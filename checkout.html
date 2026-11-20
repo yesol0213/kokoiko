@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ご予約・お支払い｜ここいこ</title>
+<title>お支払い｜ここいこ</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://js.tosspayments.com/v2/standard"></script>
 </head>
-<body>
+<body class="ckpage">
 <div class="wrap">
-  <div class="test-bar" id="testBar" hidden>テストモード：実際の請求は発生しません</div>
-  <div class="phd"><a href="index.html" id="backLink" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></a><b>ご予約・お支払い</b></div>
+  <div class="test-bar" id="testBar" lang="ko" hidden>테스트 모드: 실제 결제가 이루어지지 않습니다</div>
+  <div class="phd2"><a href="index.html" id="backLink" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></a><b>お支払い</b><span></span></div>
 
   <div class="sec"><h2>ご予約内容</h2>
-    <div class="osum"><div class="im" id="sImg"></div><div><b id="sName"></b><span id="sDate"></span><span id="sQty"></span><span id="sMeet"></span></div></div>
-    <a class="note" id="changeLink" href="#" style="display:inline-block;margin-top:8px;text-decoration:underline">日程・人数を変更する</a>
+    <div class="osum"><div class="im" id="sImg"></div><div><b id="sName"></b><span id="sDate"></span><span id="sTime"></span><span id="sQty"></span><span id="sMeet"></span></div></div>
+    <a class="chg" id="changeLink" href="#">日程・人数を変更する</a>
   </div>
 
   <form id="form" novalidate>
@@ -28,23 +28,28 @@
       <div class="field"><label for="tel">電話番号<span class="opt">任意</span></label><input id="tel" type="tel" autocomplete="tel" placeholder="+81 90-1234-5678"><div class="help">当日の緊急連絡用です（日本の番号も可）。</div></div>
     </div>
 
+    <div class="sec"><h2>お支払い方法</h2>
+      <div id="payment-method"></div><div id="agreement"></div>
+    </div>
+
     <div class="sec"><h2>お支払い金額</h2>
-      <div class="sumt"><div class="r"><span>料金</span><span id="unit"></span></div><div class="r t"><span>合計</span><span id="total"></span></div><div class="r"><span class="note" style="margin:0">円の目安</span><span class="note" style="margin:0" id="totalYen"></span></div></div>
-      <p class="note">円は本日のレートによる目安です。お支払いは韓国ウォンで行われ、実際の請求額はカード会社のレートにより異なる場合があります。</p>
-      <div class="cond" style="margin-top:12px">・お支払い後は「予約待ち」となり、10名集まった時点で出発確定です。<br>・10名に満たない場合は出発4日前までにご連絡し、<b>全額返金</b>します。<br>・お客様都合のキャンセルは出発3日前まで全額返金、それ以降は返金できません。</div>
-    </div>
+      <div class="sumt"><div class="r"><span>料金</span><span id="unit"></span></div>
+        <div class="r t"><span>合計</span><span class="ty" id="totalYen"></span></div>
+        <div class="r kw"><span>お支払い（韓国ウォン）</span><span id="total"></span></div></div>
+      <div class="cond2"><p>・お支払い後は「予約待ち」、10名集まった時点で出発確定。</p><p>・10名未満の場合は出発4日前までにご連絡し、全額返金。</p><p>・出発3日前まで全額返金、それ以降のキャンセルは返金不可。</p></div>
 
-    <div class="sec"><h2>お支払い方法</h2><div class="wnote">※決済画面は韓国語で表示されます。「카드」＝カード、「결제하기」＝お支払い</div><div id="payment-method"></div><div id="agreement"></div>
-      <label class="check"><input type="checkbox" id="agree"><span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="t">以下の規約に同意します</span></label>
-      <div class="terms"><button type="button" data-legal="terms">利用規約</button><button type="button" data-legal="privacy">プライバシーポリシー</button><button type="button" data-legal="cancel">キャンセル規定</button><button type="button" data-legal="legal">特定商取引法に基づく表記</button></div>
-      <div class="err" id="err" style="margin-top:10px"></div>
-    </div>
+      <ul class="tlist">
+        <li><span>利用規約</span><button type="button" data-legal="terms">見る</button></li>
+        <li><span>プライバシーポリシー</span><button type="button" data-legal="privacy">見る</button></li>
+        <li><span>特定商取引法に基づく表記</span><button type="button" data-legal="legal">見る</button></li>
+        <li><button type="button" class="bizl" data-legal="biz" lang="ko">사업자정보</button></li>
+      </ul>
 
-    <div class="sec biz" style="border-bottom:none"><b>事業者情報（사업자 정보）</b><dl><dt>商号（상호）</dt><dd>{商号}</dd><dt>代表者（대표자）</dt><dd>{代表者名}</dd><dt>事業者登録番号（사업자등록번호）</dt><dd>{事業者登録番号}</dd><dt>通信販売業申告番号（통신판매업 신고번호）</dt><dd>{通信販売業申告番号}</dd><dt>所在地（주소）</dt><dd>{住所}</dd><dt>電話番号（유선번호）</dt><dd>{電話番号}</dd><dt>メール（이메일）</dt><dd>chan000425@gmail.com</dd></dl></div>
-    <div class="payhint" id="payHint" hidden></div>
-    <div class="bar solid"><div class="bprice"><span>お支払い金額</span><b id="bTotal"></b><small id="bYen2"></small></div><button type="submit" class="cta w" id="payBtn" disabled>お支払いへ進む</button></div>
+      <p class="agreet">上記の内容を確認し、お支払いに同意します。</p>
+      <div class="err" id="err"></div>
+      <button type="submit" class="paybtn" id="payBtn" aria-disabled="true">決済する</button>
+    </div>
   </form>
-  <footer id="footer"></footer>
 </div>
 <script src="js/data.js"></script>
 <script src="js/common.js"></script>

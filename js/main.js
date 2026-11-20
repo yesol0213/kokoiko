@@ -6,10 +6,17 @@
   var lastW = 0;
   function fit() {
     var wrap = $("stageWrap"), w = wrap.clientWidth; if (w === lastW) return; lastW = w;
-    var s = Math.min(w / 390, (window.innerHeight - 92) / 752); s = Math.max(s, (w / 390) * 0.72);
-    var x = (w - 390 * s) / 2;
-    $("stage").style.transform = "translateX(" + x + "px) scale(" + s + ")";
-    wrap.style.height = (752 * s) + "px";
+    var s = w / 390, avail = (window.innerHeight - 92) / s;
+    // 하늘색 지도 박스는 항상 화면 폭(양옆 간격 동일). 화면이 짧으면 박스 높이만 줄이고, 안의 지도는 비율 그대로 축소해 가운데 정렬
+    var compact = avail < 690, top = compact ? 142 : 176;
+    var mh = Math.min(452, Math.max(330, avail - top - 66)), k = mh / 452;
+    $("stage").classList.toggle("compact", compact);
+    var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
+    var kk = Math.min(k, 344 / 366); $("mapin").style.transform = "scale(" + kk + ")";
+    document.querySelector(".ichi-card").style.top = (top + mh + 8) + "px";
+    var H = top + mh + 8 + 58 + 8;
+    $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
+    wrap.style.height = (H * s) + "px";
   }
   fit(); window.addEventListener("resize", fit); window.addEventListener("orientationchange", function () { lastW = 0; setTimeout(fit, 200); });
 
@@ -43,25 +50,33 @@
   gv.addEventListener("playing", function () { vbox.classList.add("playing"); });
   gv.addEventListener("pause", function () { vbox.classList.remove("playing"); });
   if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) tryPlay(); else gv.pause(); }); }, { threshold: 0.3 }).observe(gv); else tryPlay();
-  vbox.addEventListener("click", function (e) { if (gv.paused) { e.preventDefault(); e.stopPropagation(); tryPlay(); K.track("video_play", { place: "main_gangneung" }); } }, true);
+  vbox.addEventListener("touchstart", function () { if (gv.paused) tryPlay(); }, { passive: true });
 
   // 지도 지역 태그: 누르면 아래 「≒ 日本でいうと」 박스와 하단 버튼만 바뀜 (스크롤 이동 없음)
-  function setRegion(id) {
-    var p = K.products[id];
-    $("lbIchi").hidden = !p.ichioshi; $("lbName").textContent = p.short; $("lbLike").textContent = p.like;
-    $("ctaName").textContent = p.short; $("mainCta").href = p.page; $("mainCta").setAttribute("data-go", id);
-    $("ctaYen").setAttribute("data-krw", p.priceKrw); $("ctaYen").textContent = K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW);
-    var lb = $("likeBox"); lb.classList.remove("pop"); void lb.offsetWidth; lb.classList.add("pop");
+  function clearRegion() {
+    var lb = $("likeBox"), c = $("mainCta");
+    lb.classList.add("empty"); c.classList.add("off"); c.setAttribute("aria-disabled", "true"); c.href = "#"; c.removeAttribute("data-go");
+    $("ctaMain").textContent = "エリアを選んでください"; $("ctaSub").textContent = "地図のエリアをタップ";
   }
+  function setRegion(id) {
+    var p = K.products[id], lb = $("likeBox"), c = $("mainCta");
+    lb.classList.remove("empty"); $("lbIchi").hidden = !p.ichioshi; $("lbName").textContent = p.short; $("lbLike").textContent = p.like;
+    c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
+    $("ctaMain").textContent = p.short + "ツアーを見る";
+    $("ctaSub").textContent = K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW) + " ／ 1名・ソウル発 日帰り";
+    lb.classList.remove("pop"); void lb.offsetWidth; lb.classList.add("pop");
+  }
+  $("mainCta").addEventListener("click", function (e) { if (this.classList.contains("off")) { e.preventDefault(); K.toast("地図からエリアを選んでください"); } else K.track("select_item", { product: this.getAttribute("data-go"), place: "main_bar" }); });
   document.querySelectorAll("[data-region]").forEach(function (a) {
     a.addEventListener("click", function (e) {
-      e.preventDefault(); var id = a.getAttribute("data-region");
-      document.querySelectorAll("[data-region]").forEach(function (b) { b.classList.toggle("on", b === a); });
-      setRegion(id); K.track("map_region_click", { region: id });
+      e.preventDefault(); var id = a.getAttribute("data-region"), off = a.classList.contains("on");
+      document.querySelectorAll("[data-region]").forEach(function (b) { b.classList.toggle("on", !off && b === a); });
+      if (off) clearRegion(); else setRegion(id);
+      K.track("map_region_click", { region: id, selected: !off });
     });
   });
   document.querySelectorAll("[data-go]").forEach(function (a) {
-    a.addEventListener("click", function () { var g = a.querySelector(".gbtn"); if (g) g.classList.add("on"); K.track("select_item", { product: a.getAttribute("data-go") }); });
+    a.addEventListener("click", function () { K.track("select_item", { product: a.getAttribute("data-go") }); });
   });
   // 지도 눈: 위에서 아래로 내리는 애니메이션
   var FL = '<svg viewBox="-12 -12 24 24"><g fill="none" stroke-linecap="round"><g stroke="#8FB3D4" stroke-width="4.2">' + [0, 60, 120].map(function (r) { return '<line x1="0" y1="-9" x2="0" y2="9" transform="rotate(' + r + ')"/>'; }).join("") + '</g><g stroke="#fff" stroke-width="2.4">' + [0, 60, 120].map(function (r) { return '<line x1="0" y1="-9" x2="0" y2="9" transform="rotate(' + r + ')"/>'; }).join("") + '</g></g></svg>';

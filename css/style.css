@@ -63,7 +63,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .vplay{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,.8);pointer-events:none}
 .sm .bd{padding:10px 12px}.sm .t{font-size:15px;font-weight:900}.sm .s{font-size:12px;color:#4a3f4f;margin-top:2px}
 .gbtn{margin-top:8px;text-align:center;font-weight:900;font-size:13px;color:var(--mute);background:#EEEAEC;border-radius:99px;padding:8px 0;transition:.15s}
-.sm>a:active .gbtn,.gbtn.on{background:var(--rose);color:#fff}
+
 
 /* ---------- bottom bars ---------- */
 .bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:calc(min(100vw,480px) - 24px);border-radius:34px;padding:8px;display:flex;gap:8px;align-items:center;z-index:20}
@@ -216,9 +216,9 @@ footer p{margin:18px 0 0}footer p:last-child{margin-top:14px;font-size:11px}
 .mtag:not(.plain):active{transform:translate(-50%,-50%) scale(.93);box-shadow:inset 0 2px 6px rgba(0,0,0,.18)}
 /* 버튼 hover·눌림 */
 button,.cta,.go,.gbtn,.btn2,.btns a,.ichi-card,.calk{transition:filter .15s,transform .12s,box-shadow .15s}
-@media(hover:hover){button:not([disabled]):hover,a.cta:hover,.go:hover,.sm>a:hover .gbtn,.btn2:hover,.btns a:hover,.ichi-card:hover{filter:brightness(.95)}
+@media(hover:hover){button:not([disabled]):hover,a.cta:hover,.go:hover,.btn2:hover,.btns a:hover,.ichi-card:hover{filter:brightness(.95)}
 .cta:not([disabled]):hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 10px 22px rgba(200,33,88,.45)}
-.sm>a:hover .gbtn{background:var(--rose);color:#fff}}
+}
 button:not([disabled]):active,a.cta:active,.btn2:active,.btns a:active,.ichi-card:active{transform:scale(.97)}
 .bar .cta:not([disabled]):active{transform:scale(.97)}
 /* 페이드업 */
@@ -296,4 +296,26 @@ footer .ctc{display:block;margin-bottom:6px;font-weight:700;color:var(--sub)}
 .ichi-card.pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.96);opacity:.6}100%{transform:none;opacity:1}}
 .src{margin-bottom:6px}
+.mapin{position:absolute;top:0;left:50%;width:366px;height:452px;margin-left:-183px;transform-origin:50% 0;z-index:2}
+.mapin .mtag,.mapin .kyoto{z-index:2}
+.mapbox .season{z-index:3}
+.lbEq{font-size:22px;font-weight:900;color:#C82158}.lbJp{font-size:11px;color:#6B6170}
+.lbEmpty{display:none;font-size:12px;color:#9A929E;font-weight:700;white-space:nowrap;letter-spacing:-.2px}
+.ichi-card.empty .lbEmpty{display:block}.ichi-card.empty>*:not(.lbEmpty){display:none!important}
+a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
+.stage.compact .hero{top:66px}.stage.compact .hero h1{font-size:23px}
+.mapbox{transform-origin:50% 0}
+
+.mapbox{left:24px!important;right:22px!important}
+.ichi-card{left:24px!important;right:22px!important;z-index:2}
+.stage>.snowfall{z-index:1}.stage .hd,.stage .hero{z-index:3}
+/* 하단 고정 바 크기 통일 (메인·상세·결제): 바 66px / 버튼 50px */
+.bar .cta{height:50px;padding:0 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25;font-size:16px}
+.bar .cta small{font-size:10.5px;margin-top:1px}
+.bar .share{width:50px;height:50px}
+/* 메인 상품 카드: 호버는 지도 태그처럼 살짝 떠오르기만, 누르면 바로 상세로 이동 */
+.sm>a{transition:transform .15s,box-shadow .15s}
+@media(hover:hover){.sm>a:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 12px 26px rgba(60,30,60,.16)}}
+.sm>a:active{transform:scale(.98)}
+.big .th{display:none}
 [hidden]{display:none!important}

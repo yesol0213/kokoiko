@@ -20,9 +20,11 @@
 <div class="wrap main">
   <div class="stage-wrap" id="stageWrap"><div class="stage" id="stage">
     <div class="top"></div>
+    <div class="snowfall" id="snow" aria-hidden="true"></div>
     <div class="hd"><b>ここいこ</b><a href="#" id="lineTop">LINEで相談 ›</a></div>
-    <div class="hero"><h1>ソウルの外へ、<br>本当の韓国を感じる旅。</h1><p>ソウルだけじゃ、もったいない！<br>本当の韓国を探しに行こう！</p></div>
+    <div class="hero"><h1>ソウルの外へ、<br>本当の韓国を感じる旅。</h1></div>
     <div class="mapbox">
+      <div class="mapin" id="mapin">
       <img src="assets/img/map.png" alt="韓国の地図">
       <svg width="328" height="472" viewBox="0 0 400 575">
 <g fill="none" stroke="#C82158" stroke-width="3.5" stroke-dasharray="7 7" stroke-linecap="round"><path d="M128 122 C180 95 250 100 296 124"/><path d="M128 122 C170 150 220 170 250 182"/><path d="M128 122 C120 200 130 280 145 318"/></g>
@@ -31,15 +33,15 @@
 <g transform="translate(232,158)"><path d="M6 26 L12 10 L18 26Z M18 26 L26 2 L34 26Z M34 26 L39 14 L44 26Z" fill="#C9D3C1" stroke="#2A2230" stroke-width="2"/></g>
 <g transform="translate(100,286)"><path d="M0 14 Q20 2 40 14 L36 16 L4 16Z" fill="#2A2230"/><rect x="8" y="16" width="24" height="14" fill="#fff" stroke="#2A2230" stroke-width="2"/><g stroke="#3F9A6B" stroke-width="3"><path d="M48 32 V2"/><path d="M56 32 V6"/></g></g>
 <g fill="#fff" stroke="#8FB3D4" stroke-width="1.5"><path d="M222 40 q10 -8 20 0 q8 -6 16 2 q10 -4 14 6 q-25 6 -50 -8z"/><path d="M246 90 q10 -8 20 0 q8 -6 16 2 q-18 6 -36 -2z"/><path d="M270 150 q8 -6 16 0 q8 -5 14 2 q-15 5 -30 -2z"/></g></svg>
-      <div class="snowfall" id="snow" aria-hidden="true"></div>
-      <div class="season lg">❄ 雪景色シーズン 12〜2月</div>
       <span class="mtag plain" style="left:96px;top:86px">ソウル発</span>
       <a class="mtag" href="#gn" data-region="gangneung" style="left:270px;top:65px">江陵（カンヌン）<small>2.5h</small></a>
       <a class="mtag" href="#dy" data-region="danyang" style="left:270px;top:180px">丹陽（タニャン）<small>3.5h</small></a>
       <a class="mtag" href="#jd" data-region="jeonju-damyang" style="left:99px;top:295px">全州・潭陽 <small>4h</small></a>
       <span class="kyoto" style="left:147px;top:311px">≒ 京都</span>
+      </div>
+      <div class="season lg">❄ 雪景色シーズン 12〜2月</div>
     </div>
-    <div class="ichi-card" id="likeBox" aria-live="polite"><span class="ichi" id="lbIchi">イチオシ</span><b id="lbName">全州・潭陽</b><span style="font-size:22px;font-weight:900;color:#C82158">≒</span><span style="font-size:11px;color:#6B6170">日本でいうと</span><b id="lbLike">京都</b></div>
+    <div class="ichi-card empty" id="likeBox" aria-live="polite"><span class="lbEmpty">エリアをタップすると、日本でいうとどこか分かるよ！</span><span class="ichi" id="lbIchi" hidden>イチオシ</span><b id="lbName"></b><span class="lbEq">≒</span><span class="lbJp">日本でいうと</span><b id="lbLike"></b></div>
   </div></div>
 
   <section class="psec"><h2>みんなとは違う、<br>私だけの韓国旅。</h2><p>定番コースはもう卒業！あなただけの韓国に出会おう！</p></section>
@@ -84,7 +86,7 @@
 <div class="barbg"></div>
 <div class="bar lg">
   <button class="share" id="share" aria-label="シェア"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button>
-  <a class="cta" id="mainCta" href="jeonju-damyang.html" data-go="jeonju-damyang"><span id="ctaName">全州・潭陽</span>ツアーを見る<small><span id="ctaYen" data-krw="100000">約¥10,700</span> ／ 1名・ソウル発 日帰り</small></a>
+  <a class="cta off" id="mainCta" href="#" aria-disabled="true"><span id="ctaMain">エリアを選んでください</span><small id="ctaSub">地図のエリアをタップ</small></a>
 </div>
 <script src="js/data.js"></script>
 <script src="js/common.js"></script>

@@ -11,10 +11,11 @@
 <body>
 <div class="wrap" style="padding-bottom:30px">
   <div class="phd"><b style="margin:0 auto">お支払い結果</b></div>
-  <div class="res"><div class="ic" style="background:#FDECEC">⚠️</div><h1>お支払いが完了しませんでした</h1><p id="msg">時間をおいて、もう一度お試しください。</p><p class="note" id="code" style="margin-top:6px"></p><p class="note">料金は請求されていません。</p></div>
-  <div class="rbox" id="sum" hidden></div>
-  <div class="res-actions"><a class="cta" id="retry" href="checkout.html" style="display:block">入力画面に戻る</a><a class="btn2" href="index.html">トップに戻る</a></div>
-  <p class="note" style="text-align:center;margin:12px 18px">解決しない場合はお問い合わせください：<br><span id="contact"></span></p>
+  <div class="sec" id="prd" hidden></div>
+  <div class="sec" style="border-bottom:none"><div class="rst"><b class="ng">お支払い未完了</b><span id="when"></span></div><div id="sum"></div>
+    <div class="why"><b id="msg">時間をおいて、もう一度お試しください。</b><p>料金は請求されていません。<br><span id="kept">入力した内容は保存されています。</span></p><small id="code"></small></div></div>
+  <div class="ract"><a class="cta" id="retry" href="checkout.html">入力画面に戻る</a><a class="tl" href="index.html">トップに戻る</a>
+    <p class="note" style="text-align:center;margin-top:20px">解決しない場合はお問い合わせください<br><span id="contact"></span></p></div>
   <footer id="footer"></footer>
 </div>
 <script src="js/data.js"></script>
@@ -31,10 +32,11 @@
   var p = K.products[pid];
   if (p && date) {
     document.getElementById("retry").href = "checkout.html?product=" + pid + "&date=" + date + "&qty=" + qty;
-    var s = document.getElementById("sum"); s.hidden = false;
-    s.innerHTML = '<div class="r"><span>ツアー</span><b>' + p.title + '</b></div><div class="r"><span>参加日</span><b>' + K.jpLong(date) + '</b></div><div class="r"><span>人数</span><b>' + qty + '名</b></div><p class="note">入力した内容は保存されています。</p>';
-  } else if (p) { document.getElementById("retry").href = p.page; }
-  else { document.getElementById("retry").href = "index.html"; }
+    document.getElementById("when").textContent = K.jpLong(date) + " " + p.timeShort;
+    document.getElementById("sum").innerHTML = '<div class="rr"><span>人数</span><b>' + qty + '名</b></div><div class="rr t"><span>お支払い金額</span><b>' + K.krw(p.priceKrw * (+qty || 1)) + '</b></div>';
+  } else if (p) { document.getElementById("retry").href = p.page; document.getElementById("kept").textContent = ""; }
+  else { document.getElementById("retry").href = "index.html"; document.getElementById("retry").textContent = "トップに戻る"; document.getElementById("kept").textContent = ""; }
+  if (p) { var pr = document.getElementById("prd"); pr.hidden = false; pr.innerHTML = '<div class="rprd"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name + '</b><span>ソウル発 日帰り ・ 送迎バス付き</span></div></div>'; }
   K.track("payment_fail", { code: code, product: pid });
 })();
 </script>

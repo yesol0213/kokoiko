@@ -102,10 +102,36 @@
     m.innerHTML = '<div class="modal-box">' + LEGAL[k] + '<button type="button" class="btn-sub" data-close>閉じる</button></div>';
     m.hidden = false;
   };
+  // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
   K.contactLinks = function () {
-    return (K.LINE_ADD_URL ? '<a href="' + K.LINE_ADD_URL + '" target="_blank" rel="noopener">LINE</a>' : "LINE（準備中）") + " ／ " +
-      (K.INSTAGRAM_URL ? '<a href="' + K.INSTAGRAM_URL + '" target="_blank" rel="noopener">Instagram DM</a>' : "Instagram DM（準備中）") + " ／ " +
-      '<a href="mailto:' + K.CONTACT_EMAIL + '">' + K.CONTACT_EMAIL + '</a>';
+    var ln = function (url, label, ch) { return '<a class="cl" href="' + (url || "#") + '"' + (url ? ' target="_blank" rel="noopener"' : ' data-soon="' + label + '"') + ' data-ch="' + ch + '">' + label + '</a>'; };
+    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram DM", "instagram") + '<span class="sep">|</span>' +
+      '<a class="cl" href="mailto:' + K.CONTACT_EMAIL + '" data-ch="email">' + K.CONTACT_EMAIL + '</a>';
+  };
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a[data-ch]"); if (!a) return;
+    K.track("contact_click", { channel: a.getAttribute("data-ch") });
+    if (a.hasAttribute("data-soon")) { e.preventDefault(); K.toast(a.getAttribute("data-soon") + "は準備中です。メールでお問い合わせください"); }
+  });
+
+  // 마우스로도 가로 사진 슬라이드 끌어서 넘기기 (PC)
+  K.dragScroll = function (el) {
+    var down = false, x0 = 0, s0 = 0, moved = false;
+    el.addEventListener("mousedown", function (e) { down = true; moved = false; x0 = e.pageX; s0 = el.scrollLeft; el.style.scrollSnapType = "none"; e.preventDefault(); });
+    window.addEventListener("mousemove", function (e) { if (!down) return; var dx = e.pageX - x0; if (Math.abs(dx) > 4) moved = true; el.scrollLeft = s0 - dx; });
+    window.addEventListener("mouseup", function (e) {
+      if (!down) return; down = false; var w = el.clientWidth, dx = e.pageX - x0, i = Math.round(s0 / w) + (dx < -40 ? 1 : dx > 40 ? -1 : 0);
+      el.style.scrollSnapType = ""; el.scrollTo({ left: Math.max(0, i) * w, behavior: "smooth" });
+    });
+    el.addEventListener("click", function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  };
+
+  // 스크롤 시 섹션 페이드업 (캘린더 시트 제외)
+  K.fadeUp = function (sel) {
+    var els = document.querySelectorAll(sel);
+    if (!("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }); }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
+    els.forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight) return; el.classList.add("fu"); io.observe(el); });
   };
   document.addEventListener("DOMContentLoaded", function () {
     var f = document.getElementById("footer");
@@ -113,5 +139,6 @@
       '<p>お問い合わせ：' + K.contactLinks() + '</p><p>© KOKOIKO ここいこ</p>';
     document.addEventListener("click", function (e) { var b = e.target.closest("[data-legal]"); if (b) K.openLegal(b.getAttribute("data-legal")); });
     K.fillYen();
+    K.fadeUp(".psec,.big,.sm,.src,#app>.sec,.res>*,.rbox,.steps,.shbox,footer");
   });
 })();

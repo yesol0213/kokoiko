@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="wrap" style="padding-bottom:30px">
-  <div class="phd"><b style="margin:0 auto">ご予約完了</b></div>
+  <div class="phd"><b style="margin:0 auto">ご予約内容</b></div>
   <main id="app"><div class="res"><div class="ic" style="background:#F7F3F5">⏳</div><h1>お支払いを確認しています…</h1><p>このままお待ちください。画面を閉じないでください。</p></div></main>
   <footer id="footer"></footer>
 </div>
@@ -20,6 +20,7 @@
 // 결제 성공: 서버(/api/confirm)에서 금액 검증 후 승인 → 완료 화면 + 공유
 (function () {
   var K = window.KOKOIKO, app = document.getElementById("app");
+  var SHARE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
   var q = new URLSearchParams(location.search);
   var body = { paymentKey: q.get("paymentKey"), orderId: q.get("orderId"), amount: Number(q.get("amount")) };
   var bk = null; try { bk = JSON.parse(sessionStorage.getItem("kk_booking") || "null"); } catch (e) {}
@@ -40,30 +41,21 @@
       K.track("purchase", { transaction_id: d.orderId, value: d.totalAmount, currency: "KRW", product: d.productId, quantity: d.qty });
       try { sessionStorage.removeItem("kk_form"); sessionStorage.removeItem("kk_sel_" + p.id); } catch (e) {}
       history.replaceState(null, "", location.pathname);
+      var qty = d.qty || (bk && bk.qty) || 1;
       app.innerHTML =
-        '<div class="res"><div class="ic" style="background:#FFF1F5">🎉</div><h1>ご予約を受け付けました</h1><p>現在「予約待ち」です。' + K.MIN_PEOPLE + '名集まった時点で出発確定となり、LINEでお知らせします。</p></div>' +
-        '<div class="rbox"><div class="osum" style="margin-bottom:10px"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name.replace("<br>", " ") + '</b></div></div>' +
-          (bk && bk.date ? '<div class="r"><span>参加日</span><b>' + K.jpLong(bk.date) + '</b></div>' : '') +
-          '<div class="r"><span>時間</span><b>' + p.time + '</b></div>' +
-          '<div class="r"><span>集合場所</span><b>' + K.MEETING.ja + '</b></div>' +
-          '<div class="r"><span>人数</span><b>' + (d.qty || (bk && bk.qty) || 1) + '名</b></div>' +
-          '<div class="r"><span>お支払い金額</span><b>' + K.krw(d.totalAmount) + '</b></div>' +
-          '<div class="r"><span>注文番号</span><b style="font-size:11px">' + d.orderId + '</b></div></div>' +
-        '<ol class="steps"><li>ここいこのLINEを友だち追加</li><li>' + K.MIN_PEOPLE + '名集まったらLINEで出発確定をお知らせ</li><li>出発3日前までに集まらない場合は全額返金</li></ol>' +
-        '<div class="shbox"><b>お友だちと一緒に行きませんか？</b><p>シェアして' + K.MIN_PEOPLE + '名集まれば、出発が早く確定します。</p>' +
-          '<div class="shbtns"><button id="shFriend">💬 友だちにシェア</button><button id="shStory">📷 ストーリーでシェア</button></div></div>' +
-        '<div class="res-actions"><a class="btn2 line" id="lineBtn" href="#">LINEで販売者に連絡する</a><a class="cta" href="index.html" style="display:block">確認</a></div>' +
-        '<p class="note" style="text-align:center;margin:12px 18px">予約確認メールを ' + (bk && bk.email ? bk.email : "ご登録のメールアドレス") + ' にお送りします。<br>キャンセルは注文番号を添えてLINEでご連絡ください。</p>';
+        '<div class="sec"><div class="rprd"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name + '</b><span>ソウル発 日帰り ・ 送迎バス付き</span></div></div></div>' +
+        '<div class="sec"><div class="rst"><b class="ok">決済完了</b><span>' + (bk && bk.date ? K.jpLong(bk.date) + " " : "") + p.timeShort + '</span></div>' +
+          '<div class="rr"><span>集合場所</span><b>' + K.MEETING.ja + '</b></div>' +
+          '<div class="rr"><span>人数</span><b>' + qty + '名</b></div>' +
+          '<div class="rr"><span>注文番号</span><b class="oid">' + d.orderId + '</b></div>' +
+          '<div class="rr t"><span>お支払い金額</span><b>' + K.krw(d.totalAmount) + '</b></div></div>' +
+        '<div class="sec"><h2>今後の流れ</h2><div class="flow"><div>1. ' + K.MIN_PEOPLE + '名集まったら、LINEで出発確定をお知らせします。</div><div>2. キャンセル・お問い合わせは、LINE・メールでご連絡ください。</div><div>3. 出発' + K.CLOSE_DAYS_BEFORE + '日前までに' + K.MIN_PEOPLE + '名に満たない場合は、全額返金いたします。</div></div></div>' +
+        '<div class="sec" style="border-bottom:none"><h2 style="margin-bottom:4px">お友だちと一緒に行きませんか？</h2><p class="rsub">シェアして' + K.MIN_PEOPLE + '名集まれば、出発が早く確定します。</p>' +
+          '<button class="rshare" id="shFriend">' + SHARE + 'シェアする</button></div>' +
+        '<div class="ract"><a class="cta" href="index.html">確認</a><a class="tl" id="lineBtn" href="#">LINEで販売者に連絡する ›</a>' +
+        '<p class="note" style="text-align:center;margin-top:14px">予約確認メールを ' + (bk && bk.email ? bk.email : "ご登録のメールアドレス") + ' にお送りします。</p></div>';
       var url = location.origin + "/" + p.page;
       document.getElementById("shFriend").onclick = function () { K.share({ url: url, title: p.title + "｜ここいこ", text: "一緒に行かない？ソウル発の日帰り旅 ≒ " + p.like, medium: "complete", content: p.id }); };
-      document.getElementById("shStory").onclick = function () {
-        K.track("share", { method: "story", content: p.id });
-        fetch(K.img(p.hero[0])).then(function (r) { return r.blob(); }).then(function (b) {
-          var f = new File([b], "kokoiko.jpg", { type: "image/jpeg" });
-          if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], text: p.title + " " + url + "?utm_source=share&utm_medium=story" });
-          var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "kokoiko.jpg"; a.click(); K.toast("画像を保存しました。ストーリーに投稿してね！");
-        }).catch(function () {});
-      };
       document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "complete" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("LINE公式アカウントは準備中です"); };
     })
     .catch(function () { fail("NETWORK", "通信エラーが発生しました。"); });

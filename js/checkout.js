@@ -34,19 +34,38 @@
         widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" })
       ]);
     });
-  }).catch(function (e) { $("err").textContent = "決済画面を表示できませんでした。時間をおいて再度お試しください。"; console.error(e); });
+  }).then(updBtn).catch(function (e) { widgets = null; updBtn(); $("err").textContent = "決済画面を表示できませんでした。時間をおいて再度お試しください。"; console.error(e); });
+
+  // 입력 검사: 칸을 벗어날 때 인라인 에러, 모두 맞고 동의 체크 시에만 결제 버튼 활성
+  var RULES = {
+    name: [function (v) { return v.trim().length > 0; }, "お名前を入力してください"],
+    email: [function (v) { return /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(v.trim()); }, "メールアドレスの形式を確認してください"],
+    tel: [function (v) { return v.replace(/[^0-9]/g, "").length >= 9; }, "電話番号を確認してください（数字9桁以上）"],
+    line: [function (v) { return /^[a-z0-9._-]{4,20}$/.test(v.trim()); }, "LINE IDを確認してください（半角英数字・. - _ 4〜20文字）"]
+  };
+  var touched = {};
+  function okField(f) { return RULES[f][0]($(f).value); }
+  function showErr(f) {
+    var bad = touched[f] && !okField(f), el = $(f), box = el.parentNode.querySelector(".ferr");
+    el.classList.toggle("bad", bad); el.setAttribute("aria-invalid", bad ? "true" : "false");
+    if (bad && !box) { box = document.createElement("div"); box.className = "ferr"; el.insertAdjacentElement("afterend", box); }
+    if (box) { box.textContent = bad ? RULES[f][1] : ""; box.hidden = !bad; }
+  }
+  function allOk() { return FIELDS.every(okField) && $("agree").checked; }
+  function updBtn() { $("payBtn").disabled = !allOk() || !widgets; }
+  FIELDS.forEach(function (f) {
+    $(f).addEventListener("blur", function () { if ($(f).value) touched[f] = true; showErr(f); });
+    $(f).addEventListener("input", function () { if (touched[f]) showErr(f); updBtn(); });
+  });
+  $("agree").addEventListener("change", updBtn);
+  FIELDS.forEach(function (f) { if ($(f).value) { touched[f] = true; showErr(f); } });
+  updBtn();
 
   $("form").addEventListener("submit", function (e) {
     e.preventDefault();
     var v = { name: $("name").value.trim(), email: $("email").value.trim(), tel: $("tel").value.replace(/[^0-9]/g, ""), line: $("line").value.trim() };
-    var msg = "";
-    if (!v.name) msg = "お名前を入力してください。";
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email)) msg = "メールアドレスを確認してください。";
-    else if (v.tel.length < 9) msg = "電話番号を確認してください。";
-    else if (!v.line) msg = "LINE IDを入力してください。";
-    else if (!$("agree").checked) msg = "規約への同意が必要です。";
-    $("err").textContent = msg;
-    if (msg) { K.track("checkout_error", { product: id, reason: msg }); $("err").scrollIntoView({ block: "center" }); return; }
+    if (!allOk()) { FIELDS.forEach(function (f) { touched[f] = true; showErr(f); }); return; }
+    $("err").textContent = "";
     if (!widgets) return;
     $("payBtn").disabled = true; keep();
     fetch("/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: id, qty: qty }) })
@@ -63,7 +82,7 @@
           });
         });
       })
-      .catch(function (err) { $("payBtn").disabled = false; $("err").textContent = (err && err.message) || "決済を開始できませんでした。"; });
+      .catch(function (err) { updBtn(); console.error(err); $("err").textContent = (err && err.message) || "決済を開始できませんでした。"; });
   });
   K.track("view_checkout", { product: id, date: date, quantity: qty });
 })();

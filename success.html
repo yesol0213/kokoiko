@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ご予約完了｜ここいこ</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap" style="padding-bottom:30px">
+  <div class="phd"><b style="margin:0 auto">ご予約完了</b></div>
+  <main id="app"><div class="res"><div class="ic" style="background:#F7F3F5">⏳</div><h1>お支払いを確認しています…</h1><p>このままお待ちください。画面を閉じないでください。</p></div></main>
+  <footer id="footer"></footer>
+</div>
+<script src="js/data.js"></script>
+<script src="js/common.js"></script>
+<script>
+// 결제 성공: 서버(/api/confirm)에서 금액 검증 후 승인 → 완료 화면 + 공유
+(function () {
+  var K = window.KOKOIKO, app = document.getElementById("app");
+  var q = new URLSearchParams(location.search);
+  var body = { paymentKey: q.get("paymentKey"), orderId: q.get("orderId"), amount: Number(q.get("amount")) };
+  var bk = null; try { bk = JSON.parse(sessionStorage.getItem("kk_booking") || "null"); } catch (e) {}
+  var p = K.products[(bk && bk.product) || "jeonju-damyang"];
+
+  function fail(code, message) {
+    K.track("payment_fail", { code: code || "", stage: "confirm" });
+    location.replace("fail.html?code=" + encodeURIComponent(code || "CONFIRM_FAILED") + "&message=" + encodeURIComponent(message || "") +
+      (bk ? "&product=" + bk.product + "&date=" + bk.date + "&qty=" + bk.qty : ""));
+  }
+  if (!body.paymentKey || !body.orderId) { fail("INVALID_ACCESS", "決済情報が見つかりません。"); return; }
+
+  fetch("/api/confirm", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(function (res) {
+      if (!res.ok) { fail(res.j.code, res.j.message); return; }
+      var d = res.j;
+      K.track("purchase", { transaction_id: d.orderId, value: d.totalAmount, currency: "KRW", product: d.productId, quantity: d.qty });
+      try { sessionStorage.removeItem("kk_form"); sessionStorage.removeItem("kk_sel_" + p.id); } catch (e) {}
+      history.replaceState(null, "", location.pathname);
+      app.innerHTML =
+        '<div class="res"><div class="ic" style="background:#FFF1F5">🎉</div><h1>ご予約を受け付けました</h1><p>現在「予約待ち」です。' + K.MIN_PEOPLE + '名集まった時点で出発確定となり、LINEでお知らせします。</p></div>' +
+        '<div class="rbox"><div class="osum" style="margin-bottom:10px"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name.replace("<br>", " ") + '</b></div></div>' +
+          (bk && bk.date ? '<div class="r"><span>参加日</span><b>' + K.jpLong(bk.date) + '</b></div>' : '') +
+          '<div class="r"><span>時間</span><b>' + p.time + '</b></div>' +
+          '<div class="r"><span>集合場所</span><b>' + K.MEETING.ja + '</b></div>' +
+          '<div class="r"><span>人数</span><b>' + (d.qty || (bk && bk.qty) || 1) + '名</b></div>' +
+          '<div class="r"><span>お支払い金額</span><b>' + K.krw(d.totalAmount) + '</b></div>' +
+          '<div class="r"><span>注文番号</span><b style="font-size:11px">' + d.orderId + '</b></div></div>' +
+        '<ol class="steps"><li>ここいこのLINEを友だち追加</li><li>' + K.MIN_PEOPLE + '名集まったらLINEで出発確定をお知らせ</li><li>出発3日前までに集まらない場合は全額返金</li></ol>' +
+        '<div class="shbox"><b>お友だちと一緒に行きませんか？</b><p>シェアして' + K.MIN_PEOPLE + '名集まれば、出発が早く確定します。</p>' +
+          '<div class="shbtns"><button id="shFriend">💬 友だちにシェア</button><button id="shStory">📷 ストーリーでシェア</button></div></div>' +
+        '<div class="res-actions"><a class="btn2 line" id="lineBtn" href="#">LINEで販売者に連絡する</a><a class="cta" href="index.html" style="display:block">確認</a></div>' +
+        '<p class="note" style="text-align:center;margin:12px 18px">予約確認メールを ' + (bk && bk.email ? bk.email : "ご登録のメールアドレス") + ' にお送りします。<br>キャンセルは注文番号を添えてLINEでご連絡ください。</p>';
+      var url = location.origin + "/" + p.page;
+      document.getElementById("shFriend").onclick = function () { K.share({ url: url, title: p.title + "｜ここいこ", text: "一緒に行かない？ソウル発の日帰り旅 ≒ " + p.like, medium: "complete", content: p.id }); };
+      document.getElementById("shStory").onclick = function () {
+        K.track("share", { method: "story", content: p.id });
+        fetch(K.img(p.hero[0])).then(function (r) { return r.blob(); }).then(function (b) {
+          var f = new File([b], "kokoiko.jpg", { type: "image/jpeg" });
+          if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], text: p.title + " " + url + "?utm_source=share&utm_medium=story" });
+          var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "kokoiko.jpg"; a.click(); K.toast("画像を保存しました。ストーリーに投稿してね！");
+        }).catch(function () {});
+      };
+      document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "complete" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("LINE公式アカウントは準備中です"); };
+    })
+    .catch(function () { fail("NETWORK", "通信エラーが発生しました。"); });
+})();
+</script>
+</body>
+</html>

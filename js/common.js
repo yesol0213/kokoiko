@@ -89,17 +89,21 @@
   };
 
   // ---------- 푸터·약관 ----------
+  // 빈 값은 회색 괄호 안 항목 이름 (확정되면 값으로 교체)
+  var TBD = function (t) { return '<span class="tbd">(' + t + ')</span>'; };
   var LEGAL = {
-    legal: '<h3>特定商取引法に基づく表記</h3><dl><dt>販売業者</dt><dd>{商号}</dd><dt>運営責任者</dt><dd>{代表者名}</dd><dt>事業者登録番号</dt><dd>{事業者登録番号}</dd><dt>通信販売業申告番号</dt><dd>{通信販売業申告番号}</dd><dt>所在地</dt><dd>{住所}</dd><dt>連絡先</dt><dd>{電話番号} ／ ' + K.CONTACT_EMAIL + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード等／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
-    terms: '<h3>利用規約</h3><p>本サービスは、韓国の日帰りツアーの予約受付を行います。ツアーは10名以上のお申し込みで催行が確定します。集合時間に遅れた場合、ご参加いただけないことがあります。詳細は準備中です。</p>',
-    privacy: '<h3>プライバシーポリシー</h3><p>ご予約時にいただく情報（お名前・メールアドレス・電話番号・LINE ID）は、ツアーのご案内・催行連絡・お問い合わせ対応のみに使用し、第三者に提供しません。決済情報は決済代行会社（トスペイメンツ）が管理し、当社は保存しません。詳細は準備中です。</p>',
-    cancel: '<h3>キャンセル・返金規定</h3><ul><li>' + K.cancel.join("</li><li>") + '</li></ul><p>キャンセルはLINEまたはメールで注文番号をお知らせください。</p>'
+    legal: '<h3>特定商取引法に基づく表記</h3><dl><dt>販売業者</dt><dd>코코이코</dd><dt>運営責任者</dt><dd>SUN IL/ROH</dd><dt>事業者登録番号</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>通信販売業申告番号</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>旅行業登録番号</dt><dd>' + TBD("여행업 등록번호") + '</dd><dt>所在地</dt><dd>' + TBD("주소") + '</dd><dt>電話番号</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>メール</dt><dd>' + K.CONTACT_EMAIL + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
+    terms: '<h3>利用規約</h3><p>本サービスは、韓国の日帰りツアーの予約受付を行います。ツアーは10名以上のお申し込みで催行が確定します。集合時間に遅れた場合、ご参加いただけないことがあります。</p><p>' + TBD("이용약관 전문") + '</p>',
+    privacy: '<h3>プライバシーポリシー</h3><p>ご予約時にいただく情報（お名前・メールアドレス・電話番号・LINE ID）は、ツアーのご案内・催行連絡・お問い合わせ対応のみに使用し、第三者に提供しません。決済情報は決済代行会社（トスペイメンツ）が管理し、当社は保存しません。</p><dl><dt>保管期間</dt><dd>' + TBD("개인정보 보관 기간") + '</dd><dt>責任者</dt><dd>' + TBD("개인정보 보호책임자") + '</dd></dl><p>' + TBD("개인정보처리방침 전문") + '</p>',
+    cancel: '<h3>キャンセル・返金規定</h3><ul><li>' + K.cancel.join("</li><li>") + '</li></ul><p>例外：' + TBD("천재지변 등 예외 기준") + '</p><p>キャンセルはLINEまたはメールで注文番号をお知らせください。</p>',
+    // PG 심사용 사업자정보 (국문, 결제 페이지에서 엶)
+    biz: '<h3>사업자정보</h3><dl><dt>상호</dt><dd>코코이코</dd><dt>대표자</dt><dd>SUN IL/ROH</dd><dt>사업자등록번호</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>통신판매업 신고번호</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>사업장 주소</dt><dd>' + TBD("주소") + '</dd><dt>유선번호</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>이메일</dt><dd>' + K.CONTACT_EMAIL + '</dd></dl>'
   };
   K.openLegal = function (k) {
     var m = document.getElementById("modal");
     if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; document.body.appendChild(m);
       m.addEventListener("click", function (e) { if (e.target === m || e.target.closest("[data-close]")) m.hidden = true; }); }
-    m.innerHTML = '<div class="modal-box">' + LEGAL[k] + '<button type="button" class="btn-sub" data-close>閉じる</button></div>';
+    m.innerHTML = '<div class="modal-box"' + (k === "biz" ? ' lang="ko"' : '') + '>' + LEGAL[k] + '<button type="button" class="btn-sub" data-close>' + (k === "biz" ? "닫기" : "閉じる") + '</button></div>';
     m.hidden = false;
   };
   // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
@@ -135,7 +139,7 @@
   };
   document.addEventListener("DOMContentLoaded", function () {
     var f = document.getElementById("footer");
-    if (f) f.innerHTML = '<div class="footer-links"><button data-legal="legal">特定商取引法に基づく表記</button><button data-legal="terms">利用規約</button><button data-legal="privacy">プライバシーポリシー</button><button data-legal="cancel">キャンセル規定</button></div>' +
+    if (f) f.innerHTML = '<div class="footer-links"><button data-legal="terms">利用規約</button><button data-legal="privacy">プライバシーポリシー</button><button data-legal="legal">特定商取引法に基づく表記</button><button data-legal="cancel">キャンセル規定</button></div>' +
       '<p><span class="ctc">お問い合わせ</span>' + K.contactLinks() + '</p><p>© KOKOIKO ここいこ</p>';
     document.addEventListener("click", function (e) { var b = e.target.closest("[data-legal]"); if (b) K.openLegal(b.getAttribute("data-legal")); });
     K.fillYen();

@@ -362,4 +362,11 @@ background:rgba(255,255,255,.78);backdrop-filter:blur(20px) saturate(180%);-webk
 /* 브라우저 자동완성 파란 배경 제거 (다른 칸과 같은 흰 배경) */
 .field input:-webkit-autofill,.field input:-webkit-autofill:hover,.field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #fff inset!important;-webkit-text-fill-color:var(--ink)!important;caret-color:var(--ink);transition:background-color 9999s}
 .field input.bad:focus{border-color:#E2343B;box-shadow:0 0 0 3px rgba(226,52,59,.10)}
+/* 동선지도 */
+.rmap{display:block;width:100%;aspect-ratio:1290/1100;border:0;border-radius:16px;background-size:cover;background-position:center;padding:0;cursor:zoom-in}
+.rstops{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.rstops li{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.rstops i{font-style:normal;width:22px;height:22px;border-radius:50%;background:#fff;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;flex:none}
+.rstops li:last-child i{background:var(--ink);color:#fff}
+.lb.single .lbn{display:none}
 [hidden]{display:none!important}

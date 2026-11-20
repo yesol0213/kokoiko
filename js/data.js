@@ -46,6 +46,8 @@ window.KOKOIKO = {
       sellDays: [6],
       hero: ["gn_hero", "gn_gs", "gn_g3", "video:gn_wave", "gn_tk"],
       solo: { trans: 172020, entry: 9000, total: 181020, bus: "牧場から<br>公共交通なし" },
+      // 동선지도 (번호 = 방문 순서)
+      // route: { img: "gn_route.svg", stops: ["蚕室駅（ソウル）出発", "大関嶺 羊牧場", "草堂スンドゥブ村", "安木海辺・カフェ通り", "正東津"] },
       intro: {
         lead: "午前は雪の高原、<br>午後は海辺のKカフェ。",
         desc: "高原の牧場と日本海ブルーの海を、1日でまとめて楽しめる旅。まるで“海のある軽井沢”。カフェ通りでのんびりする自由時間もたっぷり。",

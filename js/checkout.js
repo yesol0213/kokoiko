@@ -4,7 +4,7 @@
   var q = new URLSearchParams(location.search);
   var p = K.products[q.get("product")] || K.products["jeonju-damyang"], id = p.id;
   var date = q.get("date"), qty = Math.min(K.MAX_PER_BOOKING, Math.max(1, parseInt(q.get("qty") || "1", 10) || 1));
-  var pmOk = false, tossAgree = true, widgets = null, FIELDS = ["name", "email", "line", "tel"];
+  var pmW = null, pmOk = false, tossAgree = true, widgets = null, FIELDS = ["name", "email", "line", "tel"];
   if (!date) { location.replace(p.page); return; }
 
   $("backLink").href = p.page; $("changeLink").href = p.page;
@@ -35,7 +35,7 @@
       ]);
     }).then(function (w) {
       // 토스 위젯 안의 결제수단 선택·필수 약관 동의 상태를 받아 결제 버튼 활성 조건에 포함
-      var pm = w[0], ag = w[1];
+      var pm = w[0], ag = w[1]; pmW = pm;
       try { if (pm && pm.getSelectedPaymentMethod) Promise.resolve(pm.getSelectedPaymentMethod()).then(function (m) { pmOk = !!m; updBtn(); }, function () {}); } catch (e2) {}
       if (pm && pm.on) pm.on("paymentMethodSelect", function (m) { pmOk = !!m; updBtn(); K.track("select_payment_method", { method: m && (m.code || m.type) }); });
       if (ag && ag.on) ag.on("agreementStatusChange", function (s) { tossAgree = !!(s && s.agreedRequiredTerms); updBtn(); });
@@ -57,19 +57,17 @@
     if (bad && !box) { box = document.createElement("div"); box.className = "ferr"; el.insertAdjacentElement("afterend", box); }
     if (box) { box.textContent = bad ? RULES[f][1] : ""; box.hidden = !bad; }
   }
-  function allOk() { return FIELDS.every(okField) && $("agree").checked && pmOk && tossAgree; }
+  function allOk() { return FIELDS.every(okField) && $("agree").checked; }
   // 아직 안 된 단계를 버튼 위 한 줄로 안내 (정보 입력 → 결제수단 → 동의 순)
   function nextStep() {
     if (!FIELDS.every(okField)) return "代表者情報を入力してください";
-    if (!pmOk) return "お支払い方法を選択してください";
-    if (!tossAgree) return "決済サービスの規約に同意してください";
     if (!$("agree").checked) return "規約に同意してください";
     return "";
   }
   function updBtn() {
     var ok = allOk() && !!widgets; $("payBtn").disabled = !ok;
     var h = $("payHint"); if (h) { h.textContent = widgets ? nextStep() : ""; h.hidden = ok || !h.textContent; }
-    var pmBox = $("payment-method"); if (pmBox) pmBox.classList.toggle("need", FIELDS.every(okField) && !pmOk);
+    var pmBox = $("payment-method"); if (pmBox && pmOk) pmBox.classList.remove("need");
   }
   FIELDS.forEach(function (f) {
     $(f).addEventListener("blur", function () { if ($(f).value) touched[f] = true; showErr(f); });
@@ -85,6 +83,18 @@
     if (!allOk()) { FIELDS.forEach(function (f) { touched[f] = true; showErr(f); }); return; }
     $("err").textContent = "";
     if (!widgets) return;
+    // 토스 위젯에서 결제수단을 골랐는지 확인 → 안 골랐으면 안내 후 위젯으로 이동
+    var chk = pmW && pmW.getSelectedPaymentMethod ? Promise.resolve().then(function () { return pmW.getSelectedPaymentMethod(); }).catch(function () { return null; }) : Promise.resolve(true);
+    chk.then(function (m) {
+      if (!m && !pmOk) {
+        var box = $("payment-method"); box.classList.add("need"); box.scrollIntoView({ behavior: "smooth", block: "center" });
+        K.toast("お支払い方法を選択してください"); return;
+      }
+      if (!tossAgree) { K.toast("決済サービスの規約に同意してください"); $("agreement").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      pay(v);
+    });
+  });
+  function pay(v) {
     $("payBtn").disabled = true; keep();
     fetch("/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: id, qty: qty }) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw j; return j; }); })
@@ -96,11 +106,11 @@
             orderId: order.orderId, orderName: order.orderName,
             successUrl: location.origin + "/success.html",
             failUrl: location.origin + "/fail.html?product=" + id + "&date=" + date + "&qty=" + qty,
-            customerEmail: v.email, customerName: v.name, customerMobilePhone: v.tel
+            customerEmail: v.email, customerName: v.name
           });
         });
       })
-      .catch(function (err) { updBtn(); console.error(err); $("err").textContent = (err && err.message) || "決済を開始できませんでした。"; });
-  });
+      .catch(function (err) { updBtn(); console.error(err); if (err && err.code === "USER_CANCEL") return; var msg = (err && err.message) || "決済を開始できませんでした。"; $("err").textContent = msg; K.toast(msg); });
+  }
   K.track("view_checkout", { product: id, date: date, quantity: qty });
 })();

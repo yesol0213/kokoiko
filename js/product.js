@@ -33,6 +33,8 @@
       '<div class="rec"><b>こんな人におすすめ</b>' + it.rec.map(function (r) { return '<div><i>✓</i>' + r + '</div>'; }).join("") + '</div>' +
       '<div class="fade"></div></div><button class="more" id="more">詳細情報をもっと見る ⌄</button></div>' +
     '<div class="sec"><h2>フォトギャラリー</h2><div class="gal">' + p.gallery.map(function (g, i) { var m = media(g[0]); return '<button data-i="' + i + '"' + (m.i ? ' style="background-image:url(' + m.i + ')"' : "") + '>' + (m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay sm"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i>' : "") + '<span>' + g[1] + '</span></button>'; }).join("") + '</div><div class="note" style="margin-top:8px">' + p.credit + '</div></div>' +
+    (p.route ? '<div class="sec"><h2>コースマップ</h2><button class="rmap" id="rmap" style="background-image:url(assets/img/' + p.route.img + ')" aria-label="コースマップを拡大"></button>' +
+      '<ol class="rstops">' + p.route.stops.map(function (t, i) { return '<li><i>' + (i + 1) + '</i>' + t + '</li>'; }).join("") + '</ol></div>' : '') +
     '<div class="sec"><h2 style="margin-bottom:4px">スケジュール</h2><div class="note" style="margin:0 0 12px">当日の交通状況により変わる場合があります。</div><div class="sl">' +
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2>体験レビュー</h2><div class="rv"><div>インフルエンサー<br>体験写真（準備中）</div><div>インフルエンサー<br>体験写真（準備中）</div></div></div>' +
@@ -88,7 +90,9 @@
 
   // 갤러리 확대
   var li = 0, G = p.gallery;
+  if (p.route) $("rmap").onclick = function () { $("lbm").innerHTML = '<img alt="コースマップ" src="assets/img/' + p.route.img + '">'; $("lbC").textContent = ""; $("lb").classList.add("on", "single"); K.track("route_map_open", { product: id }); };
   function lbShow(i) {
+    $("lb").classList.remove("single");
     li = (i + G.length) % G.length; var m = media(G[li][0]);
     $("lbm").innerHTML = m.v ? '<video src="' + m.v + '" poster="' + m.p + '" controls autoplay playsinline></video>' : '<img alt="' + G[li][1] + '" src="' + m.i + '">';
     $("lbC").textContent = (li + 1) + " / " + G.length; $("lb").classList.add("on");
@@ -96,7 +100,7 @@
   document.querySelectorAll(".gal button").forEach(function (b) { b.onclick = function () { lbShow(+b.getAttribute("data-i")); K.track("gallery_open", { product: id, index: +b.getAttribute("data-i") + 1 }); }; });
   $("lbP").onclick = function (e) { e.stopPropagation(); lbShow(li - 1); };
   $("lbN").onclick = function (e) { e.stopPropagation(); lbShow(li + 1); };
-  $("lb").onclick = function (e) { if (e.target === this || e.target.closest(".x")) { this.classList.remove("on"); $("lbm").innerHTML = ""; } };
+  $("lb").onclick = function (e) { if (e.target === this || e.target.closest(".x")) { this.classList.remove("on", "single"); $("lbm").innerHTML = ""; } };
   var tx = null; $("lb").addEventListener("touchstart", function (e) { tx = e.touches[0].clientX; }, { passive: true });
   $("lb").addEventListener("touchend", function (e) { if (tx === null) return; var dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) lbShow(li + (dx < 0 ? 1 : -1)); });
 

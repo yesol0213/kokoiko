@@ -24,8 +24,8 @@
     <div class="sec"><h2>代表者情報</h2>
       <div class="field"><label for="name">お名前（ローマ字）<span class="req">必須</span></label><input id="name" autocomplete="name" placeholder="HANAKO YAMADA"></div>
       <div class="field"><label for="email">メールアドレス<span class="req">必須</span></label><input id="email" type="email" autocomplete="email" placeholder="example@mail.com"><div class="help">予約確認とお問い合わせへの返信に使います。</div></div>
-      <div class="field"><label for="tel">電話番号<span class="req">必須</span></label><input id="tel" type="tel" autocomplete="tel" placeholder="09012345678"></div>
       <div class="field"><label for="line">LINE ID<span class="req">必須</span></label><input id="line" placeholder="LINE ID" autocapitalize="off" autocorrect="off"><div class="help">出発確定・集合案内はLINEでお送りします。</div></div>
+      <div class="field"><label for="tel">電話番号<span class="opt">任意</span></label><input id="tel" type="tel" autocomplete="tel" placeholder="+81 90-1234-5678"><div class="help">当日の緊急連絡用です（日本の番号も可）。</div></div>
     </div>
 
     <div class="sec"><h2>お支払い金額</h2>
@@ -41,6 +41,7 @@
     </div>
 
     <div class="sec biz" style="border-bottom:none"><b>事業者情報（사업자 정보）</b><dl><dt>商号（상호）</dt><dd>{商号}</dd><dt>代表者（대표자）</dt><dd>{代表者名}</dd><dt>事業者登録番号（사업자등록번호）</dt><dd>{事業者登録番号}</dd><dt>通信販売業申告番号（통신판매업 신고번호）</dt><dd>{通信販売業申告番号}</dd><dt>所在地（주소）</dt><dd>{住所}</dd><dt>電話番号（유선번호）</dt><dd>{電話番号}</dd><dt>メール（이메일）</dt><dd>chan000425@gmail.com</dd></dl></div>
+    <div class="payhint" id="payHint" hidden></div>
     <div class="bar solid"><div class="bprice"><span>お支払い金額</span><b id="bTotal"></b><small id="bYen2"></small></div><button type="submit" class="cta w" id="payBtn" disabled>お支払いへ進む</button></div>
   </form>
   <footer id="footer"></footer>

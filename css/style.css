@@ -171,9 +171,9 @@ details.acc summary:after{content:"＋"}details.acc[open] summary:after{content:
 .osum{display:flex;gap:12px;align-items:center}.osum .im{width:72px;height:72px;border-radius:12px;background-size:cover;background-position:center;flex:none}
 .osum b{font-size:14px;line-height:1.4;display:block}.osum span{font-size:12px;color:var(--sub);display:block;margin-top:2px}
 .field{margin-bottom:14px}.field label{display:block;font-size:13px;font-weight:900;margin-bottom:6px}
-.req{color:var(--rose);font-size:11px;margin-left:4px}
+.req{display:inline-block;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:4px;margin-left:8px;vertical-align:2px}
 .field input{width:100%;border:1.5px solid #E2DCDF;border-radius:12px;padding:12px;font-size:16px;font-family:inherit}
-.field input:focus{outline:none;border-color:var(--rose)}
+.field input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(42,34,48,.08)}
 .help{font-size:11px;color:var(--mute);margin-top:4px}
 .sumt .r{display:flex;justify-content:space-between;font-size:13px;margin:6px 0}.sumt .r.t{font-size:16px;font-weight:900;border-top:1px solid var(--line);padding-top:10px}
 .cond{font-size:12px;line-height:1.8;background:#F7F3F5;border-radius:12px;padding:12px}
@@ -292,7 +292,7 @@ footer .ctc{display:block;margin-bottom:6px;font-weight:700;color:var(--sub)}
 .check input:focus-visible+.box{outline:2px solid var(--rose);outline-offset:2px}
 .check span.t{font-weight:700}
 .wnote{font-size:11.5px;color:var(--sub);background:#F7F3F5;border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.6}
-.vid.playing .vplay{display:none}
+
 .ichi-card.pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.96);opacity:.6}100%{transform:none;opacity:1}}
 .src{margin-bottom:6px}
@@ -346,4 +346,20 @@ background:rgba(255,255,255,.78);backdrop-filter:blur(20px) saturate(180%);-webk
 .mcard .ms{margin-left:auto;font-size:11px;font-weight:700;color:#2F5F8C}
 .mcard p{margin:4px 0 0;font-size:12.5px;line-height:1.6;color:var(--sub)}
 .mcard.pop{animation:pop .3s ease}
+/* 결제 버튼 위 다음 단계 안내 */
+.payhint{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:21;background:rgba(42,34,48,.88);color:#fff;font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:99px;white-space:nowrap}
+#payment-method.need{outline:2px solid var(--rose);outline-offset:4px;border-radius:12px}
+/* 사진 출처·안내: 애플 각주 방식 (푸터와 같은 좌우 여백, 줄 간격 넉넉하게, 출처와 안내 분리) */
+.src{margin:12px 20px 0;font-size:12px;line-height:1.7;color:#9A929E;text-wrap:pretty;word-break:auto-phrase}
+.src .nw{white-space:nowrap}
+.src.note2{margin-top:6px;margin-bottom:28px}
+/* 출발지(ソウル発)는 누를 수 없는 표시 → 테두리·배경 없이 텍스트 */
+.mtag.plain{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0;color:var(--ink);font-size:13px;-webkit-text-stroke:3px #fff;paint-order:stroke fill}
+.dhero .hv{position:relative;background:#000}.dhero .hv video{width:100%;height:100%;object-fit:cover;display:block}
+.field .opt{display:inline-block;background:#E6E2E4;color:#6B6170;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:4px;margin-left:8px;vertical-align:2px}
+/* 전각 괄호「）」 뒤 여백이 넓어 보이지 않게 일본어 문장부호 폭을 줄임 */
+.field label{font-feature-settings:"palt"}
+/* 브라우저 자동완성 파란 배경 제거 (다른 칸과 같은 흰 배경) */
+.field input:-webkit-autofill,.field input:-webkit-autofill:hover,.field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #fff inset!important;-webkit-text-fill-color:var(--ink)!important;caret-color:var(--ink);transition:background-color 9999s}
+.field input.bad:focus{border-color:#E2343B;box-shadow:0 0 0 3px rgba(226,52,59,.10)}
 [hidden]{display:none!important}

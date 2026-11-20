@@ -11,7 +11,7 @@ window.KOKOIKO = {
   MIN_PEOPLE: 10,
   MAX_PER_BOOKING: 10,   // 오픈 이슈: 최대 인원
   CLOSE_DAYS_BEFORE: 5,  // 예약 마감: 출발 5일 전
-  MEETING: { ja: "蚕室駅（チャムシル駅）", ko: "서울특별시 송파구 올림픽로 지하 265", map: "https://maps.google.com/?q=%EC%9E%A0%EC%8B%A4%EC%97%AD" },
+  MEETING: { ja: "蚕室駅（チャムシル駅）", ko: "서울특별시 송파구 올림픽로 지하 265", map: "https://www.google.com/maps/search/?api=1&query=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C+%EC%9E%A0%EC%8B%A4%EC%97%AD" },
 
   products: {
     "jeonju-damyang": {
@@ -44,7 +44,7 @@ window.KOKOIKO = {
       priceKrw: 90000, time: "07:30 出発 ～ 23:00頃 到着", timeShort: "07:30〜23:00頃",
       season: { label: "❄ 雪景色シーズン 12〜2月", months: [12, 1, 2] },
       sellDays: [6],
-      hero: ["gn_hero", "gn_gs", "gn_g3", "gn_g2", "gn_tk"],
+      hero: ["gn_hero", "gn_gs", "gn_g3", "video:gn_wave", "gn_tk"],
       solo: { trans: 172020, entry: 9000, total: 181020, bus: "牧場から<br>公共交通なし" },
       intro: {
         lead: "午前は雪の高原、<br>午後は海辺のKカフェ。",
@@ -54,10 +54,10 @@ window.KOKOIKO = {
           { img: "gn_b1", t: "大関嶺 羊牧場（テグァルリョン）", c: "≒ 軽井沢", p: "一面の雪景色が広がる高原の牧場。冬の羊たちは、あたたかい畜舎の中でお出迎え。" },
           { img: "gn_b2", t: "安木（アンモク）海辺・Kカフェ通り", c: "Kカフェ", p: "海が見えるカフェがずらりと並ぶ通り。窓際の席で、日本海ブルーを眺めながらひと休み。" }
         ],
-        food: { imgs: [["gn_f1", "草堂スンドゥブ"], ["gn_f2", "海辺でコーヒー"]], p: "江陵名物「草堂スンドゥブ」は、海水でつくるやさしい味のおぼろ豆腐。江陵は“コーヒーの街”としても有名です。" },
+        food: { imgs: [["gn_f1", "草堂スンドゥブ"], ["gn_f2", "海辺のカフェでコーヒー"]], p: "江陵名物「草堂スンドゥブ」は、海水でつくるやさしい味のおぼろ豆腐。江陵は“コーヒーの街”としても有名です。" },
         rec: ["ソウルはもう行ったことがある", "写真映えする場所が好き", "海も山も1日で楽しみたい"]
       },
-      gallery: [["video:gn_sheep", "羊にエサやり"], ["gn_gs", "雪の羊牧場"], ["gn_g3", "雪の大関嶺"], ["gn_g2", "冬の安木海辺"], ["gn_tk", "海辺のKカフェ"]],
+      gallery: [["video:gn_sheep", "羊にエサやり"], ["gn_gs", "雪の羊牧場"], ["gn_g3", "雪の大関嶺"], ["video:gn_wave", "安木海辺の波"], ["gn_tk", "海辺のKカフェ"]],
       schedule: [["07:30", "ソウル（蚕室駅）集合・出発"], ["10:00", "大関嶺 羊牧場"], ["12:30", "草堂スンドゥブ村（自由昼食）"], ["14:20", "安木海辺・Kカフェ通り（自由時間）"], ["16:30", "正東津（自由観光）"], ["18:40", "自由夕食"], ["19:40 → 22:30〜23:00", "ソウル到着・解散"]],
       credit: "写真：@mad_bear（Instagram）、@kirinmom_89（Instagram）、韓国観光公社"
     },

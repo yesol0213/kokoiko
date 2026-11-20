@@ -4,7 +4,7 @@
   var q = new URLSearchParams(location.search);
   var p = K.products[q.get("product")] || K.products["jeonju-damyang"], id = p.id;
   var date = q.get("date"), qty = Math.min(K.MAX_PER_BOOKING, Math.max(1, parseInt(q.get("qty") || "1", 10) || 1));
-  var widgets = null, FIELDS = ["name", "email", "tel", "line"];
+  var pmOk = false, tossAgree = true, widgets = null, FIELDS = ["name", "email", "line", "tel"];
   if (!date) { location.replace(p.page); return; }
 
   $("backLink").href = p.page; $("changeLink").href = p.page;
@@ -33,6 +33,12 @@
         widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
         widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" })
       ]);
+    }).then(function (w) {
+      // 토스 위젯 안의 결제수단 선택·필수 약관 동의 상태를 받아 결제 버튼 활성 조건에 포함
+      var pm = w[0], ag = w[1];
+      try { if (pm && pm.getSelectedPaymentMethod) Promise.resolve(pm.getSelectedPaymentMethod()).then(function (m) { pmOk = !!m; updBtn(); }, function () {}); } catch (e2) {}
+      if (pm && pm.on) pm.on("paymentMethodSelect", function (m) { pmOk = !!m; updBtn(); K.track("select_payment_method", { method: m && (m.code || m.type) }); });
+      if (ag && ag.on) ag.on("agreementStatusChange", function (s) { tossAgree = !!(s && s.agreedRequiredTerms); updBtn(); });
     });
   }).then(updBtn).catch(function (e) { widgets = null; updBtn(); $("err").textContent = "決済画面を表示できませんでした。時間をおいて再度お試しください。"; console.error(e); });
 
@@ -40,7 +46,7 @@
   var RULES = {
     name: [function (v) { return v.trim().length > 0; }, "お名前を入力してください"],
     email: [function (v) { return /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(v.trim()); }, "メールアドレスの形式を確認してください"],
-    tel: [function (v) { return v.replace(/[^0-9]/g, "").length >= 9; }, "電話番号を確認してください（数字9桁以上）"],
+    tel: [function (v) { var n = v.replace(/[^0-9]/g, ""); return !v.trim() || (/^[0-9+\-\s()]+$/.test(v.trim()) && n.length >= 9 && n.length <= 15); }, "電話番号の形式を確認してください（未入力でもOK）"],
     line: [function (v) { return /^[a-z0-9._-]{4,20}$/.test(v.trim()); }, "LINE IDを確認してください（半角英数字・. - _ 4〜20文字）"]
   };
   var touched = {};
@@ -51,8 +57,20 @@
     if (bad && !box) { box = document.createElement("div"); box.className = "ferr"; el.insertAdjacentElement("afterend", box); }
     if (box) { box.textContent = bad ? RULES[f][1] : ""; box.hidden = !bad; }
   }
-  function allOk() { return FIELDS.every(okField) && $("agree").checked; }
-  function updBtn() { $("payBtn").disabled = !allOk() || !widgets; }
+  function allOk() { return FIELDS.every(okField) && $("agree").checked && pmOk && tossAgree; }
+  // 아직 안 된 단계를 버튼 위 한 줄로 안내 (정보 입력 → 결제수단 → 동의 순)
+  function nextStep() {
+    if (!FIELDS.every(okField)) return "代表者情報を入力してください";
+    if (!pmOk) return "お支払い方法を選択してください";
+    if (!tossAgree) return "決済サービスの規約に同意してください";
+    if (!$("agree").checked) return "規約に同意してください";
+    return "";
+  }
+  function updBtn() {
+    var ok = allOk() && !!widgets; $("payBtn").disabled = !ok;
+    var h = $("payHint"); if (h) { h.textContent = widgets ? nextStep() : ""; h.hidden = ok || !h.textContent; }
+    var pmBox = $("payment-method"); if (pmBox) pmBox.classList.toggle("need", FIELDS.every(okField) && !pmOk);
+  }
   FIELDS.forEach(function (f) {
     $(f).addEventListener("blur", function () { if ($(f).value) touched[f] = true; showErr(f); });
     $(f).addEventListener("input", function () { if (touched[f]) showErr(f); updBtn(); });
@@ -63,7 +81,7 @@
 
   $("form").addEventListener("submit", function (e) {
     e.preventDefault();
-    var v = { name: $("name").value.trim(), email: $("email").value.trim(), tel: $("tel").value.replace(/[^0-9]/g, ""), line: $("line").value.trim() };
+    var v = { name: $("name").value.trim(), email: $("email").value.trim(), tel: $("tel").value.trim().replace(/[^0-9+]/g, ""), line: $("line").value.trim() };
     if (!allOk()) { FIELDS.forEach(function (f) { touched[f] = true; showErr(f); }); return; }
     $("err").textContent = "";
     if (!widgets) return;

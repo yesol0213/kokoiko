@@ -11,13 +11,13 @@
   var sp = { date: null, time: false, qty: 0 }; // 캘린더 시트 안 선택
   var rate = function () { return K.rate || K.FALLBACK_JPY_PER_KRW; };
   var so = p.solo, pct = Math.round((so.total - p.priceKrw) / so.total * 100);
-  var media = function (k) { return k.indexOf("video:") === 0 ? { v: "assets/" + k.slice(6) + ".mp4" } : { i: img(k) }; };
+  var media = function (k) { return k.indexOf("video:") === 0 ? { v: "assets/" + k.slice(6) + ".mp4", p: img(k.slice(6)) } : { i: img(k) }; };
   try { var sv = JSON.parse(sessionStorage.getItem("kk_sel_" + id) || "null"); if (sv) st = sv; } catch (e) {}
 
   app.innerHTML =
     '<div class="dtop" id="dtop"><a class="ib" href="index.html" id="back" aria-label="戻る">' + BACK + '</a><span class="ttl">' + p.title + '</span><button class="ib" id="shareTop" aria-label="シェア">' + SHARE + '</button></div>' +
-    '<div class="dhero" id="dhero"><div class="slides" id="hs">' + p.hero.map(function (k) { return '<div style="background-image:url(' + img(k) + ')"></div>'; }).join("") + '</div><div class="cnt" id="hcnt">1 / ' + p.hero.length + '</div>' +
-      '<div class="th" id="hth">' + p.hero.map(function (k, i) { return '<button' + (i ? "" : ' class="on"') + ' style="background-image:url(' + img(i === 0 && p.thumb0 ? p.thumb0 : k) + ')" aria-label="写真' + (i + 1) + '"></button>'; }).join("") + '</div></div>' +
+    '<div class="dhero" id="dhero"><div class="slides" id="hs">' + p.hero.map(function (k) { var m = media(k); return m.v ? '<div class="hv"><video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i></div>' : '<div style="background-image:url(' + img(k) + ')"></div>'; }).join("") + '</div><div class="cnt" id="hcnt">1 / ' + p.hero.length + '</div>' +
+      '<div class="th" id="hth">' + p.hero.map(function (k, i) { return '<button' + (i ? "" : ' class="on"') + ' style="background-image:url(' + (i === 0 && p.thumb0 ? img(p.thumb0) : media(k).p || img(k)) + ')" aria-label="写真' + (i + 1) + '"></button>'; }).join("") + '</div></div>' +
     '<div class="sec"><div class="chips">' + (p.ichioshi ? '<span class="c-ichi">イチオシ</span>' : '') + '<span class="c-season">' + p.season.label + '</span><span class="c-like">≒ ' + p.like + '</span></div>' +
       '<h1>' + p.name + '</h1><div class="sub">ソウル発 日帰り ・ ' + p.timeShort + ' ・ 送迎バス付き</div>' +
       '<div class="price"><b data-krw="' + p.priceKrw + '"></b><small>' + K.krw(p.priceKrw) + ' ／ 1名（税込）</small></div>' +
@@ -32,7 +32,7 @@
         it.food.imgs.map(function (f) { return '<div style="background-image:url(' + img(f[0]) + ')"><span>' + f[1] + '</span></div>'; }).join("") + '</div><div class="fl">' + it.food.p + '</div></div>' +
       '<div class="rec"><b>こんな人におすすめ</b>' + it.rec.map(function (r) { return '<div><i>✓</i>' + r + '</div>'; }).join("") + '</div>' +
       '<div class="fade"></div></div><button class="more" id="more">詳細情報をもっと見る ⌄</button></div>' +
-    '<div class="sec"><h2>フォトギャラリー</h2><div class="gal">' + p.gallery.map(function (g, i) { var m = media(g[0]); return '<button data-i="' + i + '"' + (m.i ? ' style="background-image:url(' + m.i + ')"' : "") + '>' + (m.v ? '<video src="' + m.v + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay sm"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i>' : "") + '<span>' + g[1] + '</span></button>'; }).join("") + '</div><div class="note" style="margin-top:8px">' + p.credit + '</div></div>' +
+    '<div class="sec"><h2>フォトギャラリー</h2><div class="gal">' + p.gallery.map(function (g, i) { var m = media(g[0]); return '<button data-i="' + i + '"' + (m.i ? ' style="background-image:url(' + m.i + ')"' : "") + '>' + (m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay sm"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i>' : "") + '<span>' + g[1] + '</span></button>'; }).join("") + '</div><div class="note" style="margin-top:8px">' + p.credit + '</div></div>' +
     '<div class="sec"><h2 style="margin-bottom:4px">スケジュール</h2><div class="note" style="margin:0 0 12px">当日の交通状況により変わる場合があります。</div><div class="sl">' +
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2>体験レビュー</h2><div class="rv"><div>インフルエンサー<br>体験写真（準備中）</div><div>インフルエンサー<br>体験写真（準備中）</div></div></div>' +
@@ -90,7 +90,7 @@
   var li = 0, G = p.gallery;
   function lbShow(i) {
     li = (i + G.length) % G.length; var m = media(G[li][0]);
-    $("lbm").innerHTML = m.v ? '<video src="' + m.v + '" controls autoplay playsinline></video>' : '<img alt="' + G[li][1] + '" src="' + m.i + '">';
+    $("lbm").innerHTML = m.v ? '<video src="' + m.v + '" poster="' + m.p + '" controls autoplay playsinline></video>' : '<img alt="' + G[li][1] + '" src="' + m.i + '">';
     $("lbC").textContent = (li + 1) + " / " + G.length; $("lb").classList.add("on");
   }
   document.querySelectorAll(".gal button").forEach(function (b) { b.onclick = function () { lbShow(+b.getAttribute("data-i")); K.track("gallery_open", { product: id, index: +b.getAttribute("data-i") + 1 }); }; });

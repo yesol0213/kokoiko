@@ -5,20 +5,25 @@
   // 지도 전체(아래 고정 바 위까지)가 첫 화면에 들어오도록 폭·높이 중 작은 쪽에 맞춤 (카톡·LINE 인앱 브라우저 대응)
   var lastW = 0;
   function fit() {
-    var wrap = $("stageWrap"), w = wrap.clientWidth; if (w === lastW) return; lastW = w;
-    var s = w / 390, avail = (window.innerHeight - 92) / s;
-    // 하늘색 지도 박스는 항상 화면 폭(양옆 간격 동일). 화면이 짧으면 박스 높이만 줄이고, 안의 지도는 비율 그대로 축소해 가운데 정렬
-    var compact = avail < 690, top = compact ? 142 : 176;
-    var mh = Math.min(452, Math.max(330, avail - top - 66)), k = mh / 452;
+    var wrap = $("stageWrap"), w = wrap.clientWidth;
+    // 인앱 브라우저(카톡·LINE)는 innerHeight가 실제 보이는 높이보다 크게 잡힐 때가 있어 가장 작은 값을 사용
+    var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
+    var key = w + "x" + Math.round(vh / 20); if (key === lastW) return; lastW = key;
+    var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 24 : 100;
+    var s = w / 390, avail = (vh - bh) / s;
+    // 하늘색 박스는 항상 화면 폭. 짧은 화면: ① 박스 아래를 제주도 절반까지만 보이게 자르고(430) ② 그래도 모자라면 지도를 비율 그대로 축소
+    // 제목과 박스 사이 간격은 8의 배수(28px)로 넉넉하게
+    var compact = avail < 700, top = compact ? 156 : 186;
+    var full = 344 / 366, vis = compact ? 462 : 481; // vis: 박스에 보일 지도 높이(제주도 절반 = 462)
+    var mh = Math.min(vis * full, Math.max(320, avail - top - 14)), k = mh / vis;
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
-    var kk = Math.min(k, 344 / 366); $("mapin").style.transform = "scale(" + kk + ")";
-    document.querySelector(".ichi-card").style.top = (top + mh + 8) + "px";
-    var H = top + mh + 8 + 58 + 8;
+    var kk = Math.min(k, full); $("mapin").style.transform = "scale(" + kk + ")";
+    var H = top + mh + 12;
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
   }
-  fit(); window.addEventListener("resize", fit); window.addEventListener("orientationchange", function () { lastW = 0; setTimeout(fit, 200); });
+  fit(); window.addEventListener("resize", fit); if (window.visualViewport) window.visualViewport.addEventListener("resize", fit); window.addEventListener("load", function () { lastW = 0; fit(); }); window.addEventListener("orientationchange", function () { lastW = 0; setTimeout(fit, 200); });
 
   // 슬라이드: 상세페이지 대표사진 5장과 동일 (첫 장만 메인용 세로 크롭)
   var JD = K.products["jeonju-damyang"], cmap = {}; JD.gallery.forEach(function (g) { cmap[g[0]] = g[1]; });
@@ -53,14 +58,24 @@
   vbox.addEventListener("touchstart", function () { if (gv.paused) tryPlay(); }, { passive: true });
 
   // 지도 지역 태그: 누르면 아래 「≒ 日本でいうと」 박스와 하단 버튼만 바뀜 (스크롤 이동 없음)
+  // 지역별: 지도 위 일본 지명 태그 위치 + 하단 박스의 비유 이유
+  var JP = {
+    "jeonju-damyang": { x: 160, y: 281, why: "竹林の小道と韓屋の町並みが、嵯峨野や祇園のような“古都の風景”そのもの。" },
+    "gangneung": { x: 252, y: 92, why: "雪の高原牧場と、海辺のおしゃれなカフェ通り。軽井沢のような“高原リゾート”の一日。" },
+    "danyang": { x: 252, y: 207, why: "石灰岩がつくる奇岩と絶景。秋吉台と同じ“カルスト地形”の町です。" }
+  };
   function clearRegion() {
     var lb = $("likeBox"), c = $("mainCta");
-    lb.classList.add("empty"); c.classList.add("off"); c.setAttribute("aria-disabled", "true"); c.href = "#"; c.removeAttribute("data-go");
+    lb.classList.add("empty"); $("jpTag").hidden = true; $("mcard").hidden = true; document.querySelector(".mapbox .season").hidden = false;
+    c.classList.add("off"); c.setAttribute("aria-disabled", "true"); c.href = "#"; c.removeAttribute("data-go");
     $("ctaMain").textContent = "エリアを選んでください"; $("ctaSub").textContent = "地図のエリアをタップ";
   }
   function setRegion(id) {
-    var p = K.products[id], lb = $("likeBox"), c = $("mainCta");
-    lb.classList.remove("empty"); $("lbIchi").hidden = !p.ichioshi; $("lbName").textContent = p.short; $("lbLike").textContent = p.like;
+    var p = K.products[id], lb = $("likeBox"), c = $("mainCta"), j = JP[id], t = $("jpTag");
+    
+    lb.classList.remove("empty"); $("lbWhy").innerHTML = j.why;
+    var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").textContent = p.season.label; $("mWhy").textContent = j.why;
+    mc.hidden = false; document.querySelector(".mapbox .season").hidden = true; mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
     c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
     $("ctaMain").textContent = p.short + "ツアーを見る";
     $("ctaSub").textContent = K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW) + " ／ 1名・ソウル発 日帰り";

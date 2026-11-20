@@ -136,7 +136,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     var f = document.getElementById("footer");
     if (f) f.innerHTML = '<div class="footer-links"><button data-legal="legal">特定商取引法に基づく表記</button><button data-legal="terms">利用規約</button><button data-legal="privacy">プライバシーポリシー</button><button data-legal="cancel">キャンセル規定</button></div>' +
-      '<p>お問い合わせ：' + K.contactLinks() + '</p><p>© KOKOIKO ここいこ</p>';
+      '<p><span class="ctc">お問い合わせ</span>' + K.contactLinks() + '</p><p>© KOKOIKO ここいこ</p>';
     document.addEventListener("click", function (e) { var b = e.target.closest("[data-legal]"); if (b) K.openLegal(b.getAttribute("data-legal")); });
     K.fillYen();
     K.fadeUp(".psec,.big,.sm,.src,#app>.sec,.res>*,.rbox,.steps,.shbox,footer");

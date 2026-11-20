@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* ---------- Main: first screen (390-wide stage, scaled) ---------- */
 .stage-wrap{position:relative;overflow:hidden}
 .stage{width:390px;height:752px;position:relative;transform-origin:top left}
-.stage .top{position:absolute;inset:0 0 auto 0;height:320px;background:linear-gradient(160deg,#FF8A80 0%,#F59AB8 45%,#D9A6F7 100%)}
+.stage .top{position:absolute;inset:0 -300px auto -300px;height:320px;background:linear-gradient(160deg,#FF8A80 0%,#F59AB8 45%,#D9A6F7 100%)}
 .stage .top:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.45),transparent 40%)}
 .stage .hd{position:absolute;left:24px;right:22px;top:26px;display:flex;justify-content:space-between;align-items:center;z-index:3;color:#fff;text-shadow:0 1px 6px rgba(120,30,70,.25)}
 .stage .hd b{font-size:19px;letter-spacing:.04em;font-weight:900}
@@ -110,7 +110,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .intro .fade{position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff)}
 .intro.open .fade{display:none}
 .lead{font-size:15px;font-weight:900;line-height:1.6}.desc{font-size:13px;color:#4a3f4f;line-height:1.8;margin-top:8px}
-.ihero{height:184px;border-radius:14px;margin-top:12px;background-size:cover;background-position:center}
+.ihero{aspect-ratio:1/1;border-radius:14px;margin-top:12px;background-size:cover;background-position:center}
 .more{display:block;width:100%;margin-top:6px;border:1.5px solid var(--ink);border-radius:12px;text-align:center;padding:12px;font-size:14px;font-weight:900;background:#fff}
 .blk{margin-top:22px}.bi{aspect-ratio:1/1;height:auto;border-radius:16px;background-size:cover;background-position:center;position:relative}
 .no{position:absolute;left:10px;top:10px;width:26px;height:26px;border-radius:50%;background:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center}
@@ -195,8 +195,9 @@ details.acc summary:after{content:"＋"}details.acc[open] summary:after{content:
 .toast.on{display:block}
 
 /* ---------- footer / modal ---------- */
-footer{padding:24px 18px 30px;font-size:11px;color:var(--mute);line-height:1.8;border-top:1px solid var(--line)}
-.footer-links{display:flex;flex-wrap:wrap;gap:4px 12px}.footer-links button{background:none;border:0;padding:0;text-decoration:underline;color:var(--sub);font-size:11px}
+footer{padding:28px 20px 40px;font-size:12px;color:var(--mute);line-height:1.7;border-top:1px solid var(--line)}
+footer p{margin:18px 0 0}footer p:last-child{margin-top:14px;font-size:11px}
+.footer-links{display:grid;grid-template-columns:auto auto;justify-content:start;gap:12px 28px}.footer-links button{background:none;border:0;padding:0;text-align:left;line-height:1.3;color:var(--sub);font-size:12px}
 .modal{position:fixed;inset:0;background:rgba(30,20,35,.5);z-index:80;display:flex;align-items:flex-end;justify-content:center}
 .modal[hidden]{display:none}
 .modal-box{background:#fff;width:min(100vw,480px);max-height:80vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px 24px;font-size:12.5px;line-height:1.8}
@@ -264,7 +265,8 @@ button:not([disabled]):active,a.cta:active,.btn2:active,.btns a:active,.ichi-car
 .wc{background:#fff;border-radius:12px;padding:12px 13px;margin-bottom:8px}.wc b{font-size:14px;display:block;margin-bottom:3px}
 .wc p{margin:0;font-size:min(10.8px,2.72vw);color:#666;line-height:1.65;white-space:nowrap;letter-spacing:-.2px}
 /* 푸터 문의 */
-.sep{margin:0 6px;color:#ccc}a.cl{text-decoration:underline;color:var(--sub)}
+.sep{margin:0 10px;color:#DDD5D9}a.cl{text-decoration:none;color:var(--sub)}
+footer .ctc{display:block;margin-bottom:6px;font-weight:700;color:var(--sub)}
 /* 결제 결과(완료·실패) */
 .rprd{display:flex;gap:14px;align-items:center}.rprd .im{width:84px;height:84px;border-radius:12px;background-size:cover;background-position:center;flex:none}
 .rprd b{font-size:15px;line-height:1.5;display:block}.rprd span{font-size:12.5px;color:var(--mute);display:block;margin-top:4px}
@@ -290,4 +292,8 @@ button:not([disabled]):active,a.cta:active,.btn2:active,.btns a:active,.ichi-car
 .check input:focus-visible+.box{outline:2px solid var(--rose);outline-offset:2px}
 .check span.t{font-weight:700}
 .wnote{font-size:11.5px;color:var(--sub);background:#F7F3F5;border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.6}
+.vid.playing .vplay{display:none}
+.ichi-card.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96);opacity:.6}100%{transform:none;opacity:1}}
+.src{margin-bottom:6px}
 [hidden]{display:none!important}

@@ -39,23 +39,17 @@
       <a class="mtag" href="#jd" data-region="jeonju-damyang" style="left:99px;top:295px">全州・潭陽 <small>4h</small></a>
       <span class="kyoto" style="left:147px;top:311px">≒ 京都</span>
     </div>
-    <a class="ichi-card" href="jeonju-damyang.html" data-go="jeonju-damyang"><span class="ichi">イチオシ</span><b>全州・潭陽</b><span style="font-size:22px;font-weight:900;color:#C82158">≒</span><span style="font-size:11px;color:#6B6170">日本でいうと</span><b>京都</b></a>
+    <div class="ichi-card" id="likeBox" aria-live="polite"><span class="ichi" id="lbIchi">イチオシ</span><b id="lbName">全州・潭陽</b><span style="font-size:22px;font-weight:900;color:#C82158">≒</span><span style="font-size:11px;color:#6B6170">日本でいうと</span><b id="lbLike">京都</b></div>
   </div></div>
 
   <section class="psec"><h2>みんなとは違う、<br>私だけの韓国旅。</h2><p>定番コースはもう卒業！あなただけの韓国に出会おう！</p></section>
 
   <div class="big" id="jd">
-    <div class="slides" id="slides">
-      <div style="background-image:url(assets/img/jd_main1.jpg)"></div>
-      <div style="background-image:url(assets/img/jd_main3.jpg)"></div>
-    </div>
-    <div class="dots" id="dots"><i class="on"></i><i></i></div>
-    <div class="cnt" id="cnt">1/2</div>
+    <div class="slides" id="slides"></div>
+    <div class="dots" id="dots"></div>
+    <div class="cnt" id="cnt"></div>
     <div class="cap" id="cap">冬の韓服でおさんぽ（全州）</div>
-    <div class="th" id="th">
-      <button class="on" style="background-image:url(assets/img/jd_th1.jpg)" aria-label="写真1"></button>
-      <button style="background-image:url(assets/img/jd_main3.jpg)" aria-label="写真2"></button>
-    </div>
+    <div class="th" id="th"></div>
     <button class="arr" id="arr" aria-label="次の写真" style="border:1px solid rgba(255,255,255,.85)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
     <a class="g lg" href="jeonju-damyang.html" data-go="jeonju-damyang">
       <span class="chip ichi">イチオシ</span><span class="chip snow">❄ 雪景色 12〜2月</span>
@@ -69,7 +63,7 @@
     <a href="gangneung.html" id="gn" data-go="gangneung">
       <div class="stack">
         <div class="im" style="background-image:url(assets/img/gn_c1.jpg);background-position:center 30%"></div>
-        <div class="im"><video src="assets/gn_sheep.mp4" poster="assets/img/gn_c2.jpg" autoplay muted loop playsinline preload="metadata"></video><div class="vplay"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div></div>
+        <div class="im vid"><video id="gnVid" src="assets/gn_sheep.mp4" poster="assets/img/gn_c2.jpg" autoplay muted loop playsinline preload="metadata"></video><div class="vplay"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div></div>
         <div class="im" style="background-image:url(assets/img/gn_c3.jpg)"></div>
       </div>
       <div class="bd"><div class="t">江陵 ≒ 軽井沢</div><div class="s">高原の牧場と海辺のKカフェ</div><div class="pr" style="font-size:15px;margin-top:4px" data-krw="90000">約¥9,600</div><div class="gbtn">詳細を見る</div></div>
@@ -90,7 +84,7 @@
 <div class="barbg"></div>
 <div class="bar lg">
   <button class="share" id="share" aria-label="シェア"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button>
-  <a class="cta" href="jeonju-damyang.html" data-go="jeonju-damyang">全州・潭陽ツアーを見る<small><span data-krw="100000">約¥10,700</span> ／ 1名・ソウル発 日帰り</small></a>
+  <a class="cta" id="mainCta" href="jeonju-damyang.html" data-go="jeonju-damyang"><span id="ctaName">全州・潭陽</span>ツアーを見る<small><span id="ctaYen" data-krw="100000">約¥10,700</span> ／ 1名・ソウル発 日帰り</small></a>
 </div>
 <script src="js/data.js"></script>
 <script src="js/common.js"></script>

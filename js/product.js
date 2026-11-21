@@ -58,7 +58,7 @@
     '<div class="sec"><h2>体験レビュー</h2><div class="rv"><div>インフルエンサー<br>体験写真（準備中）</div><div>インフルエンサー<br>体験写真（準備中）</div></div></div>' +
     '<div class="sec warnsec"><div class="warn"><div class="wt">⚠ ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b>' + (i + 1) + '. ' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2 style="margin-bottom:4px">集合場所</h2><div class="note" style="margin:0 0 12px">出発の10分前までにお集まりください。</div>' +
-      '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="kkwarm" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0 0.299 0.587 0.114 0 0 0.299 0.587 0.114 0 0 0 0 0 1 0"/><feComponentTransfer><feFuncR type="table" tableValues="0.7843 0.7843 0.7843 0.7843 0.7843 0.7843 0.7843 0.7843 0.7843 0.7843 0.8021 0.82 0.8378 0.8556 0.8734 0.8913 0.9091 0.9269 0.9447 0.9626 0.9804"/><feFuncG type="table" tableValues="0.7569 0.7569 0.7569 0.7569 0.7569 0.7569 0.7569 0.7569 0.7569 0.7569 0.7765 0.7961 0.8157 0.8353 0.8549 0.8745 0.8941 0.9137 0.9333 0.9529 0.9725"/><feFuncB type="table" tableValues="0.7333 0.7333 0.7333 0.7333 0.7333 0.7333 0.7333 0.7333 0.7333 0.7333 0.7544 0.7754 0.7964 0.8175 0.8385 0.8595 0.8806 0.9016 0.9226 0.9437 0.9647"/></feComponentTransfer></filter></svg><div class="mpc"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
+      '<div class="mpc"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
         '<a class="mlink" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap" aria-label="Googleマップで開く"></a><i class="mpin">' + PIN + '</i>' +
         '<span class="gbadge"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span><span class="mexp">' + EXP + '</span></div>' +
         '<a class="mrow" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap2"><b>' + K.MEETING.ja + '</b><i>›</i></a>' +
@@ -147,7 +147,7 @@
     var ready = !!(o.date && o.time && o.qty), total = p.priceKrw * (ready ? o.qty : 1);
     $(L).innerHTML = ready ? o.qty + "名選択" : '<em>' + pct + '%</em><s>' + K.yen(so.total, rate()).replace("約", "") + '</s>';
     $(Y).textContent = K.yen(total, rate()); $(W).textContent = K.krw(total);
-    if (btn !== "reserve") $(btn).disabled = !ready;
+    if (btn !== "reserve") $(btn).disabled = !ready; else $(btn).classList.toggle("need", !ready);
   }
   function render() {
     var sug = openDates().slice(0, 2);

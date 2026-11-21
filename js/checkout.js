@@ -29,7 +29,6 @@
   // /api/config → SDK 초기화 → 금액 설정 → 결제수단·약관 위젯 렌더 (클라이언트 키만 받음)
   fetch("/api/config").then(function (r) { return r.json(); }).then(function (cfg) {
     if (!cfg.clientKey) throw new Error(cfg.message || "config error");
-    if (cfg.testMode) $("testBar").hidden = false;
     widgets = TossPayments(cfg.clientKey).widgets({ customerKey: TossPayments.ANONYMOUS });
     return widgets.setAmount({ currency: "KRW", value: total }).then(function () {
       return Promise.all([
@@ -61,7 +60,10 @@
     if (box) { box.textContent = bad ? RULES[f][1] : ""; box.hidden = !bad; }
   }
   function allOk() { return FIELDS.every(okField); }
-  function updBtn() { $("payBtn").setAttribute("aria-disabled", allOk() && widgets ? "false" : "true"); }
+  function updBtn() {
+    var ok = allOk(); $("payBtn").setAttribute("aria-disabled", ok && widgets ? "false" : "true");
+    var a = $("agreet"); a.textContent = ok ? "上記の内容を確認し、お支払いに同意します。" : "必須項目を入力してください。"; a.classList.toggle("miss", !ok);
+  }
   FIELDS.forEach(function (f) {
     $(f).addEventListener("blur", function () { if ($(f).value) touched[f] = true; showErr(f); });
     $(f).addEventListener("input", function () { if (touched[f]) showErr(f); updBtn(); });

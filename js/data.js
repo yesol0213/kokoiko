@@ -23,7 +23,7 @@ window.KOKOIKO = {
       hero: ["jd_hero", "jd_gs", "jd_g3", "jd_g2", "jd_tk"], thumb0: "jd_th1",
       // 혼자 갈 때 비용(고속버스·현지 택시 1인 기준, 2026-11 조사)
       solo: { trans: 183400, entry: 5000, total: 188400, bus: "約9時間<br>乗り換え7回" },
-      route: { img: "jd_route.jpg", ratio: "1290/1500" },
+      route: { img: "jd_route.jpg", ratio: "1290/1194" },
       intro: {
         lead: "竹林と韓屋にときめく、<br>韓国でいちばん“韓国らしい”一日。",
         desc: "自然・感性・伝統文化をまとめて楽しめる日帰り旅。竹林を歩き、並木道で写真を撮り、韓屋村で韓服さんぽ。自由時間たっぷりなので、自分のペースで楽しめます。",
@@ -47,7 +47,7 @@ window.KOKOIKO = {
       sellDays: [6],
       hero: ["gn_hero", "video:gn_sheep", "video:gn_wave", "gn_tk"],
       solo: { trans: 172020, entry: 9000, total: 181020, bus: "牧場から<br>公共交通なし" },
-      route: { img: "gn_route.jpg", ratio: "1290/1308" }, // 동선지도: 위 서울→강릉 전체 / 아래 강릉 확대
+      route: { img: "gn_route.jpg", ratio: "1290/1307" }, // 동선지도: 위 서울→강릉 전체 / 아래 강릉 확대
       intro: {
         lead: "午前は雪の高原、<br>午後は海辺のKカフェ。",
         desc: "高原の牧場と日本海ブルーの海を、1日でまとめて楽しめる旅。まるで“海のある軽井沢”。カフェ通りでのんびりする自由時間もたっぷり。",
@@ -71,7 +71,7 @@ window.KOKOIKO = {
       sellDays: [6], gwDates: ["2027-04-29", "2027-05-01", "2027-05-03", "2027-05-04", "2027-05-05"],
       hero: ["dy_hero", "dy_gs", "dy_g3", "dy_g2", "dy_tk"],
       solo: { trans: 154720, entry: 4000, total: 158720, bus: "現地移動だけで<br>約4時間半" },
-      route: { img: "dy_route.jpg", ratio: "1290/1408" },
+      route: { img: "dy_route.jpg", ratio: "1290/1549" },
       intro: {
         lead: "山あいの絶景と、<br>にんにくグルメの町さんぽ。",
         desc: "ユネスコ世界ジオパークに選ばれた、石灰岩がつくる絶景の町。空中を歩く展望台や川に浮かぶ奇岩、名物にんにくグルメまで、1日でまとめて楽しめます。",

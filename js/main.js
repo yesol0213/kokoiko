@@ -47,6 +47,14 @@
   sl.addEventListener("scroll", function () { clearTimeout(sl._t); sl._t = setTimeout(upd, 80); });
   [].forEach.call($("th").children, function (b, k) { b.onclick = function () { go(k); }; });
   $("arr").onclick = function () { go(Math.min(cur + 1, n - 1)); };
+  // 큰 카드 사진 전체: 탭하면 상세로 (스와이프·썸네일·화살표는 그대로)
+  var sx = 0, sy = 0;
+  sl.addEventListener("pointerdown", function (e) { sx = e.clientX; sy = e.clientY; });
+  sl.addEventListener("click", function (e) {
+    if (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10) return;
+    K.track("select_item", { product: "jeonju-damyang", place: "main_photo" });
+    location.href = "jeonju-damyang.html";
+  });
 
   // 강릉 영상: 자동재생 시도 → 막히면(저전력 모드·인앱 브라우저) 탭해서 재생
   var gv = $("gnVid"), vbox = gv.parentNode;

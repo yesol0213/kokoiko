@@ -9,6 +9,7 @@
   if (!date) { location.replace(p.page); return; }
 
   $("backLink").href = p.page; $("changeLink").href = p.page;
+  if (q.get("from") === "fail") { $("backLink").href = $("changeLink").href = p.page + "?date=" + date + "&qty=" + qty; } // 결제 실패 후에만 상세에서 선택 유지
   $("sImg").style.backgroundImage = "url(" + K.img(p.hero[0]) + ")";
   $("sName").innerHTML = p.name.replace("<br>", " ");
   $("sDate").textContent = "参加日：" + K.jpLong(date);
@@ -100,7 +101,7 @@
 
   function pay(v) {
     busy = true; $("payBtn").setAttribute("aria-disabled", "true"); keep();
-    fetch("/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: id, qty: qty }) })
+    fetch("/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: id, qty: qty, date: date }) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw j; return j; }); })
       .then(function (order) {
         try { sessionStorage.setItem("kk_booking", JSON.stringify({ product: id, qty: qty, date: date, email: v.email })); } catch (e2) {}

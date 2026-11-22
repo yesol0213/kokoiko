@@ -92,12 +92,12 @@
   // 빈 값은 회색 괄호 안 항목 이름 (확정되면 값으로 교체)
   var TBD = function (t) { return '<span class="tbd">(' + t + ')</span>'; };
   var LEGAL = {
-    legal: '<h3>特定商取引法に基づく表記</h3><dl><dt>販売業者</dt><dd>코코이코</dd><dt>運営責任者</dt><dd>SUN IL/ROH</dd><dt>事業者登録番号</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>通信販売業申告番号</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>旅行業登録番号</dt><dd>' + TBD("여행업 등록번호") + '</dd><dt>所在地</dt><dd>' + TBD("주소") + '</dd><dt>電話番号</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>メール</dt><dd>' + K.CONTACT_EMAIL + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
+    legal: '<h3>特定商取引法に基づく表記</h3><dl><dt>販売業者</dt><dd>코코이코</dd><dt>運営責任者</dt><dd>SUN IL/ROH</dd><dt>事業者登録番号</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>通信販売業申告番号</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>旅行業登録番号</dt><dd>' + TBD("여행업 등록번호") + '</dd><dt>所在地</dt><dd>' + TBD("주소") + '</dd><dt>電話番号</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>メール</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
     terms: '<h3>利用規約</h3><p>本サービスは、韓国の日帰りツアーの予約受付を行います。ツアーは10名以上のお申し込みで催行が確定します。集合時間に遅れた場合、ご参加いただけないことがあります。</p><p>' + TBD("이용약관 전문") + '</p>',
     privacy: '<h3>プライバシーポリシー</h3><p>ご予約時にいただく情報（お名前・メールアドレス・電話番号・LINE ID）は、ツアーのご案内・催行連絡・お問い合わせ対応のみに使用し、第三者に提供しません。決済情報は決済代行会社（トスペイメンツ）が管理し、当社は保存しません。</p><dl><dt>保管期間</dt><dd>' + TBD("개인정보 보관 기간") + '</dd><dt>責任者</dt><dd>' + TBD("개인정보 보호책임자") + '</dd></dl><p>' + TBD("개인정보처리방침 전문") + '</p>',
     cancel: '<h3>キャンセル・返金規定</h3><ul><li>' + K.cancel.join("</li><li>") + '</li></ul><p>例外：' + TBD("천재지변 등 예외 기준") + '</p><p>キャンセルはLINEまたはメールで注文番号をお知らせください。</p>',
     // PG 심사용 사업자정보 (국문, 결제 페이지에서 엶)
-    biz: '<h3>사업자정보</h3><dl><dt>상호</dt><dd>코코이코</dd><dt>대표자</dt><dd>SUN IL/ROH</dd><dt>사업자등록번호</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>통신판매업 신고번호</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>사업장 주소</dt><dd>' + TBD("주소") + '</dd><dt>유선번호</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>이메일</dt><dd>' + K.CONTACT_EMAIL + '</dd></dl>'
+    biz: '<h3>사업자정보</h3><dl><dt>상호</dt><dd>코코이코</dd><dt>대표자</dt><dd>SUN IL/ROH</dd><dt>사업자등록번호</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>통신판매업 신고번호</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>사업장 주소</dt><dd>' + TBD("주소") + '</dd><dt>유선번호</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>이메일</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd></dl>'
   };
   K.openLegal = function (k) {
     var m = document.getElementById("modal");
@@ -109,13 +109,12 @@
   // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
   K.contactLinks = function () {
     var ln = function (url, label, ch) { return '<a class="cl" href="' + (url || "#") + '"' + (url ? ' target="_blank" rel="noopener"' : ' data-soon="' + label + '"') + ' data-ch="' + ch + '">' + label + '</a>'; };
-    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram DM", "instagram") + '<span class="sep">|</span>' +
-      '<a class="cl" href="mailto:' + K.CONTACT_EMAIL + '" data-ch="email">' + K.CONTACT_EMAIL + '</a>';
+    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram DM", "instagram");
   };
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a[data-ch]"); if (!a) return;
     K.track("contact_click", { channel: a.getAttribute("data-ch") });
-    if (a.hasAttribute("data-soon")) { e.preventDefault(); K.toast(a.getAttribute("data-soon") + "は準備中です。メールでお問い合わせください"); }
+    if (a.hasAttribute("data-soon")) { e.preventDefault(); K.toast("お問い合わせ窓口は準備中です"); }
   });
 
   // 마우스로도 가로 사진 슬라이드 끌어서 넘기기 (PC)

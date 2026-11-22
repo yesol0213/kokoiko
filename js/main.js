@@ -28,7 +28,7 @@
   // 슬라이드: 상세페이지 대표사진 5장과 동일 (첫 장만 메인용 세로 크롭)
   var JD = K.products["jeonju-damyang"], cmap = {}; JD.gallery.forEach(function (g) { cmap[g[0]] = g[1]; });
   var imgs = JD.hero.map(function (k, i) { return i === 0 ? "jd_main1" : k; });
-  var caps = JD.hero.map(function (k, i) { return i === 0 ? "冬の韓服でおさんぽ（全州）" : (cmap[k] || ""); });
+  var caps = JD.heroCaps || JD.hero.map(function (k, i) { return i === 0 ? "冬の韓服でおさんぽ（全州）" : (cmap[k] || ""); });
   var sl = $("slides"), n = imgs.length, cur = -1;
   sl.innerHTML = imgs.map(function (k) { return '<div style="background-image:url(' + K.img(k) + ')"></div>'; }).join("");
   $("dots").innerHTML = imgs.map(function () { return "<i></i>"; }).join("");

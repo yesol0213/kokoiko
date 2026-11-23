@@ -8,14 +8,15 @@
     var wrap = $("stageWrap"), w = wrap.clientWidth;
     // 인앱 브라우저(카톡·LINE)는 innerHeight가 실제 보이는 높이보다 크게 잡힐 때가 있어 가장 작은 값을 사용
     var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
-    var key = w + "x" + Math.round(vh / 20); if (key === lastW) return; lastW = key;
+    // 스크롤로 주소창이 숨고 나타날 때 높이가 바뀌어도 다시 계산하지 않음 (지도가 늘었다 줄었다 하는 효과 방지). 폭이 바뀔 때(회전 등)만 다시 계산
+    var key = "" + w; if (key === lastW) return; lastW = key;
     var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 10 : 100;
     var s = w / 390, avail = (vh - bh) / s;
     // 하늘색 박스는 항상 화면 폭. 짧은 화면: ① 박스 아래를 제주도 절반까지만 보이게 자르고(430) ② 그래도 모자라면 지도를 비율 그대로 축소
     // 제목과 박스 사이 간격은 8의 배수(28px)로 넉넉하게
-    var compact = avail < 700, top = compact ? 164 : 188;
+    var compact = avail < 700, top = compact ? 172 : 196;
     var full = 344 / 366, vis = compact ? 462 : 481; // vis: 박스에 보일 지도 높이(제주도 절반 = 462)
-    var mh = Math.min(vis * full + 46, Math.max(320, avail - top - 4)), k = mh / vis;
+    var mh = Math.min(vis * full + 12, Math.max(320, avail - top - 4)), k = mh / vis;
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
     var kk = Math.min(k, full); $("mapin").style.transform = "scale(" + kk + ")";
@@ -124,4 +125,19 @@
 
   if ($("share")) $("share").onclick = function () { K.share({ title: "ここいこ｜ソウル発 日帰り韓国旅", text: "ソウルの外へ、本当の韓国を感じる旅。", medium: "main", content: "main" }); };
   if ($("lineTop")) $("lineTop").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "main_header" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); };
+
+  // 하단 바: 첫 화면에서는 항상 보임. 지나면 상세 상단 바와 같은 규칙(내리면 숨고, 올리면 나타남)
+  var lastY2 = window.scrollY;
+  function barScroll() {
+    var y = window.scrollY, wrap = $("stageWrap"), past = y > wrap.offsetTop + wrap.offsetHeight - 120, d = y - lastY2;
+    if (!past) { document.body.classList.remove("bhide"); lastY2 = y; }
+    else if (d > 8) { document.body.classList.add("bhide"); lastY2 = y; }
+    else if (d < -8) { document.body.classList.remove("bhide"); lastY2 = y; }
+  }
+  window.addEventListener("scroll", barScroll, { passive: true });
+
+  // 큰 카드가 화면 밖으로 나가면 슬라이드를 1장째로 되돌림 (돌아왔을 때 처음부터)
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (!e.isIntersecting && sl.scrollLeft > 0) sl.scrollTo({ left: 0 }); });
+  }, { threshold: 0 }).observe(sl);
 })();

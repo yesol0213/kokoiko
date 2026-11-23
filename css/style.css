@@ -13,7 +13,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .stage{width:390px;height:752px;position:relative;transform-origin:top left}
 .stage .top{position:absolute;inset:0 -300px auto -300px;height:320px;background:linear-gradient(160deg,#FF8A80 0%,#F59AB8 45%,#D9A6F7 100%)}
 .stage .top:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.45),transparent 40%)}
-.stage .hd{position:absolute;left:24px;right:22px;top:26px;display:flex;justify-content:space-between;align-items:center;z-index:3;color:#fff;text-shadow:0 1px 6px rgba(120,30,70,.25)}
+.stage .hd{position:absolute;left:22px;right:22px;top:26px;display:flex;justify-content:space-between;align-items:center;z-index:3;color:#fff;text-shadow:0 1px 6px rgba(120,30,70,.25)}
 .stage .hd b{font-size:19px;letter-spacing:.04em;font-weight:900}
 .stage .hd a{font-size:13px;font-weight:700}
 .stage .hero{position:absolute;left:22px;right:22px;top:86px;color:#fff;z-index:2}
@@ -541,7 +541,7 @@ details.acc[open]::details-content{height:auto}
 html{interpolate-size:allow-keywords}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 /* 메인 카드 양옆 16px 통일 */
-.mapbox{position:absolute;top:222px;height:452px;border-radius:30px;overflow:hidden;background:#DDF0F7;border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 30px rgba(60,30,60,.18);transform-origin:50% 0;left:16px!important;right:16px!important}
+.mapbox{position:absolute;top:222px;height:452px;border-radius:30px;overflow:hidden;background:#DDF0F7;border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 30px rgba(60,30,60,.18);transform-origin:50% 0;left:22px!important;right:22px!important}
 .big{border-radius:26px;overflow:hidden;position:relative;height:560px;background:#ddd;margin:12px 16px}
 div.sm{margin:14px 16px 12px}
 .pc-a b{font-weight:400;font-size:13px}
@@ -952,11 +952,11 @@ footer .cl{text-decoration:underline;text-underline-offset:3px}
 .dtop.hide{transform:translateX(-50%) translateY(-100%)}
 /* ===== V25 main ===== */
 /* 1 header up */
-.stage .hd{top:18px}
+.stage .hd{top:12px}
 /* 3 map labels: bigger, use the blue sea area */
 .mtag:not(.plain){font-size:15.5px}
 .nm2 .rb{font-size:11.5px}
-.mtag .q{font-size:15px;padding:3.75px 11.25px;margin-left:7.5px}
+.mtag .q{font-size:15px;padding:2px 9px;margin-left:7.5px}
 .mtag.plain{font-size:16.5px}
 .mapbox svg .rlab{font-size:18px}
 /* 4 main bar: always visible (disabled state), same white bar as detail */
@@ -967,10 +967,10 @@ body:has(.cta.off) .barbg{opacity:1}
 .chip.snow,.mcard .ms,.c-season,.big .g .trow .chip.snow{box-sizing:border-box!important;height:24px!important;padding:2px 8px 0 10px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
 .chip.snow>*,.mcard .ms>*,.c-season>*{line-height:1}
 /* V25 map moved down */
-.mapin{top:2px!important}
+.mapin{top:10px!important}
 /* V25 tap effect A: no bounce, no idle shake, 0.2s colour fade only */
 .mtag,.mtag .q{transition:background-color .2s ease,border-color .2s ease,color .2s ease}
-.mtag .q,.mtag.on .q,.mcard.pop #mName,.mcard.pop #mLike{animation:none!important}
+.mtag.on .q,.mcard.pop #mName,.mcard.pop #mLike{animation:none!important}
 /* V25 no tap highlight / text selection on cards and buttons */
 a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-highlight-color:transparent}
 .big,.big *,.mtag,.mtag *,.mcard,.mcard *,.bar,.bar *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -980,20 +980,43 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 .stage .hero{top:72px}
 .stage.compact .hero{top:64px}
 .mtag:not(.plain){height:53px!important;box-sizing:border-box!important;padding:0 16.1px 0 16.4px!important;align-items:center!important}
-.mtag:not(.plain) .nm2{transform:translateY(-1px)}
+.mtag:not(.plain) .nm2{transform:translateY(.5px)}
 .nm2{gap:4px}
-.stage.compact .mtag[data-region="jeonju-damyang"]{left:172px!important;top:308px!important}
+.stage.compact .mtag[data-region="jeonju-damyang"]{left:172px!important;top:298px!important}
 
 .chip.snow svg,.mcard .ms svg,.c-season svg,.big .g .trow .chip svg{width:1em!important;height:1em!important;margin:0!important}
-.mcard{bottom:6px!important}
+.mcard{bottom:12px!important}
 body:has(#mainCta) .toast{bottom:87px}
 
 .toast{padding:7px 16px!important}
 .vplay{transition:opacity .25s ease}
-.playing .vplay{opacity:0;transition:opacity .4s ease 1s}
+.playing .vplay{opacity:0;transition:opacity .4s ease 2s}
 
 .mprice{margin-top:8px!important}
 
 .info b{color:inherit}
 
 .mpm iframe{filter:saturate(.4) brightness(1.08) contrast(.92)!important}
+.mtag:not(.plain){transition:background-color .25s ease,border-color .25s ease,color .25s ease,transform .15s ease,box-shadow .25s ease}
+.mtag:not(.plain):active{transform:translate(-50%,-50%) scale(.97)!important;box-shadow:0 3px 10px rgba(120,30,70,.18)!important}
+.mtag .q{transition:background-color .25s ease,color .25s ease}
+/* 지도 텍스트 상자: 상품카드 비율의 85%(화면 기준) */
+.mcard{padding:21px 21px!important}
+.mcard .mt b{font-size:14px!important}
+.mcard p#mWhy{font-size:11px!important;margin-top:7px!important}
+.mcard p.mprice{margin-top:7px!important}
+.mcard p.mprice b{font-size:19.5px!important}
+.mcard p.mprice span{font-size:10px!important}
+.mapbox{background:rgba(221,240,247,.84)!important;border:1.5px solid rgba(255,255,255,.95)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%)}
+
+.sm .im{overflow:hidden}
+.gwb{position:absolute;left:-42px;top:20px;width:140px;text-align:center;transform:rotate(-45deg);z-index:2;background:#FCE8EF;color:#C82158;font-size:10px;font-weight:900;padding:4px 0 3px;box-shadow:0 2px 6px rgba(0,0,0,.14);letter-spacing:.04em;line-height:1.2}
+.info b{font-weight:400}
+
+.bar{transition:background .2s,transform .25s ease}
+.barbg{transition:opacity .25s ease}
+body.bhide .bar{transform:translate(-50%,140%)!important}
+body.bhide .barbg{opacity:0!important}
+@media (prefers-reduced-motion:reduce){.bar,.barbg{transition:none}}
+
+.gwb.wb{background:#E6F2FB;color:#2F5F8C}

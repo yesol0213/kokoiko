@@ -987,7 +987,7 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 .stage.compact .mtag[data-region="jeonju-damyang"]{left:172px!important;top:298px!important}
 
 .chip.snow svg,.mcard .ms svg,.c-season svg,.big .g .trow .chip svg{width:1em!important;height:1em!important;margin:0!important}
-.mcard{bottom:12px!important}
+.mcard{bottom:20px!important}
 .toast{bottom:109px!important}
 
 .toast{padding:7px 16px!important}
@@ -1009,7 +1009,7 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 .mcard p.mprice{margin-top:7px!important}
 .mcard p.mprice b{font-size:19.5px!important}
 .mcard p.mprice span{font-size:10px!important}
-.mapbox{background:rgba(221,240,247,.84)!important;border:1.5px solid rgba(255,255,255,.95)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%)}
+.mapbox{background:rgba(221,240,247,.68)!important;border:1.5px solid rgba(255,255,255,.95)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%)}
 
 .sm .im{overflow:hidden}
 .gwb{position:absolute;left:-42px;top:20px;width:140px;text-align:center;transform:rotate(-45deg);z-index:2;background:#FCE8EF;color:#C82158;font-size:10px;font-weight:900;padding:4px 0 3px;box-shadow:0 2px 6px rgba(0,0,0,.14);letter-spacing:.04em;line-height:1.2}
@@ -1037,3 +1037,13 @@ div.sm{margin-left:22px!important;margin-right:22px!important}
 .bar .cta small{font-size:12px!important;margin-top:5px!important}
 /* CTA 바가 70px로 커진 만큼 본문 아래 여백 확보 */
 .wrap{padding-bottom:132px}
+/* 탭 효과는 「≒ ？」 칩에만. 한국 지역명·읽는 법은 움직이지 않음 */
+.mtag .nm2,.mtag .nm2 *{transition:none!important;animation:none!important}
+/* 시즌 칩: 메인·상세 한 벌로 통일 (아이콘 크기·정렬 동일) */
+.mcard .ms,.c-season,.chip.snow{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;line-height:1!important}
+.mcard .ms svg,.c-season svg,.chip.snow svg{width:18px!important;height:18px!important;margin:0!important;flex:none!important;display:block!important}
+/* 메인 지도 카드는 첫 화면 축소(약 0.96배) 안에 있어 그만큼 키워 화면에서 상세와 같은 크기로 */
+.stage .mcard .ms{font-size:11.5px!important}
+.stage .mcard .ms svg{width:18.8px!important;height:18.8px!important}
+/* 상세 시즌 칩 아이콘 선 굵기를 메인(축소 렌더링)과 같게 */
+.c-season svg,.chip.snow svg{stroke-width:1.45!important}

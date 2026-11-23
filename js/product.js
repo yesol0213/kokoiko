@@ -13,7 +13,7 @@
   var sp = { date: null, time: false, qty: 0 }; // 캘린더 시트 안 선택
   var rate = function () { return K.rate || K.FALLBACK_JPY_PER_KRW; };
   var so = p.solo;
-  var NEED = function (k, cls) { return '<div class="need ' + (cls || '') + '">사진 필요: ' + k.slice(5) + '</div>'; };
+  var NEED = function (k, cls) { return '<div class="need ' + (cls || '') + '">(사진필요: ' + k.slice(5) + ')</div>'; };
   var media = function (k) { return k.indexOf("video:") === 0 ? { v: "assets/" + k.slice(6) + ".mp4", p: img(k.slice(6)) } : { i: img(k) }; };
   // 선택은 기억하지 않음 (뒤로 와도 초기화). 결제 실패 페이지에서 온 경우만 주소의 날짜·인원으로 복원
   (function () { var q = new URLSearchParams(location.search), d = q.get("date"), n = parseInt(q.get("qty"), 10); if (/^\d{4}-\d{2}-\d{2}$/.test(d || "") && n > 0 && n < 100) st = { date: d, time: true, qty: n }; })();
@@ -70,18 +70,31 @@
     return '<div class="spots">' + sp.map(function (s) {
       return '<div class="spot"><h3>' + s.t + '</h3><p>' + s.p + '</p><div class="sph"><div class="spsl">' +
         s.imgs.map(function (k, j) { var m = k.indexOf("need:") === 0 ? null : media(k); return '<div class="spi">' + (!m ? NEED(k) : m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video>' : '<img src="' + m.i + '" alt="' + s.t + '" loading="lazy">') + (s.labels && s.labels[j] ? '<span class="plab r">' + s.labels[j] + '</span>' : "") + '</div>'; }).join("") +
-        '</div><span class="spn">' + s.n + '</span>' + (s.imgs.length > 1 ? '<div class="dots">' + s.imgs.map(function (x, j) { return '<i' + (j ? '' : ' class="on"') + '></i>'; }).join("") + '</div><span class="spc">1/' + s.imgs.length + '</span><button class="arr spa" aria-label="次の写真"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>' : '') + '</div></div>';
+        '</div><span class="spn">' + s.n + '</span>' + (s.imgs.length > 1 ? '<div class="dots">' + s.imgs.map(function (x, j) { return '<i' + (j ? '' : ' class="on"') + '></i>'; }).join("") + '</div><span class="spc">1/' + s.imgs.length + '</span><button class="arr spa" aria-label="次の写真"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>' : '') + '</div>' +
+        (s.note ? '<div class="pnote">' + s.note.map(function (l) { return l.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>'); }).join("<br>") + '</div>' : '') + '</div>';
     }).join("") + '</div>';
   }
   // K-スイーツ / K-カフェ (세 페이지 고정 섹션)
   function sweetsHtml() {
     var w = it.sweets || { title: it.food.kTitle || "K-スイーツ", sub: "昼・夕食は自由時間。ローカルの味を楽しもう。", imgs: it.food.imgs, p: it.food.p };
     return '<div class="food"><h3>' + w.title + '</h3><div class="s">' + w.sub + '</div><div class="fg">' +
-      w.imgs.map(function (f) { return f[0].indexOf("need:") === 0 ? '<div class="need">사진 필요: ' + f[0].slice(5) + '</div>' : '<div style="background-image:url(' + img(f[0]) + ')"><span>' + f[1] + '</span></div>'; }).join("") + '</div><div class="fl">' + w.p + '</div></div>';
+      w.imgs.map(function (f) { return f[0].indexOf("need:") === 0 ? '<div class="need">(사진필요: ' + f[0].slice(5) + ')</div>' : '<div style="background-image:url(' + img(f[0]) + ')"><span>' + f[1] + '</span></div>'; }).join("") + '</div><div class="fl">' + w.p + '</div></div>';
+  }
+  // 참가자 후기(글): 실제 후기가 data.js의 voices에 들어왔을 때만 표시. 평균 별점·건수는 여기서 계산
+  var V = p.voices || [], vAvg = V.length ? (V.reduce(function (s, v) { return s + v.stars; }, 0) / V.length).toFixed(1) : "";
+  function stars(n) { var h = ""; for (var i = 0; i < 5; i++) h += K.icon("star", i < n ? "#F5A623" : "#E8E3E6", 13); return h; }
+  function voicesHtml() {
+    // 후기 남기기 링크는 제목 줄 오른쪽에 (줄을 따로 만들지 않음)
+    // 후기가 아직 없으면 디자인만: 빈 카드 3장
+    var cards = V.length ? V.map(function (v, k) { return '<div class="vc" data-vi="' + k + '" role="button" tabindex="0">' + (v.photo ? '<div class="vph" style="background-image:url(' + img(v.photo) + ')"></div>' : '<div class="vph need">(사진필요: 후기)</div>') + '<div class="vst">' + stars(v.stars) + '</div><p>' + v.text + '</p><div class="vm">' + v.name + '・' + v.date + '</div></div>'; }).join("")
+      : [0, 1, 2].map(function () { return '<div class="vc empty"><div class="vph need">(사진필요: 후기)</div><div class="vst">' + stars(0) + '</div><p><i></i><i></i><i></i></p><div class="vm"><i></i></div></div>'; }).join("");
+    return '<div class="sec vsec" id="voices"><div class="h2row"><h2>レビュー</h2><span class="vsum">' + K.icon("star", "#F5A623", 15) + '<b>' + (vAvg || "0.0") + '</b>（' + V.length + '件）</span>' +
+      '<a class="xlink" href="' + (K.LINE_ADD_URL || "#") + '" data-vinv>LINEで感想を送る</a></div>' +
+      '<div class="vcar' + (V.length === 1 ? ' n1' : V.length === 2 ? ' n2' : '') + '">' + cards + '</div></div>';
   }
   function galHtml() {
     var G = p.gallery, more = G.length - 5;
-    return '<div class="sec"><h2>' + (p.galleryTitle || "フォトギャラリー") + '</h2><div class="gal">' + G.slice(0, 5).map(function (g, i) { if (g[0].indexOf("need:") === 0) return '<button class="need" data-i="' + i + '">사진 필요:<br>' + g[0].slice(5) + '</button>'; var m = media(g[0]); return '<button data-i="' + i + '"' + (m.i ? ' style="background-image:url(' + m.i + ')"' : "") + '>' + (m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay sm"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i>' : "") + '<span>' + g[1] + '</span>' + (i === 4 && more > 0 ? '<i class="gmore">＋' + more + '</i>' : "") + '</button>'; }).join("") + '</div><div class="note crd">' + p.credit + '</div></div>';
+    return '<div class="sec"><h2>' + (p.galleryTitle || "フォトギャラリー") + '</h2><div class="gal">' + G.slice(0, 5).map(function (g, i) { if (g[0].indexOf("need:") === 0) return '<button class="need" data-i="' + i + '">(사진필요:<br>' + g[0].slice(5) + ')</button>'; var m = media(g[0]); return '<button data-i="' + i + '"' + (m.i ? ' style="background-image:url(' + m.i + ')"' : "") + '>' + (m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video><i class="vplay sm"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></i>' : "") + '<span>' + g[1] + '</span>' + (i === 4 && more > 0 ? '<i class="gmore">＋' + more + '</i>' : "") + '</button>'; }).join("") + '</div><div class="note crd">' + p.credit + '</div></div>';
   }
 
   app.innerHTML =
@@ -90,8 +103,10 @@
       '<div class="th" id="hth">' + p.hero.map(function (k, i) { var m = media(k); return '<button' + (i ? "" : ' class="on"') + ' style="background-image:url(' + (i === 0 && p.thumb0 ? img(p.thumb0) : m.p || img(k)) + ')" aria-label="' + (m.v ? "動画" : "写真") + (i + 1) + '">' + (m.v ? '<i class="tplay"></i>' : '') + '</button>'; }).join("") + '</div></div>' +
     '<div class="sec"><div class="chips">' + (p.ichioshi ? '<span class="c-ichi">イチオシ</span>' : '') + '<span class="c-season' + (p.season.tone ? ' ' + p.season.tone : '') + '">' + K.icon(p.season.icon, "currentColor", 14) + p.season.label + '</span></div>' +
       '<h1>' + p.name + '</h1><div class="sub">ソウル発 日帰り ・ ' + p.timeShort + ' ・ 送迎バス付き</div>' +
-      '<div class="price"><b data-krw="' + p.priceKrw + '"></b><small>' + K.krw(p.priceKrw) + ' ／ 1名（税込）</small></div>' +
-      '<div class="note">円は目安です。お支払いは韓国ウォン（₩）建てです。</div></div>' +
+      '<a class="rvrow" href="#voices">' + K.icon("star", "#F5A623", 17) + '<b>' + (vAvg || "0.0") + '</b><i>・</i><u>レビュー ' + V.length + '件</u></a>' +
+      '<div class="locrow">' + K.icon("pin", "#9A929E", 17) + '<span>' + K.MEETING.ja + '</span><a href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap0">地図を見る</a></div>' +
+      '</div>' +
+    voicesHtml() +
     '<div class="sec" id="pick"><div class="h2row"><h2>いつ参加しますか？</h2><button class="calk" id="calOpen">' + CAL + 'カレンダーで見る ›</button></div>' +
       '<div class="lbl">参加日</div><div id="dateChips"></div><div id="timeBox"></div><div id="qtyBox"></div>' +
       '<div class="info"><div class="ir nw">' + K.icon("ppl") + '<span><b>' + K.MIN_PEOPLE + '名様以上で催行確定</b><small>（未満は全額返金）</small></span></div><div class="ir">' + K.icon("clk") + '予約締切：出発' + K.CLOSE_DAYS_BEFORE + '日前</div><div class="ir nw">' + K.icon("kid") + '大人・子ども同料金／2歳未満は無料</div></div></div>' +
@@ -101,16 +116,17 @@
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
     (p.reviews && p.reviews.length ? '<div class="sec"><h2>体験レビュー</h2><div class="rv">' + p.reviews.map(function (r) { return '<div style="background-image:url(' + img(r) + ')"></div>'; }).join("") + '</div></div>' : '') + // 후기 사진이 생기면 data.js 에 reviews: ["파일명", ...] 추가
     '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
-    '<div class="sec"><h2 style="margin-bottom:4px">集合場所</h2><div class="note" style="margin:0 0 12px">出発の10分前までにお集まりください。</div>' +
+    '<div class="sec"><h2 style="margin-bottom:12px">集合場所</h2>' +
       '<div class="mpc"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
         '<a class="mlink" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap" aria-label="Googleマップで開く"></a><i class="mpin">' + PIN + '</i>' +
         '<span class="gbadge"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span><span class="mexp">' + EXP + '</span></div>' +
         '<a class="mrow" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap2"><b>' + K.MEETING.ja + '</b><i>›</i></a>' +
         '<div class="mad"><span>' + K.MEETING.ko + '</span><button class="cpy" id="copyAddr">コピー</button></div></div>' +
-      '<div class="note" style="margin-top:8px">※ タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
+      '<div class="note" style="margin-top:8px">※タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
     '<div class="sec" style="border-bottom:none">' +
       '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("ok", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("no") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
+      (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
       '<details class="acc"><summary>キャンセル・返金規定</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
       '<details class="acc"><summary>お問い合わせ（LINE・Instagram）</summary><div class="accb"><p class="accl">催行確定・日程のご案内・キャンセルや返金のご相談は、LINEでお気軽にどうぞ。</p>' + K.contactLinks() + '</div></details></div>' +
     '<footer id="footer"></footer><button class="totop" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>' +
@@ -118,7 +134,7 @@
     '<div class="sheet" id="sheet"><div class="dim" data-x></div><div class="body"><div class="grab"></div><div class="sh-hd"><b>参加日を選ぶ</b><button data-x aria-label="閉じる">✕</button></div>' +
       '<div class="sbody"><div class="mo"><button id="mPrev" aria-label="前の月">‹</button><span id="mTitle"></span><button id="mNext" aria-label="次の月">›</button></div>' +
       '<div class="cal" id="cal"></div><div class="legend"><span><i style="background:#C82158"></i>選択中</span><span><i style="background:#C9C3C7"></i>予約不可</span><span style="color:#C9C3C7;font-weight:900">満席</span></div>' +
-      '<div class="note">※ 祝日・悪天候の日は催行しません。予約締切は出発' + K.CLOSE_DAYS_BEFORE + '日前です。</div>' +
+      '<div class="note">※祝日・悪天候の日は催行しません。予約締切は出発' + K.CLOSE_DAYS_BEFORE + '日前です。</div>' +
       '<div id="sSel"></div><a class="wait" id="wait" hidden href="#">LINEでキャンセル待ちする ›</a></div>' +
       '<div class="sbar"><div class="bprice"><span id="sLabel"></span><div><b id="sYen"></b><small id="sKrw"></small></div></div><button class="cta w" id="sGo" disabled>予約に進む</button></div></div></div>' +
     '<div class="lb" id="lb"><button class="x" aria-label="閉じる">✕</button><div class="lbm" id="lbm"></div><div class="lbn"><button id="lbP" aria-label="前へ">‹</button><span id="lbC"></span><button id="lbN" aria-label="次へ">›</button></div></div>';
@@ -173,17 +189,27 @@
   var li = 0, G = p.gallery;
   if (p.route) $("rmap").onclick = function () { $("lbm").innerHTML = '<img alt="コースマップ" src="assets/img/' + p.route.img + '">'; $("lbC").textContent = ""; $("lb").classList.add("on", "single"); K.track("route_map_open", { product: id }); };
   function lbShow(i) {
-    $("lb").classList.remove("single");
+    lbMode = "gal"; $("lb").classList.remove("single", "voice");
     li = (i + G.length) % G.length; var m = media(G[li][0]);
     $("lbm").innerHTML = m.v ? '<video src="' + m.v + '" poster="' + m.p + '" controls autoplay playsinline></video>' : '<img alt="' + G[li][1] + '" src="' + m.i + '">';
     $("lbC").textContent = (li + 1) + " / " + G.length; $("lb").classList.add("on");
   }
   document.querySelectorAll(".gal button").forEach(function (b) { b.onclick = function () { lbShow(+b.getAttribute("data-i")); K.track("gallery_open", { product: id, index: +b.getAttribute("data-i") + 1 }); }; });
-  $("lbP").onclick = function (e) { e.stopPropagation(); lbShow(li - 1); };
-  $("lbN").onclick = function (e) { e.stopPropagation(); lbShow(li + 1); };
-  $("lb").onclick = function (e) { if (e.target === this || e.target.closest(".x")) { this.classList.remove("on", "single"); $("lbm").innerHTML = ""; } };
+  // 후기 보기: 따로 페이지를 만들지 않고 사진 확대 화면을 그대로 씀 — 사진 + 왼쪽 아래 흰 글씨 후기, 넘기면 다음 후기
+  var lbMode = "gal";
+  function lbVoice(i) {
+    lbMode = "voice"; li = (i + V.length) % V.length; var v = V[li];
+    $("lb").classList.remove("single"); $("lb").classList.add("on", "voice");
+    $("lbm").innerHTML = '<div class="lbv"><div class="ph' + (v.photo ? '" style="background-image:url(' + img(v.photo) + ')">' : ' need">(사진필요: 후기)') + '</div><div class="lbvt"><div class="vst">' + stars(v.stars) + '</div><p>' + v.text + '</p><div class="vm">' + v.name + '・' + v.date + '</div></div></div>';
+    $("lbC").textContent = (li + 1) + " / " + V.length;
+  }
+  function lbGo(d) { if (lbMode === "voice") lbVoice(li + d); else lbShow(li + d); }
+  document.querySelectorAll(".vc[data-vi]").forEach(function (c) { c.onclick = function () { lbVoice(+c.getAttribute("data-vi")); K.track("review_open", { product: id, index: +c.getAttribute("data-vi") + 1 }); }; });
+  $("lbP").onclick = function (e) { e.stopPropagation(); lbGo(-1); };
+  $("lbN").onclick = function (e) { e.stopPropagation(); lbGo(1); };
+  $("lb").onclick = function (e) { if (e.target === this || e.target.closest(".x")) { this.classList.remove("on", "single", "voice"); $("lbm").innerHTML = ""; lbMode = "gal"; } };
   var tx = null; $("lb").addEventListener("touchstart", function (e) { tx = e.touches[0].clientX; }, { passive: true });
-  $("lb").addEventListener("touchend", function (e) { if (tx === null) return; var dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) lbShow(li + (dx < 0 ? 1 : -1)); });
+  $("lb").addEventListener("touchend", function (e) { if (tx === null) return; var dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) lbGo(dx < 0 ? 1 : -1); });
 
   // 집합장소
   $("copyAddr").onclick = function () {
@@ -191,7 +217,8 @@
     if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, ok); else ok();
     K.track("copy_address", { product: id });
   };
-  ["gmap", "gmap2"].forEach(function (g) { $(g).addEventListener("click", function () { K.track("open_map", { product: id, place: g }); }); });
+  document.querySelectorAll("[data-vinv]").forEach(function (el) { el.addEventListener("click", function (e) { K.track("review_invite", { product: id }); if (!K.LINE_ADD_URL) { e.preventDefault(); K.toast("LINE公式アカウントは準備中です"); } }); });
+  ["gmap0", "gmap", "gmap2"].forEach(function (g) { $(g).addEventListener("click", function () { K.track("open_map", { product: id, place: g }); }); });
 
   // ---------- 예약 선택 (상세·캘린더 시트 공통: 날짜 → 시간·집합장소 → 인원) ----------
   function save() {}
@@ -251,7 +278,7 @@
     var y = +view.slice(0, 4), m = +view.slice(5, 7) - 1, first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate();
     $("mTitle").textContent = y + "年" + (m + 1) + "月";
     $("mPrev").disabled = ms.indexOf(view) <= 0; $("mNext").disabled = ms.indexOf(view) >= ms.length - 1;
-    var h = "日月火水木金土".split("").map(function (w, i) { return '<div class="w"' + (i === 0 ? ' style="color:#D9534F"' : i === 6 ? ' style="color:#3D7CC9"' : "") + '>' + w + '</div>'; }).join("");
+    var h = "日月火水木金土".split("").map(function (w, i) { return '<div class="w"' + (i === 0 ? ' style="color:#E2343B"' : i === 6 ? ' style="color:#2F5F8C"' : "") + '>' + w + '</div>'; }).join("");
     for (var i = 0; i < first; i++) h += "<div></div>";
     for (var d = 1; d <= last; d++) {
       var s = K.ymd(new Date(y, m, d)), wd = new Date(y, m, d).getDay(), stt = dates[s], ok = stt && K.bookable(s);

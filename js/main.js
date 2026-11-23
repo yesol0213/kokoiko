@@ -95,7 +95,7 @@
     
     lb.classList.remove("empty"); $("lbWhy").innerHTML = j.why;
     var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").classList.toggle("gw", !!p.season.tone); $("mSeason").innerHTML = K.icon(p.season.icon, "currentColor", p.season.icon === "flower" ? 19 : 14) + p.season.label; $("mWhy").textContent = j.why;
-    mc.hidden = false; mc.onclick = function () { K.track("select_item", { product: id, place: "main_mcard" }); location.href = p.page; }; $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
+    mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
     c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
     $("ctaMain").textContent = "ここ、見てみる？"; $("ctaSub").textContent = p.short + "・" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW);
     $("mPrice").innerHTML = "<b>" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW) + (document.body.classList.contains("tilde") ? "〜" : "") + "</b><span>₩" + p.priceKrw.toLocaleString() + "・1名</span>";

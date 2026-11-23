@@ -23,6 +23,23 @@
     var H = top + mh + 12;
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
+    // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)
+    window.__kkFixLabel = function () {
+      var lab = document.querySelector('.mtag[data-region="jeonju-damyang"]'), mi = $("mapin");
+      if (!lab || !mi) return;
+      requestAnimationFrame(function () {
+        var scale = kk;
+        for (var n = 0; n < 6; n++) {
+          var lr = lab.getBoundingClientRect(), br = mb.getBoundingClientRect();
+          var card = $("mcard"), ch = card && !card.hidden ? card.getBoundingClientRect().height : 112 * s;
+          var limit = br.bottom - 12 * s - ch - 26 * s;
+          if (lr.bottom <= limit) break;
+          scale = Math.max(0.62, scale - 0.02);
+          mi.style.transform = "scale(" + scale + ")";
+        }
+      });
+    };
+    window.__kkFixLabel();
   }
   fit(); window.addEventListener("resize", fit); if (window.visualViewport) window.visualViewport.addEventListener("resize", fit); window.addEventListener("load", function () { lastW = 0; fit(); }); window.addEventListener("orientationchange", function () { lastW = 0; setTimeout(fit, 200); });
 
@@ -95,7 +112,7 @@
     
     lb.classList.remove("empty"); $("lbWhy").innerHTML = j.why;
     var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").classList.toggle("gw", !!p.season.tone); $("mSeason").innerHTML = K.icon(p.season.icon, "currentColor", p.season.icon === "flower" ? 19 : 14) + p.season.label; $("mWhy").textContent = j.why;
-    mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
+    mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; if (window.__kkFixLabel) window.__kkFixLabel(); $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
     c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
     $("ctaMain").textContent = "ここ、見てみる？"; $("ctaSub").textContent = p.short + "・" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW);
     $("mPrice").innerHTML = "<b>" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW) + (document.body.classList.contains("tilde") ? "〜" : "") + "</b><span>₩" + p.priceKrw.toLocaleString() + "・1名</span>";

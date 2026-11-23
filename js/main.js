@@ -9,13 +9,13 @@
     // 인앱 브라우저(카톡·LINE)는 innerHeight가 실제 보이는 높이보다 크게 잡힐 때가 있어 가장 작은 값을 사용
     var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
     var key = w + "x" + Math.round(vh / 20); if (key === lastW) return; lastW = key;
-    var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 24 : 100;
+    var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 10 : 100;
     var s = w / 390, avail = (vh - bh) / s;
     // 하늘색 박스는 항상 화면 폭. 짧은 화면: ① 박스 아래를 제주도 절반까지만 보이게 자르고(430) ② 그래도 모자라면 지도를 비율 그대로 축소
     // 제목과 박스 사이 간격은 8의 배수(28px)로 넉넉하게
-    var compact = avail < 700, top = compact ? 164 : 186;
+    var compact = avail < 700, top = compact ? 164 : 188;
     var full = 344 / 366, vis = compact ? 462 : 481; // vis: 박스에 보일 지도 높이(제주도 절반 = 462)
-    var mh = Math.min(vis * full, Math.max(320, avail - top - 14)), k = mh / vis;
+    var mh = Math.min(vis * full + 46, Math.max(320, avail - top - 4)), k = mh / vis;
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
     var kk = Math.min(k, full); $("mapin").style.transform = "scale(" + kk + ")";
@@ -27,14 +27,18 @@
 
   // 슬라이드: 상세페이지 대표사진 5장과 동일 (첫 장만 메인용 세로 크롭)
   var JD = K.products["jeonju-damyang"], cmap = {}; JD.gallery.forEach(function (g) { cmap[g[0]] = g[1]; });
-  var imgs = JD.hero.map(function (k, i) { return i === 0 ? "jd_main1" : k; });
-  var caps = JD.heroCaps || JD.hero.map(function (k, i) { return i === 0 ? "冬の韓服でおさんぽ（全州）" : (cmap[k] || ""); });
+  var imgs = JD.hero.map(function (k, i) { return i === 0 ? "jd_main1" : k; }).concat(["jd_pnb", "jd_bg"]);
+  var caps = (JD.heroCaps || JD.hero.map(function (k, i) { return i === 0 ? "冬の韓服でおさんぽ（全州）" : (cmap[k] || ""); })).concat(["PNB 手作りチョコパイ（全州）", "バゲットバーガー（全州）"]);
   var sl = $("slides"), n = imgs.length, cur = -1;
   sl.innerHTML = imgs.map(function (k) { return '<div style="background-image:url(' + K.img(k) + ')"></div>'; }).join("");
   $("dots").innerHTML = imgs.map(function () { return "<i></i>"; }).join("");
   $("th").innerHTML = JD.hero.map(function (k, i) { return '<button style="background-image:url(' + K.img(i === 0 ? JD.thumb0 : k) + ')" aria-label="写真' + (i + 1) + '"></button>'; }).join("");
   K.dragScroll(sl);
   function go(i) { sl.scrollTo({ left: sl.clientWidth * i, behavior: "smooth" }); }
+  // 손가락을 따라 움직이다가, 놓을 때 30px 이상 밀었으면 다음/이전 장으로 (절반 넘기지 않아도 넘어감)
+  var tx = 0, ty = 0, tb = 0;
+  sl.addEventListener("touchstart", function (e) { var t = e.touches[0]; tx = t.clientX; ty = t.clientY; tb = Math.round(sl.scrollLeft / sl.clientWidth); }, { passive: true });
+  sl.addEventListener("touchend", function (e) { var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty; if (Math.abs(dx) < 30 || Math.abs(dx) < Math.abs(dy)) return; go(Math.max(0, Math.min(n - 1, tb + (dx < 0 ? 1 : -1)))); }, { passive: true });
   function upd(force) {
     var i = Math.round(sl.scrollLeft / sl.clientWidth); if (i === cur && !force) return; cur = i;
     if ($("cnt")) $("cnt").textContent = (i + 1) + "/" + n; if ($("cap")) $("cap").textContent = caps[i];
@@ -83,7 +87,7 @@
     var lb = $("likeBox"), c = $("mainCta");
     lb.classList.add("empty"); $("jpTag").hidden = true; $("mcard").hidden = true; $("mapin").removeAttribute("data-sel"); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = "≒ ？"; });
     c.classList.add("off"); c.setAttribute("aria-disabled", "true"); c.href = "#"; c.removeAttribute("data-go");
-    $("ctaMain").textContent = "地図からエリアを選んでください"; $("ctaSub").textContent = "";
+    $("ctaMain").textContent = "タップしてチェック！"; $("ctaSub").textContent = "";
   }
   function setRegion(id) {
     var p = K.products[id], lb = $("likeBox"), c = $("mainCta"), j = JP[id], t = $("jpTag");
@@ -97,7 +101,7 @@
     lb.classList.remove("pop"); void lb.offsetWidth; lb.classList.add("pop");
   }
   var tt = $("totop"); window.addEventListener("scroll", function () { tt.classList.toggle("on", window.scrollY > 900); }, { passive: true }); tt.onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); K.track("to_top", { product: "main" }); };
-  $("mainCta").addEventListener("click", function (e) { if (this.classList.contains("off")) { e.preventDefault(); K.toast("地図からエリアを選んでください"); } else K.track("select_item", { product: this.getAttribute("data-go"), place: "main_bar" }); });
+  $("mainCta").addEventListener("click", function (e) { if (this.classList.contains("off")) { e.preventDefault(); K.toast("タップしてチェック！"); } else K.track("select_item", { product: this.getAttribute("data-go"), place: "main_bar" }); });
   document.querySelectorAll("[data-region]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault(); var id = a.getAttribute("data-region"), off = a.classList.contains("on");
@@ -119,5 +123,5 @@
   sn.innerHTML = h;
 
   if ($("share")) $("share").onclick = function () { K.share({ title: "ここいこ｜ソウル発 日帰り韓国旅", text: "ソウルの外へ、本当の韓国を感じる旅。", medium: "main", content: "main" }); };
-  if ($("lineTop")) $("lineTop").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "main_header" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("LINE公式アカウントは準備中です"); };
+  if ($("lineTop")) $("lineTop").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "main_header" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); };
 })();

@@ -138,7 +138,7 @@
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a[data-ch]"); if (!a) return;
     K.track("contact_click", { channel: a.getAttribute("data-ch") });
-    if (a.hasAttribute("data-soon")) { e.preventDefault(); K.toast("お問い合わせ窓口は準備中です"); }
+    if (a.hasAttribute("data-soon")) { e.preventDefault(); K.toast("ただいま準備中です"); }
   });
 
   // 마우스로도 가로 사진 슬라이드 끌어서 넘기기 (PC)

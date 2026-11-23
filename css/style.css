@@ -947,3 +947,53 @@ footer .cl{text-decoration:underline;text-underline-offset:3px}
 /* meeting-place map: Google colours with saturation slightly lowered (no grey filter, no blue tint) */
 .mpm iframe{filter:grayscale(1) contrast(.75) brightness(1.12)!important}
 .mpm:after{display:none!important}
+/* V25: detail top bar hides on scroll down, returns on scroll up */
+.dtop{transition:background .2s,transform .25s ease}
+.dtop.hide{transform:translateX(-50%) translateY(-100%)}
+/* ===== V25 main ===== */
+/* 1 header up */
+.stage .hd{top:18px}
+/* 3 map labels: bigger, use the blue sea area */
+.mtag:not(.plain){font-size:15.5px}
+.nm2 .rb{font-size:11.5px}
+.mtag .q{font-size:15px;padding:3.75px 11.25px;margin-left:7.5px}
+.mtag.plain{font-size:16.5px}
+.mapbox svg .rlab{font-size:18px}
+/* 4 main bar: always visible (disabled state), same white bar as detail */
+.bar:has(.cta.off){transform:translate(-50%,0)}
+body:has(.cta.off) .barbg{opacity:1}
+.bar.lg{background:none!important;border:0!important;box-shadow:none!important;padding:8px!important}
+/* V25 chips: one box model for every season chip (fixed height, centered both ways) */
+.chip.snow,.mcard .ms,.c-season,.big .g .trow .chip.snow{box-sizing:border-box!important;height:24px!important;padding:2px 8px 0 10px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+.chip.snow>*,.mcard .ms>*,.c-season>*{line-height:1}
+/* V25 map moved down */
+.mapin{top:2px!important}
+/* V25 tap effect A: no bounce, no idle shake, 0.2s colour fade only */
+.mtag,.mtag .q{transition:background-color .2s ease,border-color .2s ease,color .2s ease}
+.mtag .q,.mtag.on .q,.mcard.pop #mName,.mcard.pop #mLike{animation:none!important}
+/* V25 no tap highlight / text selection on cards and buttons */
+a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-highlight-color:transparent}
+.big,.big *,.mtag,.mtag *,.mcard,.mcard *,.bar,.bar *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.slides>div{scroll-snap-stop:always}
+.mapbox svg.kmap{pointer-events:none}
+/* V25 main: title block up 8px, region labels: even side padding + roomier row gap */
+.stage .hero{top:72px}
+.stage.compact .hero{top:64px}
+.mtag:not(.plain){height:53px!important;box-sizing:border-box!important;padding:0 16.1px 0 16.4px!important;align-items:center!important}
+.mtag:not(.plain) .nm2{transform:translateY(-1px)}
+.nm2{gap:4px}
+.stage.compact .mtag[data-region="jeonju-damyang"]{left:172px!important;top:308px!important}
+
+.chip.snow svg,.mcard .ms svg,.c-season svg,.big .g .trow .chip svg{width:1em!important;height:1em!important;margin:0!important}
+.mcard{bottom:6px!important}
+body:has(#mainCta) .toast{bottom:87px}
+
+.toast{padding:7px 16px!important}
+.vplay{transition:opacity .25s ease}
+.playing .vplay{opacity:0;transition:opacity .4s ease 1s}
+
+.mprice{margin-top:8px!important}
+
+.info b{color:inherit}
+
+.mpm iframe{filter:saturate(.4) brightness(1.08) contrast(.92)!important}

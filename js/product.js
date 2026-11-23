@@ -104,7 +104,7 @@
     '<div class="sec"><div class="chips">' + (p.ichioshi ? '<span class="c-ichi">イチオシ</span>' : '') + '<span class="c-season' + (p.season.tone ? ' ' + p.season.tone : '') + '">' + K.icon(p.season.icon, "currentColor", 14) + p.season.label + '</span></div>' +
       '<h1>' + p.name + '</h1><div class="sub">ソウル発 日帰り ・ ' + p.timeShort + ' ・ 送迎バス付き</div>' +
       '<a class="rvrow" href="#voices">' + K.icon("star", "#F5A623", 17) + '<b>' + (vAvg || "0.0") + '</b><i>・</i><u>レビュー ' + V.length + '件</u></a>' +
-      '<div class="locrow">' + K.icon("pin", "#9A929E", 17) + '<span>' + K.MEETING.ja + '</span><a href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap0">地図を見る</a></div>' +
+      '<div class="locrow">' + K.icon("pin", "#9A929E", 17) + '<span>' + K.MEETING.ja + '</span><a href="#meetmap" id="gmap0">詳しい場所</a></div>' +
       '</div>' +
     voicesHtml() +
     '<div class="sec" id="pick"><div class="h2row"><h2>いつ参加しますか？</h2><button class="calk" id="calOpen">' + CAL + 'カレンダーで見る ›</button></div>' +
@@ -117,7 +117,7 @@
     (p.reviews && p.reviews.length ? '<div class="sec"><h2>体験レビュー</h2><div class="rv">' + p.reviews.map(function (r) { return '<div style="background-image:url(' + img(r) + ')"></div>'; }).join("") + '</div></div>' : '') + // 후기 사진이 생기면 data.js 에 reviews: ["파일명", ...] 추가
     '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2 style="margin-bottom:12px">集合場所</h2>' +
-      '<div class="mpc"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
+      '<div class="mpc" id="meetmap"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
         '<a class="mlink" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap" aria-label="Googleマップで開く"></a><i class="mpin">' + PIN + '</i>' +
         '<span class="gbadge"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span><span class="mexp">' + EXP + '</span></div>' +
         '<a class="mrow" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap2"><b>' + K.MEETING.ja + '</b><i>›</i></a>' +
@@ -142,7 +142,15 @@
   var $ = function (x) { return document.getElementById(x); };
 
   // 상단 바: 사진을 지나면 흰 바
-  function onScroll() { $("dtop").classList.toggle("solid", window.scrollY > $("dhero").offsetHeight - 60); }
+  // V25: 내리면 숨기고, 올리면 다시 나타남 (사진 구간에서는 항상 보임)
+  var lastY = window.scrollY;
+  function onScroll() {
+    var y = window.scrollY, past = y > $("dhero").offsetHeight - 60, d = y - lastY, bar = $("dtop");
+    bar.classList.toggle("solid", past);
+    if (!past) { bar.classList.remove("hide"); lastY = y; }
+    else if (d > 8) { bar.classList.add("hide"); lastY = y; }
+    else if (d < -8) { bar.classList.remove("hide"); lastY = y; }
+  }
   window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
   $("shareTop").onclick = function () { K.share({ title: p.title + "｜ここいこ", text: "ソウル発 日帰り ≒ " + p.like, medium: "detail", content: id }); };
 
@@ -217,8 +225,9 @@
     if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, ok); else ok();
     K.track("copy_address", { product: id });
   };
-  document.querySelectorAll("[data-vinv]").forEach(function (el) { el.addEventListener("click", function (e) { K.track("review_invite", { product: id }); if (!K.LINE_ADD_URL) { e.preventDefault(); K.toast("LINE公式アカウントは準備中です"); } }); });
-  ["gmap0", "gmap", "gmap2"].forEach(function (g) { $(g).addEventListener("click", function () { K.track("open_map", { product: id, place: g }); }); });
+  document.querySelectorAll("[data-vinv]").forEach(function (el) { el.addEventListener("click", function (e) { K.track("review_invite", { product: id }); if (!K.LINE_ADD_URL) { e.preventDefault(); K.toast("ただいま準備中です"); } }); });
+  ["gmap", "gmap2"].forEach(function (g) { $(g).addEventListener("click", function () { K.track("open_map", { product: id, place: g }); }); });
+  $("gmap0").addEventListener("click", function (e) { e.preventDefault(); K.track("open_map", { product: id, place: "gmap0" }); $("meetmap").scrollIntoView({ behavior: "smooth", block: "center" }); });
 
   // ---------- 예약 선택 (상세·캘린더 시트 공통: 날짜 → 시간·집합장소 → 인원) ----------
   function save() {}
@@ -303,7 +312,7 @@
   $("sGo").onclick = function () { goCheckout(sp); };
   $("wait").onclick = function (e) {
     e.preventDefault(); K.track("waitlist_click", { product: id, date: sp.date });
-    if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("LINE公式アカウントは準備中です");
+    if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です");
   };
 
   K.getDates(p).then(function (d) {
@@ -313,4 +322,11 @@
   });
   K.fillYen().then(render);
   K.track("view_item", { product: id, value: p.priceKrw, currency: "KRW" });
+
+  // 상세 히어로 영상: 재생 중이면 playing 클래스로 플레이 아이콘 숨김
+  [].forEach.call(document.querySelectorAll(".hv video"), function (v) {
+    var box = v.parentNode;
+    v.addEventListener("playing", function () { box.classList.add("playing"); });
+    v.addEventListener("pause", function () { box.classList.remove("playing"); });
+  });
 })();

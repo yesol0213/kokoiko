@@ -58,7 +58,7 @@
         '<p class="note" style="text-align:center;margin-top:14px">ご予約の確認・出発のご案内はLINEでお送りします。</p></div>';
       var url = location.origin + "/" + p.page;
       document.getElementById("shFriend").onclick = function () { K.share({ url: url, title: p.title + "｜ここいこ", text: "一緒に行かない？ソウル発の日帰り旅 ≒ " + p.like, medium: "complete", content: p.id }); };
-      document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "complete" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("LINE公式アカウントは準備中です"); };
+      document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "complete" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); };
     })
     .catch(function () { fail("NETWORK", "通信エラーが発生しました。"); });
 })();

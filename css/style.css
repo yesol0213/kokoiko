@@ -962,7 +962,9 @@ footer .cl{text-decoration:underline;text-underline-offset:3px}
 /* 4 main bar: always visible (disabled state), same white bar as detail */
 .bar:has(.cta.off){transform:translate(-50%,0)}
 body:has(.cta.off) .barbg{opacity:1}
-.bar.lg{background:none!important;border:0!important;box-shadow:none!important;padding:8px!important}
+.bar.lg{background:#C82158!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:99px!important;overflow:hidden}
+body:has(.cta.off) .bar.lg{background:#E8E3E6!important}
+.bar.lg .cta{height:70px!important;border-radius:99px!important;width:100%!important}
 /* V25 chips: one box model for every season chip (fixed height, centered both ways) */
 .chip.snow,.mcard .ms,.c-season,.big .g .trow .chip.snow{box-sizing:border-box!important;height:24px!important;padding:2px 8px 0 10px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
 .chip.snow>*,.mcard .ms>*,.c-season>*{line-height:1}
@@ -986,7 +988,7 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 
 .chip.snow svg,.mcard .ms svg,.c-season svg,.big .g .trow .chip svg{width:1em!important;height:1em!important;margin:0!important}
 .mcard{bottom:12px!important}
-body:has(#mainCta) .toast{bottom:87px}
+.toast{bottom:109px!important}
 
 .toast{padding:7px 16px!important}
 .vplay{transition:opacity .25s ease}
@@ -1020,3 +1022,18 @@ body.bhide .barbg{opacity:0!important}
 @media (prefers-reduced-motion:reduce){.bar,.barbg{transition:none}}
 
 .gwb.wb{background:#E6F2FB;color:#2F5F8C}
+/* 좌우 기준선 22px 통일 (지도 상자와 아래 섹션들) */
+.psec{padding-left:22px!important;padding-right:22px!important}
+.big{margin-left:22px!important;margin-right:22px!important}
+div.sm{margin-left:22px!important;margin-right:22px!important}
+.cred,.note,.fnote,.wrap>p.note{padding-left:22px!important;padding-right:22px!important}
+/* 라벨 탭: 칩이 먼저 열리고 0.1초 뒤 배경이 물듦 (B) + 눌린 라벨이 살짝 떠오름 (C) */
+.mtag:not(.plain){transition:background-color .3s ease .1s,border-color .3s ease .1s,color .3s ease .1s,transform .2s ease,box-shadow .3s ease .1s}
+.mtag .q{transition:background-color .18s ease,color .18s ease}
+.mtag.on{transform:translate(-50%,-50%) scale(1.03);box-shadow:0 10px 22px rgba(120,30,70,.26)!important}
+@media (prefers-reduced-motion:reduce){.mtag:not(.plain),.mtag .q{transition:none}.mtag.on{transform:translate(-50%,-50%)}}
+/* 주 버튼 글자 18px (메인·상세 공통) */
+.bar .cta{font-size:18px!important}
+.bar .cta small{font-size:12px!important;margin-top:5px!important}
+/* CTA 바가 70px로 커진 만큼 본문 아래 여백 확보 */
+.wrap{padding-bottom:132px}

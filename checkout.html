@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>お支払い｜ここいこ</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,20 +15,18 @@
   <div class="phd2"><a href="index.html" id="backLink" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></a><b>お支払い</b><span></span></div>
 
   <div class="sec"><h2>ご予約内容</h2>
-    <div class="osum"><div class="im" id="sImg"></div><div><b id="sName"></b><span id="sDate"></span><span id="sTime"></span><span id="sQty"></span><span id="sMeet"></span></div></div>
-    <a class="chg" id="changeLink" href="#">日程・人数を変更する</a>
+    <div class="osum"><div class="im" id="sImg"></div><div><b id="sName"></b><span id="sDate"></span><span id="sTime"></span><span id="sQty"></span><span class="smeet"><span id="sMeet"></span><button type="button" class="cpy" id="addrCopy">コピー</button></span></div></div>
   </div>
 
   <form id="form" novalidate>
     <div class="sec"><h2>代表者情報</h2>
-      <div class="field"><label for="name">お名前（ローマ字）<span class="req">必須</span></label><input id="name" autocomplete="name" placeholder="HANAKO YAMADA"></div>
-      <div class="field"><label for="email">メールアドレス<span class="req">必須</span></label><input id="email" type="email" autocomplete="email" placeholder="example@mail.com"><div class="help">予約確認とお問い合わせへの返信に使います。</div></div>
-      <div class="field"><label for="line">LINE ID<span class="req">必須</span></label><input id="line" placeholder="LINE ID" autocapitalize="off" autocorrect="off"><div class="help">出発確定・集合案内はLINEでお送りします。</div></div>
-      <div class="field"><label for="tel">電話番号<span class="opt">任意</span></label><input id="tel" type="tel" autocomplete="tel" placeholder="+81 90-1234-5678"><div class="help">当日の緊急連絡用です（日本の番号も可）。</div></div>
+      <div class="field"><label for="name">お名前（ローマ字）<span class="req">必須</span></label><div class="inwrap"><input id="name" autocomplete="name" placeholder="HANAKO YAMADA"><span class="okmark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div></div>
+      <div class="field"><label for="email">メールアドレス<span class="req">必須</span></label><div class="inwrap"><input id="email" type="email" autocomplete="email" placeholder="example@mail.com"><span class="okmark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div></div>
+      <div class="field"><label for="line">LINE ID<span class="req">必須</span></label><div class="inwrap"><input id="line" placeholder="LINE ID" autocapitalize="off" autocorrect="off"><span class="okmark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div></div>
     </div>
 
     <div class="sec"><h2>お支払い方法</h2>
-      <p class="pmh">「퀵계좌이체」ではなく「신용·체크카드」を選択してください。</p>
+      <p class="pmh"><span>カード決済は「신용・체크카드」をお選びください</span></p>
       <div id="payment-method"></div><div id="agreement"></div>
     </div>
 
@@ -36,7 +34,7 @@
       <div class="sumt"><div class="r"><span>料金</span><span id="unit"></span></div>
         <div class="r t"><span>合計</span><span class="ty" id="totalYen"></span></div>
         <div class="r kw"><span>お支払い（韓国ウォン）</span><span id="total"></span></div></div>
-      <div class="cond2"><p>・お支払い後は「予約待ち」、10名集まった時点で出発確定。</p><p>・10名未満の場合は出発3日前にご連絡し、全額返金。</p><p>・出発3日前まで全額返金、それ以降のキャンセルは返金不可。</p></div>
+      <div class="cond2"><p>1. お支払い後は「予約待ち」、10名集まった時点で出発確定。</p><p>2. 10名未満の場合は出発3日前にご連絡し、全額返金。</p><p>3. 出発3日前まで全額返金、それ以降のキャンセルは返金不可。</p></div>
 
       <ul class="tlist">
         <li><span>利用規約</span><button type="button" data-legal="terms">見る</button></li>
@@ -54,5 +52,7 @@
 <script src="js/data.js?v=25"></script>
 <script src="js/common.js?v=25"></script>
 <script src="js/checkout.js?v=25"></script>
+<button class="totop nobar" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
+<script>(function(){var t=document.getElementById("totop");if(!t)return;addEventListener("scroll",function(){t.classList.toggle("on",scrollY>600)},{passive:true});t.onclick=function(){scrollTo({top:0,behavior:"smooth"})};})();</script>
 </body>
 </html>

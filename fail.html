@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>お支払いが完了しませんでした｜ここいこ</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
@@ -11,12 +11,10 @@
 <body>
 <div class="wrap" style="padding-bottom:30px">
   <div class="phd"><b style="margin:0 auto">お支払い結果</b></div>
+  <div class="sec rhero"><h1 class="ng">お支払い未完了</h1><p class="r1" id="msg">お支払いを完了できませんでした。</p></div>
   <div class="sec" id="prd" hidden></div>
-  <div class="sec" style="border-bottom:none"><div class="rst"><b class="ng">お支払い未完了</b><span id="when"></span></div><div id="sum"></div>
-    <div class="why"><b id="msg">時間をおいて、もう一度お試しください。</b><p>料金は請求されていません。<br><span id="kept">入力した内容は保存されています。</span></p><small id="code"></small></div></div>
-  <div class="ract"><a class="cta" id="retry" href="checkout.html">入力画面に戻る</a><a class="tl" href="index.html">トップに戻る</a>
-    <p class="note" style="text-align:center;margin-top:20px">解決しない場合はお問い合わせください<br><span id="contact"></span></p></div>
-  <footer id="footer"></footer>
+  <div class="ract"><a class="cta" id="retry" href="checkout.html">入力画面に戻る</a>
+    <a class="tl ext" id="lineBtn" href="#">LINEで販売者に連絡する ›</a></div>
 </div>
 <script src="js/data.js?v=25"></script>
 <script src="js/common.js?v=25"></script>
@@ -25,20 +23,37 @@
 (function () {
   var K = window.KOKOIKO, q = new URLSearchParams(location.search);
   var code = q.get("code") || "", message = q.get("message") || "", pid = q.get("product") || "", date = /^\d{4}-\d{2}-\d{2}$/.test(q.get("date") || "") ? q.get("date") : "", qty = Math.min(10, Math.max(1, parseInt(q.get("qty"), 10) || 1)); // 주소창 값은 숫자·날짜 형식만 사용
-  var friendly = { PAY_PROCESS_CANCELED: "お支払いがキャンセルされました。", PAY_PROCESS_ABORTED: "お支払いが中断されました。", REJECT_CARD_COMPANY: "カード会社により承認されませんでした。別のカードをお試しください。", AMOUNT_MISMATCH: "金額の確認ができませんでした。もう一度お試しください。", INVALID_ORDER: "注文情報を確認できませんでした。もう一度お試しください。" };
-  document.getElementById("msg").textContent = friendly[code] || message || "時間をおいて、もう一度お試しください。";
-  document.getElementById("code").textContent = code ? "エラーコード：" + code : "";
-  document.getElementById("contact").innerHTML = K.contactLinks();
+  // 실패 사유: 토스가 failUrl 오류로 정의한 3개 코드만 구분, 그 외(승인 단계 토스 코드·서버 검사·통신 오류)는 공통 문구
+  var friendly = { PAY_PROCESS_CANCELED: "お支払いがキャンセルされました。", PAY_PROCESS_ABORTED: "承認に失敗したため、お支払いが中断されました。", REJECT_CARD_COMPANY: "カード会社によりお支払いが承認されませんでした。" };
+  document.getElementById("msg").textContent = friendly[code] || "お支払いを完了できませんでした。";
+  document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "fail" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); };
   var p = K.products[pid];
   if (p && date) {
     document.getElementById("retry").href = "checkout.html?product=" + pid + "&date=" + date + "&qty=" + qty + "&from=fail";
-    document.getElementById("when").textContent = K.jpLong(date) + " " + p.timeShort;
-    document.getElementById("sum").innerHTML = '<div class="rr"><span>人数</span><b>' + qty + '名</b></div><div class="rr t"><span>お支払い金額</span><b>' + K.krw(p.priceKrw * qty) + '</b></div>';
-  } else if (p) { document.getElementById("retry").href = p.page; document.getElementById("kept").textContent = ""; }
-  else { document.getElementById("retry").href = "index.html"; document.getElementById("retry").textContent = "トップに戻る"; document.getElementById("kept").textContent = ""; }
-  if (p) { var pr = document.getElementById("prd"); pr.hidden = false; pr.innerHTML = '<div class="rprd"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name + '</b><span>ソウル発 日帰り ・ 送迎バス付き</span></div></div>'; }
+      } else if (p) { document.getElementById("retry").href = p.page; }
+  else { location.replace("index.html"); return; } // 상품 정보가 없으면 실패 화면을 따로 만들지 않고 메인으로
+  if (p) { var pr = document.getElementById("prd"); pr.hidden = false;
+    var tot = p.priceKrw * qty;
+    // 결제수단: 토스는 실패 시 결제수단을 보내주지 않아, 결제 페이지에서 고른 값을 주소(pm)로 넘겨받음. 값 형식은 실제 위젯에서 확인 필요(임시)
+    var pm = q.get("pm") || "", PAYM = { CARD: "クレジット・デビットカード", "카드": "クレジット・デビットカード", TRANSFER: "口座振替", "계좌이체": "口座振替", VIRTUAL_ACCOUNT: "バーチャル口座", "가상계좌": "バーチャル口座", MOBILE_PHONE: "携帯電話決済", "휴대폰": "携帯電話決済", TOSSPAY: "簡単決済", NAVERPAY: "簡単決済", KAKAOPAY: "簡単決済", PAYCO: "簡単決済", "간편결제": "簡単決済" };
+    // 예약 상세: 결제완료 페이지 토글과 같은 내용
+    pr.innerHTML = '<details class="acc chev"><summary>ご予約内容</summary><div class="accb ordb">' +
+      '<div class="psum"><b>' + p.name + '</b><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div></div>' +
+      (date ? '<div class="rr"><span>参加日</span><b>' + K.jpLong(date) + ' ' + p.timeShort + '</b></div>' : '') +
+      '<div class="rr"><span>人数</span><b>' + qty + '名</b></div>' +
+      '</div></details>';
+    // 금액은 결제완료 페이지처럼 별도 섹션
+    var amt = document.createElement("div"); amt.className = "sec";
+    amt.innerHTML = '<h2>お支払い内訳</h2>' +
+      '<div class="rr"><span>参加費 ' + K.krw(p.priceKrw) + ' × ' + qty + '名</span><b>' + K.krw(tot) + '</b></div>' +
+      '<div class="rr t"><span>合計</span><b class="ty2">' + K.yen(tot, K.FALLBACK_JPY_PER_KRW) + '<small>' + K.krw(tot) + '</small></b></div>' +
+      (PAYM[pm] ? '<div class="rr"><span>お支払い方法</span><b>' + PAYM[pm] + '</b></div>' : '');
+    pr.insertAdjacentElement("afterend", amt);
+    K.getRate().then(function (c) { var y = amt.querySelector('.ty2'); if (y) y.firstChild.nodeValue = K.yen(tot, c.rate); }); }
   K.track("payment_fail", { code: code, product: pid });
 })();
 </script>
+<button class="totop nobar" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
+<script>(function(){var t=document.getElementById("totop");if(!t)return;addEventListener("scroll",function(){t.classList.toggle("on",scrollY>600)},{passive:true});t.onclick=function(){scrollTo({top:0,behavior:"smooth"})};})();</script>
 </body>
 </html>

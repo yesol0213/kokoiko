@@ -1,6 +1,6 @@
 // 결제 승인 (서버 전용). 시크릿 키는 환경변수 TOSS_SECRET_KEY 에서만 읽는다.
 const { PRICES, MAX_QTY, byCode } = require("./_prices");
-const { readOrderId } = require("./_order-sign");
+const { readOrderId, signKey } = require("./_order-sign");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ code: "METHOD_NOT_ALLOWED", message: "POST only" });
@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
   if (!paymentKey || !orderId) return res.status(400).json({ code: "INVALID_REQUEST", message: "決済情報が不足しています" });
 
   // 1) orderId 서명 확인 → 서버가 발급한 주문인지
-  const order = readOrderId(orderId, secret);
+  const order = readOrderId(orderId, signKey());
   const productId = order && byCode(order.code);
   if (!order || !productId || order.qty < 1 || order.qty > MAX_QTY) {
     return res.status(400).json({ code: "INVALID_ORDER", message: "注文情報が正しくありません" });
@@ -44,7 +44,8 @@ module.exports = async function handler(req, res) {
       method: data.method,
       approvedAt: data.approvedAt,
       productId,
-      qty: order.qty
+      qty: order.qty,
+      date: order.date
     });
   } catch (e) {
     return res.status(502).json({ code: "CONFIRM_FAILED", message: "決済の確認に失敗しました" });

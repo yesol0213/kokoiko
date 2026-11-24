@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>ご予約完了｜ここいこ</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
 <div class="wrap" style="padding-bottom:30px">
   <div class="phd"><b style="margin:0 auto">ご予約内容</b></div>
   <main id="app"><div class="res"><div class="ic" style="background:#F5F3F4">⏳</div><h1>お支払いを確認しています…</h1><p>このままお待ちください。画面を閉じないでください。</p></div></main>
-  <footer id="footer"></footer>
 </div>
 <script src="js/data.js?v=25"></script>
 <script src="js/common.js?v=25"></script>
@@ -20,7 +19,6 @@
 // 결제 성공: 서버(/api/confirm)에서 금액 검증 후 승인 → 완료 화면 + 공유
 (function () {
   var K = window.KOKOIKO, app = document.getElementById("app");
-  var SHARE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
   var q = new URLSearchParams(location.search);
   var body = { paymentKey: q.get("paymentKey"), orderId: q.get("orderId"), amount: Number(q.get("amount")) };
   var bk = null; try { bk = JSON.parse(sessionStorage.getItem("kk_booking") || "null"); } catch (e) {}
@@ -44,24 +42,39 @@
       try { sessionStorage.removeItem("kk_form"); sessionStorage.removeItem("kk_sel_" + p.id); } catch (e) {}
       history.replaceState(null, "", location.pathname);
       var qty = d.qty || (bk && bk.qty) || 1;
+      // 결제수단: 토스 승인 응답 method(한국어 값)를 일본어로 표시 — 문구 확인 필요(임시)
+      var PAYM = { "카드": "クレジット・デビットカード", "간편결제": "簡単決済", "계좌이체": "口座振替", "가상계좌": "バーチャル口座", "휴대폰": "携帯電話決済" };
       app.innerHTML =
-        '<div class="sec"><div class="rprd"><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div><div><b>' + p.name + '</b><span>ソウル発 日帰り ・ 送迎バス付き</span></div></div></div>' +
-        '<div class="sec"><div class="rst"><b class="ok">決済完了</b><span>' + (day ? K.jpLong(day) + " " : "") + p.timeShort + '</span></div>' +
-          '<div class="rr"><span>集合場所</span><b>' + K.MEETING.ja + '</b></div>' +
+        // 1. 상태 + 예약 핵심(상품·참가일·인원·집합장소)
+        '<div class="sec rhero"><h1 class="ok">決済完了</h1></div>' +
+        '<div class="sec"><details class="acc chev"><summary>ご予約内容</summary><div class="accb ordb">' +
+          '<div class="psum"><b>' + p.name + '</b><div class="im" style="background-image:url(' + K.img(p.hero[0]) + ')"></div></div>' +
+          (day ? '<div class="rr"><span>参加日</span><b>' + K.jpLong(day) + ' ' + p.timeShort + '</b></div>' : '') +
           '<div class="rr"><span>人数</span><b>' + qty + '名</b></div>' +
+          '<div class="rr"><span>集合場所</span><b>' + K.MEETING.ja + '<button type="button" class="cpy" id="addrCopy">コピー</button></b></div>' +
+        '</div></details></div>' +
+        // 2. 결제 내역(항목별 금액 → 합계 원화·엔화)
+        '<div class="sec"><h2>お支払い内訳</h2>' +
+          '<div class="rr"><span>参加費 ' + K.krw(p.priceKrw) + ' × ' + qty + '名</span><b>' + K.krw(p.priceKrw * qty) + '</b></div>' +
+          '<div class="rr t"><span>合計</span><b class="ty2">' + K.yen(d.totalAmount, K.FALLBACK_JPY_PER_KRW) + '<small>' + K.krw(d.totalAmount) + '</small></b></div>' +
           '<div class="rr"><span>注文番号</span><b class="oid">' + d.orderId + '</b></div>' +
-          '<div class="rr t"><span>お支払い金額</span><b>' + K.krw(d.totalAmount) + '</b></div></div>' +
-        '<div class="sec"><h2>今後の流れ</h2><div class="flow"><div>1. ' + K.MIN_PEOPLE + '名集まったら、LINEで出発確定をお知らせします。</div><div>2. キャンセル・お問い合わせは、LINEでご連絡ください。</div><div>3. 出発' + K.CLOSE_DAYS_BEFORE + '日前までに' + K.MIN_PEOPLE + '名に満たない場合は、全額返金いたします。</div></div></div>' +
-        '<div class="sec" style="border-bottom:none"><h2 style="margin-bottom:4px">お友だちと一緒に行きませんか？</h2><p class="rsub">シェアして' + K.MIN_PEOPLE + '名集まれば、出発が早く確定します。</p>' +
-          '<button class="rshare" id="shFriend">' + SHARE + 'シェアする</button></div>' +
-        '<div class="ract"><a class="cta" href="index.html">確認</a><a class="tl" id="lineBtn" href="#">LINEで販売者に連絡する ›</a>' +
-        '<p class="note" style="text-align:center;margin-top:14px">ご予約の確認・出発のご案内はLINEでお送りします。</p></div>';
-      var url = location.origin + "/" + p.page;
-      document.getElementById("shFriend").onclick = function () { K.share({ url: url, title: p.title + "｜ここいこ", text: "一緒に行かない？ソウル発の日帰り旅 ≒ " + p.like, medium: "complete", content: p.id }); };
+          '<div class="rr"><span>お支払い方法</span><b>' + (PAYM[d.method] || d.method || "—") + '</b></div>' +
+        '</div>' +
+        // 3. 주의사항
+        '<div class="sec"><h2>今後の流れ</h2><div class="cond2"><p>1. ' + K.MIN_PEOPLE + '名集まったら、LINEで出発確定をお知らせします。</p><p>2. キャンセル・お問い合わせは、LINEでご連絡ください。</p><p>3. 出発' + K.CLOSE_DAYS_BEFORE + '日前までに' + K.MIN_PEOPLE + '名に満たない場合は、全額返金いたします。</p></div></div>' +
+        // 4. 다음 행동
+        '<div class="ract"><a class="cta" href="index.html">確認</a><a class="tl ext" id="lineBtn" href="#">LINEで販売者に連絡する ›</a></div>';
+      K.getRate().then(function (c) { var y = document.querySelector('.rr.t .ty2'); if (y) y.firstChild.nodeValue = K.yen(d.totalAmount, c.rate); });
+      document.getElementById("addrCopy").onclick = function () {
+        var t = K.MEETING.ko, ok = function () { K.toast("住所をコピーしました"); };
+        if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, ok); else ok();
+      };
       document.getElementById("lineBtn").onclick = function (e) { e.preventDefault(); K.track("line_click", { place: "complete" }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); };
     })
     .catch(function () { fail("NETWORK", "通信エラーが発生しました。"); });
 })();
 </script>
+<button class="totop nobar" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
+<script>(function(){var t=document.getElementById("totop");if(!t)return;addEventListener("scroll",function(){t.classList.toggle("on",scrollY>600)},{passive:true});t.onclick=function(){scrollTo({top:0,behavior:"smooth"})};})();</script>
 </body>
 </html>

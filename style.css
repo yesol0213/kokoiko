@@ -284,8 +284,8 @@ button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97
 .warnsec{border-bottom:none;padding-bottom:6px}
 /* 푸터 문의 */
 .sep{margin:0 10px;color:#E8E3E6}
-a.cl{text-decoration:none;color:var(--sub)}
-footer .ctc{display:block;margin-bottom:6px;font-weight:700;color:var(--sub)}
+a.cl{text-decoration:underline;text-underline-offset:3px;color:var(--sub)}
+footer .ctc{display:inline;margin:0 10px 0 0;font-weight:700;color:var(--sub)}
 /* 결제 결과(완료·실패) */
 .rprd{display:flex;gap:14px;align-items:center}
 /* 결제완료·실패 상품 요약: 제목 왼쪽 + 썸네일 오른쪽, 아래 조건줄(일정·인원 / 단가) */
@@ -1045,6 +1045,7 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 .mcard{bottom:20px!important}
 .toast{bottom:84px!important}
 body:not(.bhide):has(.bar.solid) .toast{bottom:98px!important} /* 상세 하단 바(70px)+16+12 — D3 */
+body:not(:has(.bar)) .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important} /* 하단 바 없는 페이지(결제·완료·실패): 화면 바닥 16px — D3 */
 
 .toast{padding:6px 16px!important;line-height:1!important}
 .vplay{transition:opacity .25s ease}
@@ -1136,3 +1137,26 @@ body.bhide .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
 .pring[data-r="jeonju-damyang"],.mtag[data-region="jeonju-damyang"]:not(.on) .nm2 .q{animation-delay:2.2s!important}
 .mapin[data-sel] .pring{display:none}
 @media (prefers-reduced-motion:reduce){.pring{animation:none!important}}
+
+/* 메인 전주 카드 설명 2줄 — 지도 설명 카드(#mWhy / #mTags)와 같은 크기·색 */
+.big .g .s.cw{font-size:11px;line-height:1.4;margin-top:6px;color:#6B6170;white-space:nowrap}
+.big .g .s.ct{font-size:11.5px;line-height:1.4;margin-top:2px;color:#8A8290}
+
+/* 상세 섹션 안 안내문(.note)은 섹션 좌우 여백을 이미 가지고 있으므로 22px를 한 번 더 주지 않는다 — 제목과 같은 선 */
+.sec>.note:not(.crd){padding-left:0!important;padding-right:0!important}
+
+/* 푸터 문의 줄: 「お問い合わせ」 라벨과 링크를 한 줄·세로 가운데 정렬 */
+footer p:has(>.ctc){display:flex;align-items:center;flex-wrap:wrap;gap:0}
+footer p:has(>.ctc) .sep{margin:0 8px}
+
+/* 결제 확인 대기 화면 로딩 링 — 동작 줄이기 설정이면 멈춤 */
+.kkspin{transform-origin:12px 12px;animation:kkspin 1s linear infinite}
+@keyframes kkspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.kkspin{animation:none}}
+
+/* D26: 더블탭 확대 방지 (iOS) */
+html{touch-action:manipulation}
+/* D26: 달력 시트 안 안내문은 시트 좌우 여백이 이미 있으므로 22px를 더 주지 않는다 — 범례·달력과 같은 선 */
+.sbody .note,.sbody .legend{padding-left:0!important;padding-right:0!important}
+/* D26: LINE으로 연락하는 텍스트 링크는 전 페이지 .tl.ext 규칙 — 본문색 굵게 13.5px + › + 밑줄 (초록 폐지) */
+.wait,.stage .hd a#lineTop{color:var(--ink)!important;font-size:13.5px!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:3px}

@@ -99,6 +99,8 @@
     "gangneung": { x: 252, y: 92, sub: "#高原牧場　#海カフェ　#韓国スイーツ", why: "ソウルからたった2時間半、海のある軽井沢へ。" },
     "danyang": { x: 252, y: 207, sub: "#ユネスコ世界ジオパーク　#フォトスポット", why: "秋吉台と同じ石灰岩、でも川が流れる。" }
   };
+  // 메인 전주 카드 설명 2줄 = 지도 설명 카드와 같은 문구(JP 한 곳에서 가져옴)
+  (function () { var cw = document.querySelector(".big .s.cw"), ct = document.querySelector(".big .s.ct"); if (cw && ct) { cw.textContent = JP["jeonju-damyang"].why; ct.textContent = JP["jeonju-damyang"].sub; } })();
   function clearRegion() {
     var lb = $("likeBox"), c = $("mainCta");
     lb.classList.add("empty"); $("jpTag").hidden = true; $("mcard").hidden = true; $("mapin").removeAttribute("data-sel"); if (window.__kkBefore) $("mapin").style.transform = window.__kkBefore; document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = "≒ ？"; });

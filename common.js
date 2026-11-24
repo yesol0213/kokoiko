@@ -137,7 +137,7 @@
   // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
   K.contactLinks = function () {
     var ln = function (url, label, ch) { return '<a class="cl" href="' + (url || "#") + '"' + (url ? ' target="_blank" rel="noopener"' : ' data-soon="' + label + '"') + ' data-ch="' + ch + '">' + label + '</a>'; };
-    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram DM", "instagram");
+    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram", "instagram");
   };
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a[data-ch]"); if (!a) return;
@@ -225,4 +225,13 @@
     K.fillYen();
     K.fadeUp(".psec,.big,.sm,.src,#app>.sec,.res>*,.rbox,.steps,.shbox,footer");
   });
+})();
+
+// D26: 전 페이지 핀치·더블탭 줌 금지. iOS(Safari·인스타·LINE 인앱)는 viewport의 user-scalable=no를 무시하므로 직접 막는다
+(function () {
+  var stop = function (e) { e.preventDefault(); };
+  ["gesturestart", "gesturechange", "gestureend"].forEach(function (t) { document.addEventListener(t, stop, { passive: false }); });
+  document.addEventListener("touchmove", function (e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  var last = 0;
+  document.addEventListener("touchend", function (e) { var n = Date.now(); if (n - last < 300) e.preventDefault(); last = n; }, { passive: false });
 })();

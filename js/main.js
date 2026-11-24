@@ -21,6 +21,8 @@
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
     var kk = Math.min(k, full); var roomy = vh >= 740, dy = roomy ? 26 : 14, kb = Math.min(1.0, (mh - 10 - dy - 16) / 447); window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
     var H = top + mh + 12;
+    // V26: 실제 기기(인앱 브라우저 등)의 보이는 높이가 계산값보다 클 때, 첫 화면 아래로 다음 섹션이 비치지 않도록 화면 전체 높이만큼 채움
+    H = Math.max(H, vh / s);
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
     // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)
@@ -110,7 +112,10 @@
     
     lb.classList.remove("empty"); $("lbWhy").innerHTML = j.why;
     var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").classList.toggle("gw", !!p.season.tone); $("mSeason").innerHTML = K.icon(p.season.icon, "currentColor", p.season.icon === "flower" ? 19 : 14) + p.season.label; $("mWhy").textContent = j.why; $("mTags").textContent = j.sub; mc.style.animation = "none"; void mc.offsetWidth; mc.style.animation = "";
-    mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; if (window.__kkFixLabel) window.__kkFixLabel(); $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
+    mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; if (window.__kkFixLabel) window.__kkFixLabel(); $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; });
+    // V26 D21: 카드가 탭한 핀 위치에서 생겨나듯 보이도록, 확대 시작점을 핀 위치로 맞춤(스케일 팝)
+    (function () { var pin = document.querySelector('.pind[data-r="' + id + '"]'); if (!pin) return; var pr = pin.getBoundingClientRect(), mr = mc.getBoundingClientRect(); if (!mr.width || !mr.height) return; var ox = Math.max(0, Math.min(100, (pr.left + pr.width / 2 - mr.left) / mr.width * 100)); var oy = Math.max(0, Math.min(100, (pr.top + pr.height / 2 - mr.top) / mr.height * 100)); mc.style.transformOrigin = ox.toFixed(1) + "% " + oy.toFixed(1) + "%"; })();
+    mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
     c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
     $("ctaMain").textContent = "ここ、見てみる？"; $("ctaSub").textContent = p.short + "・" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW);
     $("mPrice").innerHTML = "<b>" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW) + (document.body.classList.contains("tilde") ? "〜" : "") + "</b><span>₩" + p.priceKrw.toLocaleString() + "・1名</span>";

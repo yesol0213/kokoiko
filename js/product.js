@@ -78,7 +78,7 @@
   function sweetsHtml() {
     var w = it.sweets || { title: it.food.kTitle || "K-スイーツ", sub: "昼・夕食は自由時間。ローカルの味を楽しもう。", imgs: it.food.imgs, p: it.food.p };
     return '<div class="food"><h3>' + w.title + '</h3><div class="s">' + w.sub + '</div><div class="fg">' +
-      w.imgs.map(function (f) { return f[0].indexOf("need:") === 0 ? '<div class="need">(사진필요: ' + f[0].slice(5) + ')</div>' : '<div style="background-image:url(' + img(f[0]) + ')"><span>' + f[1] + '</span></div>'; }).join("") + '</div><div class="fl">' + w.p + '</div></div>';
+      w.imgs.map(function (f) { return f[0].indexOf("need:") === 0 ? '<div class="need">(사진필요: ' + f[0].slice(5) + ')</div>' : '<div class="fzoom" data-src="' + img(f[0]) + '" data-alt="' + f[1] + '" style="background-image:url(' + img(f[0]) + ')"><span>' + f[1] + '</span></div>'; }).join("") + '</div><div class="fl">' + w.p + '</div></div>';
   }
   // 참가자 후기(글): 실제 후기가 data.js의 voices에 들어왔을 때만 표시. 평균 별점·건수는 여기서 계산
   var V = p.voices || [], vAvg = V.length ? (V.reduce(function (s, v) { return s + v.stars; }, 0) / V.length).toFixed(1) : "";
@@ -109,8 +109,8 @@
     voicesHtml() +
     '<div class="sec" id="pick"><div class="h2row"><h2>いつ参加しますか？</h2><button class="calk" id="calOpen">' + CAL + 'カレンダーで見る ›</button></div>' +
       '<div class="lbl">参加日</div><div id="dateChips"></div><div id="timeBox"></div><div id="qtyBox"></div>' +
-      '<div class="info"><div class="ir nw">' + K.icon("ppl") + '<span><b>' + K.MIN_PEOPLE + '名様以上で催行確定</b><small>（未満は全額返金）</small></span></div><div class="ir">' + K.icon("clk") + '予約締切：出発' + K.CLOSE_DAYS_BEFORE + '日前</div><div class="ir nw">' + K.icon("kid") + '大人・子ども同料金／2歳未満は無料</div></div></div>' +
-    '<div class="sec intro2"><div class="intro clip" id="intro">' + cityHtml() + '<hr class="hl">' + recHtml() + '<hr class="hl">' + priceHtml() + '<hr class="hl">' + routeHtml() + spotsHtml() + sweetsHtml() + '</div><button class="more" id="more">詳細情報をもっと見る ⌄</button></div>' +
+      '<div class="info"><div class="ir nw">' + K.icon("ppl") + '<span><b>' + K.MIN_PEOPLE + '名様以上で出発確定</b><small>（未満は全額返金）</small></span></div><div class="ir">' + K.icon("clk") + '予約締切：出発' + K.CLOSE_DAYS_BEFORE + '日前</div><div class="ir nw">' + K.icon("kid") + '大人・子ども同料金／2歳未満は無料</div></div></div>' +
+    '<div class="sec intro2"><div class="intro clip" id="intro">' + cityHtml() + '<hr class="hl">' + recHtml() + '<hr class="hl">' + priceHtml() + '<hr class="hl">' + routeHtml() + spotsHtml() + sweetsHtml() + '</div><button class="more" id="more"><span class="mt">詳細情報をもっと見る</span><svg class="mi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>' +
     galHtml() +
     '<div class="sec"><h2 style="margin-bottom:4px">スケジュール</h2><div class="note" style="margin:0 0 12px">当日の交通状況により変わる場合があります。</div><div class="sl">' +
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
@@ -128,13 +128,13 @@
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
       (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
       '<details class="acc"><summary>キャンセル・返金規定</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
-      '<details class="acc"><summary>お問い合わせ（LINE・Instagram）</summary><div class="accb"><p class="accl">催行確定・日程のご案内・キャンセルや返金のご相談は、LINEでお気軽にどうぞ。</p>' + K.contactLinks() + '</div></details></div>' +
+      '<details class="acc"><summary>お問い合わせ（LINE・Instagram）</summary><div class="accb"><p class="accl">出発確定・日程のご案内・キャンセルや返金のご相談は、LINEでお気軽にどうぞ。</p>' + K.contactLinks() + '</div></details></div>' +
     '<footer id="footer"></footer><button class="totop" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>' +
-    '<div class="bar solid"><div class="bprice"><span id="bLabel"></span><div><b id="bYen"></b><small id="bKrw"></small></div></div><button class="cta w" id="reserve">予約に進む</button></div>' +
+    '<div class="bar solid" id="resBar"><div class="bprice"><span id="bLabel"></span><div><b id="bYen"></b><small id="bKrw"></small></div></div><button class="cta w" id="reserve">予約に進む</button></div>' +
     '<div class="sheet" id="sheet"><div class="dim" data-x></div><div class="body"><div class="grab"></div><div class="sh-hd"><b>参加日を選ぶ</b><button data-x aria-label="閉じる">✕</button></div>' +
       '<div class="sbody"><div class="mo"><button id="mPrev" aria-label="前の月">‹</button><span id="mTitle"></span><button id="mNext" aria-label="次の月">›</button></div>' +
       '<div class="cal" id="cal"></div><div class="legend"><span><i style="background:#C82158"></i>選択中</span><span><i style="background:#C9C3C7"></i>予約不可</span><span style="color:#C9C3C7;font-weight:900">満席</span></div>' +
-      '<div class="note">※祝日・悪天候の日は催行しません。予約締切は出発' + K.CLOSE_DAYS_BEFORE + '日前です。</div>' +
+      '<div class="note">※祝日・悪天候の日は出発しません。予約締切は出発' + K.CLOSE_DAYS_BEFORE + '日前です。</div>' +
       '<div id="sSel"></div><a class="wait" id="wait" hidden href="#">LINEでキャンセル待ちする ›</a></div>' +
       '<div class="sbar"><div class="bprice"><span id="sLabel"></span><div><b id="sYen"></b><small id="sKrw"></small></div></div><button class="cta w" id="sGo" disabled>予約に進む</button></div></div></div>' +
     '<div class="lb" id="lb"><button class="x" aria-label="閉じる">✕</button><div class="lbm" id="lbm"></div><div class="lbn"><button id="lbP" aria-label="前へ">‹</button><span id="lbC"></span><button id="lbN" aria-label="次へ">›</button></div></div>';
@@ -173,7 +173,8 @@
     var box = $("intro"), open = box.classList.toggle("open");
     box.style.maxHeight = open ? "none" : "";
     if (!open) clipH();
-    this.textContent = open ? "閉じる ⌃" : "詳細情報をもっと見る ⌄";
+    this.classList.toggle("on", open);
+    this.querySelector(".mt").textContent = open ? "閉じる" : "詳細情報をもっと見る";
     if (!open) box.scrollIntoView({ block: "start" });
     K.track("intro_toggle", { product: id, open: open });
   };
@@ -203,6 +204,14 @@
     $("lbC").textContent = (li + 1) + " / " + G.length; $("lb").classList.add("on");
   }
   document.querySelectorAll(".gal button").forEach(function (b) { b.onclick = function () { lbShow(+b.getAttribute("data-i")); K.track("gallery_open", { product: id, index: +b.getAttribute("data-i") + 1 }); }; });
+  // K-디저트(.fg) 사진: 눌러서 원본 크게 보기(다운로드 방지)
+  document.querySelectorAll(".fg .fzoom").forEach(function (el) {
+    el.onclick = function () {
+      $("lbm").innerHTML = '<img alt="' + el.getAttribute("data-alt") + '" src="' + el.getAttribute("data-src") + '" oncontextmenu="return false" draggable="false">';
+      $("lbC").textContent = ""; $("lb").classList.remove("voice"); $("lb").classList.add("on", "single");
+      K.track("sweets_photo_open", { product: id });
+    };
+  });
   // 후기 보기: 따로 페이지를 만들지 않고 사진 확대 화면을 그대로 씀 — 사진 + 왼쪽 아래 흰 글씨 후기, 넘기면 다음 후기
   var lbMode = "gal";
   function lbVoice(i) {
@@ -235,9 +244,9 @@
   // 시간·인원 영역 html (o = 선택 상태, pre = id 접두어)
   function selHtml(o, pre) {
     var h = "";
-    if (o.date) h += '<div class="lbl">時間</div><button class="c' + (o.time ? " sel" : "") + '" id="' + pre + 'time">' + p.time + '</button><div class="meet">📍 集合場所：' + K.MEETING.ja + '</div>';
+    if (o.date) h += '<div class="lbl">時間</div><button class="c' + (o.time ? " sel" : "") + '" id="' + pre + 'time">' + p.time + '</button>';
     if (o.date && o.time) h += '<div class="lbl">人数</div><div class="qrow"><div><div style="font-size:13px">参加費（1名）</div><b>' + K.yen(p.priceKrw, rate()) + '</b><small>' + K.krw(p.priceKrw) + '</small></div>' +
-      '<div class="pill"><button id="' + pre + 'minus" aria-label="減らす"' + (o.qty ? "" : " disabled") + '>−</button><output>' + o.qty + '</output><button id="' + pre + 'plus" aria-label="増やす">＋</button></div></div><div class="note">2歳未満のお子さまは人数に含めないでください。</div>';
+      '<div class="pill"><button id="' + pre + 'minus" aria-label="減らす"' + (o.qty ? "" : " disabled") + '>−</button><output>' + o.qty + '</output><button id="' + pre + 'plus" aria-label="増やす">＋</button></div></div>';
     return h;
   }
   function selBind(o, pre, done) {
@@ -269,7 +278,8 @@
     K.track("begin_checkout", { product: id, date: o.date, quantity: o.qty, value: p.priceKrw * o.qty, currency: "KRW" });
     location.href = "checkout.html?product=" + id + "&date=" + o.date + "&qty=" + o.qty;
   }
-  $("reserve").onclick = function () {
+  // V26: 버튼 안쪽만이 아니라 하단 바 전체(가격 영역·여백 포함)를 눌러도 같은 동작
+  $("resBar").onclick = function () {
     if (!(st.date && st.time && st.qty)) {
       K.toast("日程とオプションを選択してください。");
       window.scrollTo({ top: $("pick").getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" });
@@ -306,7 +316,7 @@
     barPrice(full ? { date: null } : sp, "sLabel", "sYen", "sKrw", "sGo");
   }
   $("calOpen").onclick = function () { sp = { date: null, time: false, qty: 0 }; view = null; drawCal(); sheetSel(); $("sheet").classList.add("on"); K.track("calendar_open", { product: id }); };
-  $("sheet").addEventListener("click", function (e) { if (e.target.closest("[data-x]")) $("sheet").classList.remove("on"); });
+  $("sheet").addEventListener("click", function (e) { if (e.target.closest("[data-x]")) K.closeSheet($("sheet")); });
   $("mPrev").onclick = function () { var ms = months(); view = ms[ms.indexOf(view) - 1]; drawCal(); };
   $("mNext").onclick = function () { var ms = months(); view = ms[ms.indexOf(view) + 1]; drawCal(); };
   $("sGo").onclick = function () { goCheckout(sp); };

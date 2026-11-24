@@ -116,19 +116,23 @@
   // 빈 값은 회색 괄호 안 항목 이름 (확정되면 값으로 교체)
   var TBD = function (t) { return '<span class="tbd">(' + t + ')</span>'; };
   var LEGAL = {
-    legal: '<h3>特定商取引法に基づく表記</h3><dl><dt>販売業者</dt><dd>코코이코</dd><dt>運営責任者</dt><dd>SUN IL/ROH</dd><dt>事業者登録番号</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>通信販売業申告番号</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>旅行業登録番号</dt><dd>' + TBD("여행업 등록번호") + '</dd><dt>所在地</dt><dd>' + TBD("주소") + '</dd><dt>電話番号</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>メール</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
-    terms: '<h3>利用規約</h3><p>本サービスは、韓国の日帰りツアーの予約受付を行います。ツアーは10名以上のお申し込みで催行が確定します。集合時間に遅れた場合、ご参加いただけないことがあります。</p><p>' + TBD("이용약관 전문") + '</p>',
-    privacy: '<h3>プライバシーポリシー</h3><p>ご予約時にいただく情報（お名前・メールアドレス・電話番号・LINE ID）は、ツアーのご案内・催行連絡・お問い合わせ対応のみに使用し、第三者に提供しません。決済情報は決済代行会社（トスペイメンツ）が管理し、当社は保存しません。</p><dl><dt>保管期間</dt><dd>' + TBD("개인정보 보관 기간") + '</dd><dt>責任者</dt><dd>' + TBD("개인정보 보호책임자") + '</dd></dl><p>' + TBD("개인정보처리방침 전문") + '</p>',
-    cancel: '<h3>キャンセル・返金規定</h3><ul><li>' + K.cancel.join("</li><li>") + '</li></ul><p>例外：' + TBD("천재지변 등 예외 기준") + '</p><p>キャンセルはLINEで注文番号をお知らせください。</p>',
+    legal: '<dl><dt>販売業者</dt><dd>코코이코</dd><dt>運営責任者</dt><dd>SUN IL/ROH</dd><dt>事業者登録番号</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>通信販売業申告番号</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>旅行業登録番号</dt><dd>' + TBD("여행업 등록번호") + '</dd><dt>所在地</dt><dd>' + TBD("주소") + '</dd><dt>電話番号</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>メール</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd><dt>販売価格</dt><dd>各商品ページに記載（韓国ウォン・税込・1名あたり）</dd><dt>支払方法・時期</dt><dd>クレジットカード／ご予約時</dd><dt>提供時期</dt><dd>ご予約のツアー当日</dd><dt>キャンセル</dt><dd>出発3日前まで全額返金。それ以降は返金不可（天災等を除く）</dd></dl>',
+    terms: '<p>本サービスは、韓国の日帰りツアーの予約受付を行います。ツアーは10名以上のお申し込みで出発が確定します。集合時間に遅れた場合、ご参加いただけないことがあります。</p><p>' + TBD("이용약관 전문") + '</p>',
+    privacy: '<p>ご予約時にいただく情報（お名前・メールアドレス・LINE ID）は、ツアーのご案内・出発確定の連絡・お問い合わせ対応のみに使用し、第三者に提供しません。決済情報は決済代行会社（トスペイメンツ）が管理し、当社は保存しません。</p><dl><dt>保管期間</dt><dd>' + TBD("개인정보 보관 기간") + '</dd><dt>責任者</dt><dd>' + TBD("개인정보 보호책임자") + '</dd></dl><p>' + TBD("개인정보처리방침 전문") + '</p>',
+    cancel: '<ul><li>' + K.cancel.join("</li><li>") + '</li></ul><p>例外：' + TBD("천재지변 등 예외 기준") + '</p><p>キャンセルはLINEで注文番号をお知らせください。</p>',
     // PG 심사용 사업자정보 (국문, 결제 페이지에서 엶)
-    biz: '<h3>사업자정보</h3><dl><dt>상호</dt><dd>코코이코</dd><dt>대표자</dt><dd>SUN IL/ROH</dd><dt>사업자등록번호</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>통신판매업 신고번호</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>사업장 주소</dt><dd>' + TBD("주소") + '</dd><dt>유선번호</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>이메일</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd></dl>'
+    biz: '<dl><dt>상호</dt><dd>코코이코</dd><dt>대표자</dt><dd>SUN IL/ROH</dd><dt>사업자등록번호</dt><dd>' + TBD("사업자등록번호") + '</dd><dt>통신판매업 신고번호</dt><dd>' + TBD("통신판매업 신고번호") + '</dd><dt>사업장 주소</dt><dd>' + TBD("주소") + '</dd><dt>유선번호</dt><dd>' + TBD("유선 전화번호") + '</dd><dt>이메일</dt><dd>' + (K.CONTACT_EMAIL || TBD("문의 이메일")) + '</dd></dl>'
   };
   K.openLegal = function (k) {
-    var m = document.getElementById("modal");
-    if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; document.body.appendChild(m);
-      m.addEventListener("click", function (e) { if (e.target === m || e.target.closest("[data-close]")) m.hidden = true; }); }
-    m.innerHTML = '<div class="modal-box"' + (k === "biz" ? ' lang="ko"' : '') + '>' + LEGAL[k] + '<button type="button" class="btn-sub" data-close>' + (k === "biz" ? "닫기" : "閉じる") + '</button></div>';
-    m.hidden = false;
+    var m = document.getElementById("legalSheet");
+    if (!m) {
+      m = document.createElement("div"); m.id = "legalSheet"; m.className = "sheet";
+      document.body.appendChild(m);
+      m.addEventListener("click", function (e) { if (e.target.closest("[data-x]")) K.closeSheet(m); });
+    }
+    var title = k === "legal" ? "特定商取引法に基づく表記" : k === "terms" ? "利用規約" : k === "privacy" ? "プライバシーポリシー" : k === "biz" ? "사업자정보" : "キャンセル・返金規定";
+    m.innerHTML = '<div class="dim" data-x></div><div class="body legal-body"' + (k === "biz" ? ' lang="ko"' : '') + '><div class="grab"></div><div class="sh-hd"><b>' + title + '</b><button type="button" data-x aria-label="' + (k === "biz" ? "닫기" : "閉じる") + '">✕</button></div><div class="legal-sc">' + LEGAL[k] + '</div></div>';
+    m.classList.add("on");
   };
   // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
   K.contactLinks = function () {
@@ -153,11 +157,64 @@
     el.addEventListener("click", function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   };
 
-  // 스크롤 시 섹션 페이드업 (캘린더 시트 제외)
+  // ---------- 하단 시트 공통 동작 (V26: 닫힐 때도 애니메이션 + 손잡이를 당겨서 닫기) ----------
+  // 열려 있던 그대로 사라지지 않고, 내려가며 사라지는 쪽으로 통일 (D28 하단 시트 패턴의 일부)
+  K.closeSheet = function (el) {
+    if (!el || !el.classList.contains("on")) return;
+    var body = el.querySelector(".body"), dim = el.querySelector(".dim");
+    if (!body) { el.classList.remove("on"); return; }
+    body.style.transition = "transform .26s cubic-bezier(.32,.72,0,1)";
+    body.style.transform = "translate(-50%,100%)";
+    if (dim) { dim.style.transition = "opacity .22s ease"; dim.style.opacity = "0"; }
+    setTimeout(function () {
+      el.classList.remove("on");
+      body.style.transition = ""; body.style.transform = "";
+      if (dim) { dim.style.transition = ""; dim.style.opacity = ""; }
+    }, 260);
+  };
+  // 손잡이(.grab)를 눌러 아래로 당기면 실시간으로 따라오고, 놓으면 거리·속도에 따라
+  // 제자리로 돌아가거나(스냅백) 그대로 닫힘. 최신 미국 앱(iOS 시트 등)의 드래그-닫기 동작
+  (function () {
+    var sh = null, body = null, dim = null, startY = 0, lastY = 0, lastT = 0, vy = 0, dragging = false;
+    var DISMISS_PX = 110, DISMISS_VEL = 0.55;
+    function down(e) {
+      var grab = e.target.closest(".grab"); if (!grab) return;
+      sh = grab.closest(".sheet"); if (!sh) return;
+      body = sh.querySelector(".body"); dim = sh.querySelector(".dim");
+      startY = lastY = (e.touches ? e.touches[0].clientY : e.clientY); lastT = Date.now(); vy = 0; dragging = true;
+      body.style.transition = "none"; if (dim) dim.style.transition = "none";
+    }
+    function move(e) {
+      if (!dragging) return;
+      var y = (e.touches ? e.touches[0].clientY : e.clientY), dy = Math.max(0, y - startY), now = Date.now();
+      if (now > lastT) vy = (y - lastY) / (now - lastT);
+      lastY = y; lastT = now;
+      if (e.cancelable) e.preventDefault();
+      body.style.transform = "translate(-50%," + dy + "px)";
+      if (dim) dim.style.opacity = String(Math.max(0, 1 - dy / 280));
+    }
+    function up() {
+      if (!dragging) return;
+      dragging = false;
+      var dy = Math.max(0, lastY - startY);
+      if (dy > DISMISS_PX || vy > DISMISS_VEL) { K.closeSheet(sh); return; }
+      body.style.transition = "transform .3s cubic-bezier(.32,.72,0,1)"; body.style.transform = "translate(-50%,0)";
+      if (dim) { dim.style.transition = "opacity .3s ease"; dim.style.opacity = "1"; }
+      setTimeout(function () { if (body) { body.style.transition = ""; body.style.transform = ""; } if (dim) { dim.style.transition = ""; dim.style.opacity = ""; } }, 300);
+    }
+    document.addEventListener("touchstart", down, { passive: true });
+    document.addEventListener("touchmove", move, { passive: false });
+    document.addEventListener("touchend", up);
+    document.addEventListener("mousedown", down);
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+  })();
+
+  // 스크롤 시 섹션 페이드업 (캘린더 시트 제외). V26: 한 번만 재생하지 않고, 화면에 다시 들어올 때마다 반복 재생(D20)
   K.fadeUp = function (sel) {
     var els = document.querySelectorAll(sel);
     if (!("IntersectionObserver" in window)) return;
-    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }); }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { en.target.classList.toggle("in", en.isIntersecting); }); }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
     els.forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight) return; el.classList.add("fu"); io.observe(el); });
   };
   document.addEventListener("DOMContentLoaded", function () {

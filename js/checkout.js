@@ -5,17 +5,22 @@
   var q = new URLSearchParams(location.search);
   var p = K.products[q.get("product")] || K.products["jeonju-damyang"], id = p.id;
   var date = q.get("date"), qty = Math.min(K.MAX_PER_BOOKING, Math.max(1, parseInt(q.get("qty") || "1", 10) || 1));
-  var widgets = null, pmW = null, pmOk = false, tossAgree = true, FIELDS = ["name", "email", "line", "tel"];
+  var widgets = null, pmW = null, pmOk = false, pmSel = "", tossAgree = true, FIELDS = ["name", "email", "line"];
   if (!date) { location.replace(p.page); return; }
 
-  $("backLink").href = p.page; $("changeLink").href = p.page;
-  if (q.get("from") === "fail") { $("backLink").href = $("changeLink").href = p.page + "?date=" + date + "&qty=" + qty; } // 결제 실패 후에만 상세에서 선택 유지
+  // 뒤로가기(헤더 ‹)·「日程・人数を変更する」 모두 상세 페이지로 돌아갈 때 선택했던 날짜·인원을 유지(상세 페이지가 ?date=&qty=를 읽어 그대로 복원함)
+  $("backLink").href = p.page + "?date=" + date + "&qty=" + qty;
   $("sImg").style.backgroundImage = "url(" + K.img(p.hero[0]) + ")";
   $("sName").innerHTML = p.name.replace("<br>", " ");
   $("sDate").textContent = "参加日：" + K.jpLong(date);
   $("sTime").textContent = "時間：" + p.time;
   $("sQty").textContent = "人数：" + qty + "名";
   $("sMeet").textContent = "集合：" + K.MEETING.ja;
+  $("addrCopy").onclick = function () {
+    var t = K.MEETING.ko, ok = function () { K.toast("住所をコピーしました"); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, ok); else ok();
+    K.track("copy_address", { product: id });
+  };
   var total = p.priceKrw * qty; // 표시용. 실제 금액은 /api/order 가 정함
   $("unit").textContent = K.krw(p.priceKrw) + " × " + qty + "名";
   $("total").textContent = K.krw(total);
@@ -38,27 +43,28 @@
       ]);
     }).then(function (w) {
       var pm = w[0], ag = w[1]; pmW = pm;
-      try { if (pm && pm.getSelectedPaymentMethod) Promise.resolve(pm.getSelectedPaymentMethod()).then(function (m) { pmOk = !!m; }, function () {}); } catch (e2) {}
-      if (pm && pm.on) pm.on("paymentMethodSelect", function (m) { pmOk = !!m; if (pmOk) $("payment-method").classList.remove("need"); K.track("select_payment_method", { method: m && (m.code || m.type) }); });
+      try { if (pm && pm.getSelectedPaymentMethod) Promise.resolve(pm.getSelectedPaymentMethod()).then(function (m) { pmOk = !!m; pmSel = (m && (m.code || m.type)) || pmSel; }, function () {}); } catch (e2) {}
+      if (pm && pm.on) pm.on("paymentMethodSelect", function (m) { pmOk = !!m; pmSel = (m && (m.code || m.type)) || ""; if (pmOk) $("payment-method").classList.remove("need"); K.track("select_payment_method", { method: m && (m.code || m.type) }); });
       if (ag && ag.on) ag.on("agreementStatusChange", function (s) { tossAgree = !!(s && s.agreedRequiredTerms); });
       updBtn();
     });
-  }).catch(function (e) { widgets = null; updBtn(); $("err").textContent = "決済画面を表示できませんでした。時間をおいて再度お試しください。"; console.error(e); });
+  }).catch(function (e) { widgets = null; updBtn(); console.error(e); });
 
   // 입력 검사: 칸을 벗어날 때 인라인 에러. 빠진 칸이 있으면 버튼은 비활성 모양, 누르면 첫 빠진 칸으로 이동
   var RULES = {
     name: [function (v) { return v.trim().length > 0; }, "お名前を入力してください"],
     email: [function (v) { return /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(v.trim()); }, "メールアドレスの形式を確認してください"],
-    tel: [function (v) { var n = v.replace(/[^0-9]/g, ""); return !v.trim() || (/^[0-9+\-\s()]+$/.test(v.trim()) && n.length >= 9 && n.length <= 15); }, "電話番号の形式を確認してください（未入力でもOK）"],
     line: [function (v) { return /^[a-z0-9._-]{4,20}$/.test(v.trim()); }, "LINE IDを確認してください（半角英数字・. - _ 4〜20文字）"]
   };
   var touched = {};
   function okField(f) { return RULES[f][0]($(f).value); }
   function showErr(f) {
-    var bad = touched[f] && !okField(f), el = $(f), box = el.parentNode.querySelector(".ferr");
+    var bad = touched[f] && !okField(f), el = $(f), field = el.closest(".field"), box = field.querySelector(".ferr");
     el.classList.toggle("bad", bad); el.setAttribute("aria-invalid", bad ? "true" : "false");
-    if (bad && !box) { box = document.createElement("div"); box.className = "ferr"; el.insertAdjacentElement("afterend", box); }
+    if (bad && !box) { box = document.createElement("div"); box.className = "ferr"; el.closest(".inwrap").insertAdjacentElement("afterend", box); }
     if (box) { box.textContent = bad ? RULES[f][1] : ""; box.hidden = !bad; }
+    // 체크마크는 필수 항목에서만(전화번호는 任意라 굳이 로즈로 안 바뀌어도 됨)
+    field.classList.toggle("good", !!el.value.trim() && okField(f));
   }
   function allOk() { return FIELDS.every(okField); }
   function updBtn() {
@@ -111,7 +117,7 @@
           return widgets.requestPayment({
             orderId: order.orderId, orderName: order.orderName,
             successUrl: location.origin + "/success.html",
-            failUrl: location.origin + "/fail.html?product=" + id + "&date=" + date + "&qty=" + qty,
+            failUrl: location.origin + "/fail.html?product=" + id + "&date=" + date + "&qty=" + qty + (pmSel ? "&pm=" + encodeURIComponent(pmSel) : ""),
             customerEmail: v.email, customerName: v.name
           });
         });

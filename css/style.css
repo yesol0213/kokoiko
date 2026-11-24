@@ -1047,3 +1047,37 @@ div.sm{margin-left:22px!important;margin-right:22px!important}
 .stage .mcard .ms svg{width:18.8px!important;height:18.8px!important}
 /* 상세 시즌 칩 아이콘 선 굵기를 메인(축소 렌더링)과 같게 */
 .c-season svg,.chip.snow svg{stroke-width:1.45!important}
+
+/* V26 시안 */
+.bar{width:calc(min(100vw,480px) - 44px)!important}
+.bar.lg .cta{height:56px!important}
+.bar .cta{font-size:17px!important}
+.bar .cta small{font-size:11.5px!important;margin-top:3px!important}
+
+.mapin{transition:transform .38s cubic-bezier(.3,.7,.3,1)}
+@keyframes cardup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.mcard:not([hidden]){animation:cardup .38s cubic-bezier(.2,.8,.3,1) both}
+.mcard p.mtags{margin-top:6px!important;font-size:11.5px!important;color:#8A8290;white-space:normal}
+.mtag:not(.on) .nm2 .q{animation:qshake 3.2s ease-in-out infinite!important}
+.mtag[data-region="danyang"]:not(.on) .nm2 .q{animation-delay:1.1s!important}
+.mtag[data-region="jeonju-damyang"]:not(.on) .nm2 .q{animation-delay:2.2s!important}
+@media (prefers-reduced-motion:reduce){.mtag .nm2 .q,.mcard:not([hidden]){animation:none!important}}
+
+.mcard{bottom:12px!important;padding:17px 21px!important}
+.mcard p#mWhy{margin-top:6px!important;line-height:1.4!important}
+.mcard p.mtags{margin-top:2px!important;line-height:1.4!important}
+.mcard p.mprice{margin-top:7px!important}
+
+/* V26: 하단 CTA가 숨은 동안엔 토스트를 화면 아래쪽으로 내려서 띄움 */
+.toast{transition:bottom .25s ease}
+body.bhide .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))!important}
+
+/* V26 모션 D안: 핀 펄스 링 + ? 칩 반응(회전+커짐+분홍 진해짐), 지역별 1.1초 간격(stagger), 선택하면 정지 */
+@keyframes qwig2{0%,22%,100%{transform:rotate(0) scale(1);background:#FCE8EF}4%{transform:rotate(-12deg) scale(1.18);background:#F8CFDD}9%{transform:rotate(10deg) scale(1.18);background:#F8CFDD}14%{transform:rotate(-6deg) scale(1.1)}18%{transform:rotate(3deg) scale(1.04)}}
+@keyframes pring{0%{transform:scale(.35);opacity:.55}38%,100%{transform:scale(1.9);opacity:0}}
+.mtag:not(.on) .nm2 .q{animation:qwig2 3.2s ease-in-out infinite!important}
+.pring{fill:none;stroke:#C82158;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center;pointer-events:none;animation:pring 3.2s ease-out infinite}
+.pring[data-r="danyang"],.mtag[data-region="danyang"]:not(.on) .nm2 .q{animation-delay:1.1s!important}
+.pring[data-r="jeonju-damyang"],.mtag[data-region="jeonju-damyang"]:not(.on) .nm2 .q{animation-delay:2.2s!important}
+.mapin[data-sel] .pring{display:none}
+@media (prefers-reduced-motion:reduce){.pring{animation:none!important}}

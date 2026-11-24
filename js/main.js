@@ -10,33 +10,27 @@
     var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
     // 스크롤로 주소창이 숨고 나타날 때 높이가 바뀌어도 다시 계산하지 않음 (지도가 늘었다 줄었다 하는 효과 방지). 폭이 바뀔 때(회전 등)만 다시 계산
     var key = "" + w; if (key === lastW) return; lastW = key;
-    var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 10 : 100;
+    var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 32 : 104;
     var s = w / 390, avail = (vh - bh) / s;
     // 하늘색 박스는 항상 화면 폭. 짧은 화면: ① 박스 아래를 제주도 절반까지만 보이게 자르고(430) ② 그래도 모자라면 지도를 비율 그대로 축소
     // 제목과 박스 사이 간격은 8의 배수(28px)로 넉넉하게
     var compact = avail < 700, top = compact ? 172 : 196;
     var full = 344 / 366, vis = compact ? 462 : 481; // vis: 박스에 보일 지도 높이(제주도 절반 = 462)
-    var mh = Math.min(vis * full + 12, Math.max(320, avail - top - 4)), k = mh / vis;
+    var mh = Math.max(300, avail - top), k = mh / vis;
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
-    var kk = Math.min(k, full); $("mapin").style.transform = "scale(" + kk + ")";
+    var kk = Math.min(k, full); var roomy = vh >= 740, dy = roomy ? 26 : 14, kb = Math.min(1.0, (mh - 10 - dy - 16) / 447); window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
     var H = top + mh + 12;
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
     // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)
     window.__kkFixLabel = function () {
-      var lab = document.querySelector('.mtag[data-region="jeonju-damyang"]'), mi = $("mapin");
-      if (!lab || !mi) return;
+      var lab = document.querySelector('.mtag[data-region="jeonju-damyang"]'), mi = $("mapin"), card = $("mcard");
+      if (!lab || !mi || !card || card.hidden) return;
       requestAnimationFrame(function () {
-        var scale = kk;
-        for (var n = 0; n < 6; n++) {
-          var lr = lab.getBoundingClientRect(), br = mb.getBoundingClientRect();
-          var card = $("mcard"), ch = card && !card.hidden ? card.getBoundingClientRect().height : 112 * s;
-          var limit = br.bottom - 12 * s - ch - 26 * s;
-          if (lr.bottom <= limit) break;
-          scale = Math.max(0.62, scale - 0.02);
-          mi.style.transform = "scale(" + scale + ")";
-        }
+        var labB = lab.offsetTop + lab.offsetHeight / 2 + 4, avail2 = mb.offsetHeight - 12 - card.offsetHeight - 14 - 10;
+        var sc = Math.max(0.56, Math.min(window.__kkBK || kk, avail2 / labB));
+        mi.style.transform = "scale(" + sc + ")";
       });
     };
     window.__kkFixLabel();
@@ -69,13 +63,17 @@
   sl.addEventListener("scroll", function () { clearTimeout(sl._t); sl._t = setTimeout(upd, 80); });
   [].forEach.call($("th").children, function (b, k) { b.onclick = function () { go(k); }; });
   if ($("arr")) $("arr").onclick = function () { go(Math.min(cur + 1, n - 1)); };
-  // 자동 슬라이드: 3.5초마다 다음 장, 마지막 장 다음은 처음으로. 손으로 넘기면 멈춤. '동작 줄이기' 기기는 자동 넘김 없음
-  var auto = null, AUTO_MS = 3500;
+  // 자동 슬라이드: 카드가 화면에 보일 때만 3.5초마다 다음 장(마지막 다음은 처음). 손으로 만지는 동안은 멈추고, 놓은 뒤 5초 지나면 다시 자동. '동작 줄이기' 기기는 자동 넘김 없음
+  var auto = null, rt = null, inView = false, AUTO_MS = 3500, RESUME_MS = 5000, REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function stopAuto() { if (auto) { clearInterval(auto); auto = null; } }
-  if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
-    auto = setInterval(function () { if (document.hidden) return; go((cur + 1) % n); }, AUTO_MS);
-    ["pointerdown", "touchstart", "wheel"].forEach(function (ev) { sl.addEventListener(ev, stopAuto, { passive: true }); });
-  }
+  function startAuto() { stopAuto(); if (REDUCE || !inView) return; auto = setInterval(function () { if (document.hidden) return; go((cur + 1) % n); }, AUTO_MS); }
+  function holdAuto() { stopAuto(); clearTimeout(rt); }
+  function releaseAuto() { clearTimeout(rt); rt = setTimeout(startAuto, RESUME_MS); }
+  ["pointerdown", "touchstart"].forEach(function (ev) { sl.addEventListener(ev, holdAuto, { passive: true }); });
+  ["pointerup", "pointercancel", "touchend", "touchcancel"].forEach(function (ev) { sl.addEventListener(ev, releaseAuto, { passive: true }); });
+  sl.addEventListener("wheel", function () { holdAuto(); releaseAuto(); }, { passive: true });
+  [].forEach.call($("th").children, function (b) { b.addEventListener("click", function () { holdAuto(); releaseAuto(); }); });
+  if ($("arr")) $("arr").addEventListener("click", function () { holdAuto(); releaseAuto(); });
   // 큰 카드 사진 전체: 탭하면 상세로 (스와이프·썸네일·화살표는 그대로)
   var sx = 0, sy = 0;
   sl.addEventListener("pointerdown", function (e) { sx = e.clientX; sy = e.clientY; });
@@ -97,13 +95,13 @@
   // 지도 지역 태그: 누르면 아래 「≒ 日本でいうと」 박스와 하단 버튼만 바뀜 (스크롤 이동 없음)
   // 지역별: 지도 위 일본 지명 태그 위치 + 하단 박스의 비유 이유
   var JP = {
-    "jeonju-damyang": { x: 160, y: 281, why: "嵐山のような竹林と、三年坂のような韓屋の路地。" },
-    "gangneung": { x: 252, y: 92, why: "ソウルから2時間、海のある軽井沢へ。" },
-    "danyang": { x: 252, y: 207, why: "秋吉台と同じカルストを、空から見下ろす。" }
+    "jeonju-damyang": { x: 160, y: 281, sub: "#森林浴　#自然に癒される　#韓定食の本場", why: "嵐山のような竹林と、韓服でおさんぽする韓屋の路地。" },
+    "gangneung": { x: 252, y: 92, sub: "#高原牧場　#海カフェ　#韓国スイーツ", why: "ソウルからたった2時間半、海のある軽井沢へ。" },
+    "danyang": { x: 252, y: 207, sub: "#ユネスコ世界ジオパーク　#フォトスポット", why: "秋吉台と同じ石灰岩、でも川が流れる。" }
   };
   function clearRegion() {
     var lb = $("likeBox"), c = $("mainCta");
-    lb.classList.add("empty"); $("jpTag").hidden = true; $("mcard").hidden = true; $("mapin").removeAttribute("data-sel"); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = "≒ ？"; });
+    lb.classList.add("empty"); $("jpTag").hidden = true; $("mcard").hidden = true; $("mapin").removeAttribute("data-sel"); if (window.__kkBefore) $("mapin").style.transform = window.__kkBefore; document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = "≒ ？"; });
     c.classList.add("off"); c.setAttribute("aria-disabled", "true"); c.href = "#"; c.removeAttribute("data-go");
     $("ctaMain").textContent = "タップしてチェック！"; $("ctaSub").textContent = "";
   }
@@ -111,7 +109,7 @@
     var p = K.products[id], lb = $("likeBox"), c = $("mainCta"), j = JP[id], t = $("jpTag");
     
     lb.classList.remove("empty"); $("lbWhy").innerHTML = j.why;
-    var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").classList.toggle("gw", !!p.season.tone); $("mSeason").innerHTML = K.icon(p.season.icon, "currentColor", p.season.icon === "flower" ? 19 : 14) + p.season.label; $("mWhy").textContent = j.why;
+    var mc = $("mcard"); $("mName").textContent = p.short; $("mLike").textContent = p.like; $("mSeason").classList.toggle("gw", !!p.season.tone); $("mSeason").innerHTML = K.icon(p.season.icon, "currentColor", p.season.icon === "flower" ? 19 : 14) + p.season.label; $("mWhy").textContent = j.why; $("mTags").textContent = j.sub; mc.style.animation = "none"; void mc.offsetWidth; mc.style.animation = "";
     mc.hidden = false; mc.onclick = null; mc.style.cursor = "default"; if (window.__kkFixLabel) window.__kkFixLabel(); $("mapin").setAttribute("data-sel", id); document.querySelectorAll(".mtag .q").forEach(function (q) { q.textContent = q.getAttribute("data-q") === id ? "≒ " + p.like : "≒ ？"; }); mc.classList.remove("pop"); void mc.offsetWidth; mc.classList.add("pop");
     c.classList.remove("off"); c.removeAttribute("aria-disabled"); c.href = p.page; c.setAttribute("data-go", id);
     $("ctaMain").textContent = "ここ、見てみる？"; $("ctaSub").textContent = p.short + "・" + K.yen(p.priceKrw, K.rate || K.FALLBACK_JPY_PER_KRW);
@@ -153,8 +151,11 @@
   }
   window.addEventListener("scroll", barScroll, { passive: true });
 
-  // 큰 카드가 화면 밖으로 나가면 슬라이드를 1장째로 되돌림 (돌아왔을 때 처음부터)
+  // 큰 카드 사진이 절반 이상 보이면 자동 슬라이드 시작, 화면 밖으로 나가면 1장째로 되돌리고 멈춤 (돌아오면 처음부터 다시)
   if ("IntersectionObserver" in window) new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (!e.isIntersecting && sl.scrollLeft > 0) sl.scrollTo({ left: 0 }); });
-  }, { threshold: 0 }).observe(sl);
+    es.forEach(function (e) {
+      if (!e.isIntersecting) { inView = false; holdAuto(); if (sl.scrollLeft > 0) sl.scrollTo({ left: 0 }); }
+      else if (e.intersectionRatio >= 0.5 && !inView) { inView = true; clearTimeout(rt); startAuto(); }
+    });
+  }, { threshold: [0, 0.5] }).observe(sl);
 })();

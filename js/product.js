@@ -133,10 +133,9 @@
     '<div class="bar solid" id="resBar"><div class="bprice"><span id="bLabel"></span><div><b id="bYen"></b><small id="bKrw"></small></div></div><button class="cta w" id="reserve">予約に進む</button></div>' +
     '<div class="sheet" id="sheet"><div class="dim" data-x></div><div class="body"><div class="grab"></div><div class="sh-hd"><b>参加日を選ぶ</b><button data-x aria-label="閉じる">✕</button></div>' +
       '<div class="sbody"><div class="mo"><button id="mPrev" aria-label="前の月">‹</button><span id="mTitle"></span><button id="mNext" aria-label="次の月">›</button></div>' +
-      '<div class="cal" id="cal"></div><div class="legend"><span><i style="background:#C82158"></i>選択中</span><span><i style="background:#C9C3C7"></i>予約不可</span><span style="color:#C9C3C7;font-weight:900">満席</span></div>' +
-      '<div class="note">※祝日・悪天候の日は出発しません。予約締切は出発' + K.CLOSE_DAYS_BEFORE + '日前です。</div>' +
+      '<div class="cal" id="cal"></div>' +
       '<div id="sSel"></div><a class="wait" id="wait" hidden href="#">LINEでキャンセル待ちする ›</a></div>' +
-      '<div class="sbar"><div class="bprice"><span id="sLabel"></span><div><b id="sYen"></b><small id="sKrw"></small></div></div><button class="cta w" id="sGo" disabled>予約に進む</button></div></div></div>' +
+      '<div class="sbar" id="sBar" hidden><div class="bprice"><span id="sLabel"></span><div><b id="sYen"></b><small id="sKrw"></small></div></div><button class="cta w" id="sGo" disabled>予約に進む</button></div></div></div>' +
     '<div class="lb" id="lb"><button class="x" aria-label="閉じる">✕</button><div class="lbm" id="lbm"></div><div class="lbn"><button id="lbP" aria-label="前へ">‹</button><span id="lbC"></span><button id="lbN" aria-label="次へ">›</button></div></div>';
 
   var $ = function (x) { return document.getElementById(x); };
@@ -152,6 +151,19 @@
     else if (d < -8) { bar.classList.remove("hide"); lastY = y; }
   }
   window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  // D5: 하단 바 위치는 그대로 두고, 화면이 짧아 별점·집합 장소 줄(.locrow)이 바에 가릴 때만 대표사진(.dhero)을 줄여 확보 (2026-11-25)
+  function fitHero() {
+    var dhero = $("dhero"), topSec = dhero.nextElementSibling;
+    if (!topSec) return;
+    dhero.style.height = "";
+    var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
+    var bar = $("resBar"), bh = bar ? bar.getBoundingClientRect().height + 12 : 80; // 바는 바닥에 붙음(D5) — 바 높이 + 여유 12
+    var need = dhero.offsetHeight + topSec.offsetHeight, avail = vh - bh;
+    if (need > avail) dhero.style.height = Math.max(220, dhero.offsetHeight - (need - avail)) + "px";
+  }
+  fitHero(); window.addEventListener("resize", fitHero); if (window.visualViewport) window.visualViewport.addEventListener("resize", fitHero); window.addEventListener("load", fitHero);
+
   $("shareTop").onclick = function () { K.share({ title: p.title + "｜ここいこ", text: "ソウル発 日帰り ≒ " + p.like, medium: "detail", content: id }); };
 
   // 대표 사진 슬라이드 카운터
@@ -246,14 +258,14 @@
     var h = "";
     if (o.date) h += '<div class="lbl">時間</div><button class="c' + (o.time ? " sel" : "") + '" id="' + pre + 'time">' + p.time + '</button>';
     if (o.date && o.time) h += '<div class="lbl">人数</div><div class="qrow"><div><div style="font-size:13px">参加費（1名）</div><b>' + K.yen(p.priceKrw, rate()) + '</b><small>' + K.krw(p.priceKrw) + '</small></div>' +
-      '<div class="pill"><button id="' + pre + 'minus" aria-label="減らす"' + (o.qty ? "" : " disabled") + '>−</button><output>' + o.qty + '</output><button id="' + pre + 'plus" aria-label="増やす">＋</button></div></div>';
+      '<div class="pill"><button id="' + pre + 'minus" aria-label="減らす"' + (o.qty ? "" : " disabled") + '>−</button><output>' + o.qty + '</output><button id="' + pre + 'plus" aria-label="増やす"' + (o.qty >= K.MAX_PER_BOOKING ? " disabled" : "") + '>＋</button></div></div>';
     return h;
   }
   function selBind(o, pre, done) {
     if (o.date) $(pre + "time").onclick = function () { o.time = !o.time; o.qty = 0; done(); K.track("select_time", { product: id }); };
     if (o.date && o.time) {
       $(pre + "minus").onclick = function () { o.qty = Math.max(0, o.qty - 1); done(); };
-      $(pre + "plus").onclick = function () { if (o.qty >= K.MAX_PER_BOOKING) { K.toast("1回のご予約は" + K.MAX_PER_BOOKING + "名までです"); return; } o.qty++; done(); K.track("select_quantity", { product: id, quantity: o.qty }); };
+      $(pre + "plus").onclick = function () { if (o.qty >= K.MAX_PER_BOOKING) return; o.qty++; done(); K.track("select_quantity", { product: id, quantity: o.qty }); };
     }
   }
   // 하단 바 가격: 인원 선택 전 = 할인율 + 혼자 갈 때 비용(취소선), 선택 후 = n名選択 + 합계
@@ -281,7 +293,7 @@
   // V26: 버튼 안쪽만이 아니라 하단 바 전체(가격 영역·여백 포함)를 눌러도 같은 동작
   $("resBar").onclick = function () {
     if (!(st.date && st.time && st.qty)) {
-      K.toast("日程とオプションを選択してください。");
+      K.toast(st.date ? "時間と人数を選択してください" : "参加日を選択してください"); // N22. 「時間と人数…」는 임시 문구(W10)
       window.scrollTo({ top: $("pick").getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" });
       K.track("reserve_need_select", { product: id }); return;
     }
@@ -310,7 +322,8 @@
   function sheetSel() {
     var full = sp.date && dates[sp.date] === "full";
     $("wait").hidden = !full;
-    if (!sp.date) $("sSel").innerHTML = '<div class="pickhint">日程を選択してください</div>';
+    $("sBar").hidden = !sp.date || full; // N22: 가격·CTA 줄은 예약 가능한 날짜를 골랐을 때만
+    if (!sp.date) $("sSel").innerHTML = '<div class="pickhint">参加日を選択してください</div>';
     else if (full) $("sSel").innerHTML = '<div class="pickhint">' + K.jpLong(sp.date) + 'は満席です</div>';
     else { $("sSel").innerHTML = '<div class="pickd">' + K.jpLong(sp.date) + '</div>' + selHtml(sp, "s_"); selBind(sp, "s_", sheetSel); }
     barPrice(full ? { date: null } : sp, "sLabel", "sYen", "sKrw", "sGo");

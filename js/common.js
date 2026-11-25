@@ -210,11 +210,11 @@
     document.addEventListener("mouseup", up);
   })();
 
-  // 스크롤 시 섹션 페이드업 (캘린더 시트 제외). V26: 한 번만 재생하지 않고, 화면에 다시 들어올 때마다 반복 재생(D20)
+  // 스크롤 시 섹션 페이드업 (캘린더 시트 제외). 화면 아래 80px 전부터 시작해 빈 공간이 보이지 않게(D24, 2026-11-25). V26: 한 번만 재생하지 않고, 화면에 다시 들어올 때마다 반복 재생(D20)
   K.fadeUp = function (sel) {
     var els = document.querySelectorAll(sel);
     if (!("IntersectionObserver" in window)) return;
-    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { en.target.classList.toggle("in", en.isIntersecting); }); }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { en.target.classList.toggle("in", en.isIntersecting); }); }, { threshold: 0, rootMargin: "0px 0px 80px 0px" });
     els.forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight) return; el.classList.add("fu"); io.observe(el); });
   };
   document.addEventListener("DOMContentLoaded", function () {

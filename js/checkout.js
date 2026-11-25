@@ -126,7 +126,7 @@
       .catch(function (err) {
         busy = false; updBtn(); console.error(err);
         if (err && err.code === "USER_CANCEL") return;
-        var msg = (err && err.message) || "決済を開始できませんでした。"; $("err").textContent = msg; K.toast(msg);
+        var msg = (err && err.message) || "決済を開始できませんでした"; $("err").textContent = msg; K.toast(msg);
       });
   }
   K.track("view_checkout", { product: id, date: date, quantity: qty });

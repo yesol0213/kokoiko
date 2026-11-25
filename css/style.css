@@ -23,7 +23,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .stage .top:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.45),transparent 40%)}
 .stage .hd{position:absolute;left:22px;right:22px;top:26px;display:flex;justify-content:space-between;align-items:center;z-index:3;color:#fff;text-shadow:0 1px 6px rgba(120,30,70,.25)}
 .stage .hd b{font-size:19px;letter-spacing:.04em;font-weight:900}
-.stage .hd a{font-size:13px;font-weight:700}
+.stage .hd a{font-size:13.5px;font-weight:700;color:#fff;text-decoration:none}
 .stage .hero{position:absolute;left:22px;right:22px;top:86px;color:#fff;z-index:2}
 .stage .hero h1{font-size:26px;line-height:1.35;margin:0;font-weight:900;text-shadow:0 1px 8px rgba(120,30,70,.25)}
 .stage .hero p{font-size:13.5px;margin:6px 0 0;line-height:1.6}
@@ -179,10 +179,8 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .cal .d.full.pick{border-color:#C9C3C7}
 .cal .d.pick:not(.full){background:var(--rose)}
 .cal .d.pick:not(.full) b{color:#fff!important}
-.legend{display:flex;gap:12px;font-size:11px;color:var(--sub);margin:12px 0 4px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 .sheet .cta{margin-top:12px;width:100%}
-.wait{display:block;margin-top:10px;font-size:13px;text-align:center;color:#06A54B;font-weight:900}
+.wait{display:block;margin:14px 0 16px;font-size:13.5px;text-align:center;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 /* ---------- Lightbox ---------- */
 .lb.on{display:flex}
 .lb img{max-width:100%;max-height:85vh}
@@ -253,7 +251,7 @@ button,.cta,.go,.gbtn,.ichi-card,.calk{transition:filter .15s,transform .12s,box
 button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97)}
 .bar .cta:not([disabled]):active{transform:scale(.97)}
 /* 페이드업 */
-.fu{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.fu{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
 .fu.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.fu{opacity:1;transform:none}.snowfall{display:none}}
 /* 상세 대표사진 썸네일 */
@@ -274,9 +272,11 @@ button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97
 .lbn button{position:static;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:0;color:#fff;font-size:24px;line-height:1}
 /* 캘린더 시트 */
 .sbody{overflow-y:auto;padding-bottom:16px;flex:1}
-.pickhint{margin-top:14px;padding:14px;border-radius:12px;background:#F5F3F4;color:#9A929E;font-size:14px;font-weight:700;text-align:center}
-.pickd{margin-top:14px;font-size:15px;font-weight:900;color:var(--rose)}
+#sSel:has(+ .wait:not([hidden])) .pickhint{margin-bottom:0}
+.pickhint{margin:22px 0;padding:20px 14px;border-radius:12px;background:#F5F3F4;color:#9A929E;font-size:14px;font-weight:700;text-align:center}
+.pickd{margin-top:22px;font-size:15px;font-weight:700;color:var(--ink)}
 .sbar{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 0 calc(14px + env(safe-area-inset-bottom));margin:0 -4px}
+.sbody:has(+ .sbar[hidden]){padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 .sbar .bprice{padding-left:4px}
 .sbar .cta.w{width:150px;flex:none;margin:0}
 /* 비교표 */
@@ -715,7 +715,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .mapin[data-sel="gangneung"] .ricon[data-r="gangneung"],.mapin[data-sel="danyang"] .ricon[data-r="danyang"],.mapin[data-sel="jeonju-damyang"] .ricon[data-r="jeonju-damyang"]{stroke:#C82158}
 .mcard .ms.gw{background:#FCE8EF;color:#C82158;padding:3px 9px 3px 7px;border-radius:99px}
 .mcard .ms.gw svg{margin:-4px -2px -4px -5px}
-.pickhint{position:absolute;right:14px;bottom:14px;z-index:3;font-size:12.5px;font-weight:700;color:#6B6170;text-shadow:0 0 6px #fff,0 0 2px #fff}
+.mapbox .pickhint{position:absolute;right:14px;bottom:14px;z-index:3;font-size:12.5px;font-weight:700;color:#6B6170;text-shadow:0 0 6px #fff,0 0 2px #fff}
 .mapbox:has(.mapin[data-sel]) .pickhint{display:none}
 .mapbox .pickhint{background:none!important;padding:0!important;border:0!important;box-shadow:none!important;border-radius:0!important;width:auto!important;left:auto!important}
 /* summary card rule */
@@ -871,8 +871,8 @@ body:has(.cta.off) .barbg{opacity:0}
 .bar .cta{height:48px!important;transition:transform .2s ease,box-shadow .2s ease,background-color .15s ease!important}
 @media(hover:hover){.bar .cta:not(.off):not([disabled]):hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(200,33,88,.28)!important;filter:none}}
 /* premium pass — detail reservation bar: price loud */
-.bar.solid{padding:10px 10px 10px 8px;border:1px solid #EEE9EC;box-shadow:0 10px 28px rgba(60,30,60,.14)}
-.bar.solid .bprice{padding-left:16px}
+.bar.solid{width:min(100vw,480px);bottom:0;border-radius:0;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid #EEE9EC;box-shadow:none} /* 상세 하단 바: 화면 하단에 붙은 풀폭(D5) */
+.bar.solid .bprice{padding-left:0}
 .bar.solid .bprice b{font-size:22px;line-height:1.1}
 .bar.solid .bprice small{font-size:11px}
 /* fit fixes: map card must stay below the Jeonju pill; detail bar price on one line */
@@ -1044,7 +1044,7 @@ a,button,.mtag,.cta,.big,.big *,.ichi-card,.mcard,.slides,.slides *{-webkit-tap-
 .big .g .trow .chip.snow svg{width:18px!important;height:18px!important;margin:0!important}
 .mcard{bottom:20px!important}
 .toast{bottom:84px!important}
-body:not(.bhide):has(.bar.solid) .toast{bottom:98px!important} /* 상세 하단 바(70px)+16+12 — D3 */
+body:not(.bhide):has(.bar.solid) .toast{bottom:calc(80px + env(safe-area-inset-bottom,0px))!important} /* 상세 하단 바(68px, 바닥 붙음)+12 — D3 */
 body:not(:has(.bar)) .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important} /* 하단 바 없는 페이지(결제·완료·실패): 화면 바닥 16px — D3 */
 
 .toast{padding:6px 16px!important;line-height:1!important}
@@ -1107,7 +1107,7 @@ div.sm{margin-left:22px!important;margin-right:22px!important}
 .c-season svg,.chip.snow svg{stroke-width:1.45!important}
 
 /* V26 시안 */
-.bar{width:calc(min(100vw,480px) - 44px)!important}
+.bar:not(.solid){width:calc(min(100vw,480px) - 44px)!important}
 .bar.lg .cta{height:56px!important}
 .bar .cta{font-size:17px!important}
 .bar .cta small{font-size:11.5px!important;margin-top:3px!important}
@@ -1157,6 +1157,4 @@ footer p:has(>.ctc) .sep{margin:0 8px}
 /* D26: 더블탭 확대 방지 (iOS) */
 html{touch-action:manipulation}
 /* D26: 달력 시트 안 안내문은 시트 좌우 여백이 이미 있으므로 22px를 더 주지 않는다 — 범례·달력과 같은 선 */
-.sbody .note,.sbody .legend{padding-left:0!important;padding-right:0!important}
-/* D26: LINE으로 연락하는 텍스트 링크는 전 페이지 .tl.ext 규칙 — 본문색 굵게 13.5px + › + 밑줄 (초록 폐지) */
-.wait,.stage .hd a#lineTop{color:var(--ink)!important;font-size:13.5px!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:3px}
+.sbody .note{padding-left:0!important;padding-right:0!important}

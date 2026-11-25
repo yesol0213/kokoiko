@@ -20,7 +20,7 @@
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
     var kk = Math.min(k, full); var roomy = vh >= 740, dy = roomy ? 26 : 14, kb = Math.min(1.0, (mh - 10 - dy - 16) / 447); window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
-    var H = top + mh + 12;
+    var H = top + mh + 12 + 24; // LINE·카톡 등 인앱 브라우저 툴바 높이 차이 대응 버퍼(D44) — 첫 화면 아래 다음 섹션 문구가 비치지 않도록
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
     // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)

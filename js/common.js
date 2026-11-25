@@ -100,6 +100,9 @@
   K.toast = function (msg) {
     var t = document.getElementById("toast");
     if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }
+    // CTA가 화면 안에 있는 페이지(결제완료·실패)에서는 CTA 위로 띄운다 — 버튼·링크를 가리지 않게
+    var ra = document.querySelector(".ract");
+    if (ra) { var r = ra.getBoundingClientRect(); t.style.setProperty("bottom", Math.max(16, window.innerHeight - r.top + 12) + "px", "important"); }
     t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove("on"); }, 2200);
   };
   K.share = function (o) {
@@ -136,8 +139,10 @@
   };
   // 문의 링크: 계정이 아직 없으면 눌렀을 때 '준비 중' 안내
   K.contactLinks = function () {
-    var ln = function (url, label, ch) { return '<a class="cl" href="' + (url || "#") + '"' + (url ? ' target="_blank" rel="noopener"' : ' data-soon="' + label + '"') + ' data-ch="' + ch + '">' + label + '</a>'; };
-    return ln(K.LINE_ADD_URL, "LINE", "line") + '<span class="sep">|</span>' + ln(K.INSTAGRAM_URL, "Instagram", "instagram");
+    var ln = function (url, label, ch, same) { return '<a class="cl" href="' + (url || "#") + '"' + (url ? (same ? '' : ' target="_blank" rel="noopener"') : ' data-soon="' + label + '"') + ' data-ch="' + ch + '">' + label + '</a>'; };
+    var sep = '<span class="sep">|</span>';
+    // 메일 주소가 정해지기 전에는 눌렀을 때 '준비 중' 안내 (LINE·Instagram과 같은 방식)
+    return ln(K.LINE_ADD_URL, "LINE", "line") + sep + ln(K.INSTAGRAM_URL, "Instagram", "instagram") + sep + ln(K.CONTACT_EMAIL ? "mailto:" + K.CONTACT_EMAIL : "", "Email", "email", true);
   };
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a[data-ch]"); if (!a) return;
@@ -223,6 +228,12 @@
       (document.body.hasAttribute("data-product") ? '' : '<p><span class="ctc">お問い合わせ</span>' + K.contactLinks() + '</p>') + '<p>© KOKOIKO ここいこ</p>'; // 상세 페이지는 FAQ에 문의가 있어 푸터 문의 생략
     document.addEventListener("click", function (e) { var b = e.target.closest("[data-legal]"); if (b) K.openLegal(b.getAttribute("data-legal")); });
     K.fillYen();
+    // 하단 고정 바가 없는 페이지(결제·완료·실패): CTA가 화면에 보이는 동안 위로 가기 버튼을 CTA 위로 올린다
+    var tt = document.querySelector(".totop.nobar");
+    if (tt) {
+      var lift = function () { var c = document.querySelector(".paybtn,.ract .cta"); if (!c) return; var r = c.getBoundingClientRect(); if (r.top < window.innerHeight) tt.style.setProperty("--lift", (window.innerHeight - r.top) + "px"); else tt.style.removeProperty("--lift"); };
+      window.addEventListener("scroll", lift, { passive: true }); window.addEventListener("resize", lift); lift();
+    }
     K.fadeUp(".psec,.big,.sm,.src,#app>.sec,.res>*,.rbox,.steps,.shbox,footer");
   });
 })();

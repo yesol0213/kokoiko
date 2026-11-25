@@ -55,7 +55,7 @@
     return '<div class="pcmp"><h2 class="ph">' + (p.pcHead ? p.pcHead.replace('{diff}', '<span data-krw="' + (p.priceKrw - tot) + '">' + K.yen(p.priceKrw - tot, rate()) + '</span>') : per >= 10 ? 'ひとりで行くより<br><span class="mk">約' + per + '%安く</span>、ラクに。' : 'ひとりで行くより<br><span class="mk">ずっとラクに</span>。') + '</h2><p class="psub">' + (p.pcSub || 'ソウルの外へ、本当の韓国を感じる旅を') + '</p>' +
       '<div class="pc"><div class="pc-h0"></div><div class="pc-h a">ひとりで</div><div class="pc-h k">KOKOIKO</div><div class="pc-gap"></div><div class="pc-a pc-gap"></div><div class="pc-k pc-gap"></div>' + rows + '<div class="pc-gap"></div><div class="pc-a pc-gap"></div><div class="pc-k pc-gap"></div>' +
       (p.rides ? '<div class="pc-rd"><b>乗り換え</b></div><div class="pc-a rd"><span>' + p.rides + '回</span></div><div class="pc-k rd"><span>なし</span></div>' : '') +
-      '<div class="pc-sum"><b>合計</b><small>※円は本日のレートによる目安</small>' + (legs.some(function (l) { return /<sup>※/.test(l[1] || ""); }) ? '<small>※公共交通がない区間</small>' : '') + (legs.some(function (l) { return /<sup>＊/.test(l[1] || ""); }) ? '<small>＊バスが1日数本しかない区間</small>' : '') + '</div><div class="pc-a sum"><span data-krw="' + tot + '">' + K.yen(tot, rate()) + '</span><small>' + K.krw(tot) + '</small></div>' +
+      '<div class="pc-sum"><b>合計</b><small>※円は本日のレートによる目安</small>' + (legs.some(function (l) { return /<sup>※/.test(l[1] || ""); }) ? '<small>※公共交通がない区間</small>' : '') + (legs.some(function (l) { return /<sup>＊/.test(l[1] || ""); }) ? '<small>＊バスがほとんどなく、<br>タクシーもつかまりにくい区間</small>' : '') + '</div><div class="pc-a sum"><span data-krw="' + tot + '">' + K.yen(tot, rate()) + '</span><small>' + K.krw(tot) + '</small></div>' +
       '<div class="pc-k sum"><span class="mk" data-krw="' + p.priceKrw + '">' + K.yen(p.priceKrw, rate()) + '</span><small>' + K.krw(p.priceKrw) + '</small></div></div></div>';
   }
   function routeHtml() {
@@ -71,7 +71,7 @@
       return '<div class="spot"><h3>' + s.t + '</h3><p>' + s.p + '</p><div class="sph"><div class="spsl">' +
         s.imgs.map(function (k, j) { var m = k.indexOf("need:") === 0 ? null : media(k); return '<div class="spi">' + (!m ? NEED(k) : m.v ? '<video src="' + m.v + '" poster="' + m.p + '" autoplay muted loop playsinline preload="metadata"></video>' : '<img src="' + m.i + '" alt="' + s.t + '" loading="lazy">') + (s.labels && s.labels[j] ? '<span class="plab r">' + s.labels[j] + '</span>' : "") + '</div>'; }).join("") +
         '</div><span class="spn">' + s.n + '</span>' + (s.imgs.length > 1 ? '<div class="dots">' + s.imgs.map(function (x, j) { return '<i' + (j ? '' : ' class="on"') + '></i>'; }).join("") + '</div><span class="spc">1/' + s.imgs.length + '</span><button class="arr spa" aria-label="次の写真"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>' : '') + '</div>' +
-        (s.note ? '<div class="pnote">' + s.note.map(function (l) { return l.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>'); }).join("<br>") + '</div>' : '') + '</div>';
+        (s.note ? '<div class="pnote"' + (s.noteAt != null ? ' data-at="' + s.noteAt + '"' : '') + '>' + s.note.map(function (l) { return l.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>'); }).join("<br>") + '</div>' : '') + '</div>';
     }).join("") + '</div>';
   }
   // K-スイーツ / K-カフェ (세 페이지 고정 섹션)
@@ -164,7 +164,8 @@
     if (loc) {
       // 집합 장소 줄 바로 아래에서 첫 화면이 끝나게 — 섹션 아래 여백·구분선은 접히는 선 밖으로 (D46)
       var inner = loc.getBoundingClientRect().bottom - topSec.getBoundingClientRect().top;
-      dhero.style.height = Math.max(220, Math.min(dhero.offsetHeight, vh - bh - GAP - inner)) + "px";
+      // 긴 화면에서는 440px(375:440)을 넘겨 키워 첫 화면을 채운다 — 상한 600px (D48 예외, 2026-11-25)
+      dhero.style.height = Math.max(220, Math.min(600, vh - bh - GAP - inner)) + "px";
     } else {
       var need = dhero.offsetHeight + topSec.offsetHeight, avail = vh - bh - 12;
       if (need > avail) dhero.style.height = Math.max(220, dhero.offsetHeight - (need - avail)) + "px";
@@ -204,7 +205,11 @@
     var sl = ph.querySelector(".spsl"), c = ph.querySelector(".spc"), a = ph.querySelector(".spa"); if (!c) return;
     var n = sl.children.length, cur = function () { return Math.round(sl.scrollLeft / sl.clientWidth); };
     var ds = ph.querySelectorAll(".dots i");
-    sl.addEventListener("scroll", function () { var i = cur(); c.textContent = (i + 1) + "/" + n; [].forEach.call(ds, function (d, k) { d.classList.toggle("on", k === i); }); }, { passive: true });
+    // 특정 장(noteAt)에서만 보이는 안내: 자리는 늘 차지하고 보이기만 토글해 넘길 때 화면이 밀리지 않게
+    var pn = ph.parentElement.querySelector(".pnote[data-at]");
+    var upd = function (i) { if (pn) pn.style.visibility = (i === +pn.getAttribute("data-at")) ? "" : "hidden"; };
+    upd(cur());
+    sl.addEventListener("scroll", function () { var i = cur(); c.textContent = (i + 1) + "/" + n; [].forEach.call(ds, function (d, k) { d.classList.toggle("on", k === i); }); upd(i); }, { passive: true });
     a.onclick = function () { sl.scrollTo({ left: sl.clientWidth * ((cur() + 1) % n), behavior: "smooth" }); };
     [].forEach.call(ds, function (d, k) { d.onclick = function () { sl.scrollTo({ left: sl.clientWidth * k, behavior: "smooth" }); }; }); // 점을 눌러도 이동
     K.dragScroll(sl); // PC에서는 마우스로 끌어서 넘기기

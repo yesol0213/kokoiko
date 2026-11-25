@@ -6,15 +6,15 @@
 <title>ご予約完了｜ここいこ</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=1125-2">
+<link rel="stylesheet" href="css/style.css?v=1125-3">
 </head>
 <body>
-<div class="wrap" style="padding-bottom:30px">
+<div class="wrap" style="padding-bottom:16px">
   <div class="phd"><b style="margin:0 auto">お支払い結果</b></div>
   <main id="app"><div class="res"><div class="ic" style="background:#F5F3F4"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="#F1E3E8"/><path class="kkspin" d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" stroke="#C82158"/></svg></div><h1>お支払いを確認しています…</h1><p>このままお待ちください。<br>画面を閉じないでください。</p></div></main>
 </div>
-<script src="js/data.js?v=1125-2"></script>
-<script src="js/common.js?v=1125-2"></script>
+<script src="js/data.js?v=1125-3"></script>
+<script src="js/common.js?v=1125-3"></script>
 <script>
 // 결제 성공: 서버(/api/confirm)에서 금액 검증 후 승인 → 완료 화면 + 공유
 (function () {
@@ -57,11 +57,11 @@
         '<div class="sec"><h2>お支払い内訳</h2>' +
           '<div class="rr"><span>参加費 ' + K.krw(p.priceKrw) + ' × ' + qty + '名</span><b>' + K.krw(p.priceKrw * qty) + '</b></div>' +
           '<div class="rr t"><span>合計</span><b class="ty2">' + K.yen(d.totalAmount, K.FALLBACK_JPY_PER_KRW) + '<small>' + K.krw(d.totalAmount) + '</small></b></div>' +
-          '<div class="rr"><span>注文番号</span><b class="oid">' + d.orderId + '</b></div>' +
           '<div class="rr"><span>お支払い方法</span><b>' + (PAYM[d.method] || d.method || "—") + '</b></div>' +
+          '<div class="rr"><span>注文番号</span><b class="oid">' + d.orderId + '</b></div>' +
+          // 안내 1·2·3: 결제 페이지와 같은 문구·같은 양식(소제목 없이 금액 아래 박스)
+          '<div class="cond2"><p>1. お支払い後は「予約待ち」、' + K.MIN_PEOPLE + '名集まった時点で出発確定。</p><p>2. ' + K.MIN_PEOPLE + '名未満の場合は出発' + K.CLOSE_DAYS_BEFORE + '日前にご連絡し、全額返金。</p><p>3. 出発' + K.CLOSE_DAYS_BEFORE + '日前まで全額返金、それ以降のキャンセルは返金不可。</p></div>' +
         '</div>' +
-        // 3. 주의사항
-        '<div class="sec"><h2>今後の流れ</h2><div class="cond2"><p>1. ' + K.MIN_PEOPLE + '名集まったら、LINEで出発確定をお知らせします。</p><p>2. キャンセル・お問い合わせは、LINEでご連絡ください。</p><p>3. 出発' + K.CLOSE_DAYS_BEFORE + '日前までに' + K.MIN_PEOPLE + '名に満たない場合は、全額返金いたします。</p></div></div>' +
         // 4. 다음 행동
         '<div class="ract"><a class="cta" href="index.html">確認</a><a class="tl ext" id="lineBtn" href="#">LINEで問い合わせる ›</a></div>';
       K.getRate().then(function (c) { var y = document.querySelector('.rr.t .ty2'); if (y) y.firstChild.nodeValue = K.yen(d.totalAmount, c.rate); });

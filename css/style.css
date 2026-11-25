@@ -13,8 +13,8 @@ html,body{margin:0;padding:0}
 body{font-family:"Noto Sans JP",sans-serif;color:var(--ink);background:#EEE9EC;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appearance:none;background:none;border:0}
-.wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;position:relative;padding-bottom:110px;overflow-x:hidden}
-.wrap.main{background:var(--bg)}
+.wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;position:relative;padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));overflow-x:hidden}  /* 상세: 푸터 마지막 줄 ~ 하단 바 윗면 23px (S4) */
+.wrap.main{background:var(--bg);padding-bottom:73px}  /* 메인: 떠 있는 바(16+56) 기준 23px (S4) */
 .lg{background:var(--glass);backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:var(--glass-sh)}
 /* ---------- Main: first screen (390-wide stage, scaled) ---------- */
 .stage-wrap{position:relative;overflow:hidden}
@@ -137,8 +137,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .rv{display:flex;gap:8px}
 .rv div{flex:1;height:150px;border-radius:14px;background:#E8E3E6;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;text-align:center}
 .mpc iframe{width:100%;height:170px;border:0;display:block}
-details.acc{border-top:1px solid var(--line)}
-details.acc:last-child{border-bottom:1px solid var(--line)}
+details.acc + details.acc{border-top:1px solid var(--line)}  /* 구분선은 항목 사이에만 — 묶음의 위·아래는 섹션 선이 맡아 선이 겹쳐 보이지 않게 (2026-11-25) */
 details.acc summary{list-style:none;padding:14px 0;display:flex;justify-content:space-between;font-size:14.5px;font-weight:900;cursor:pointer}
 details.acc summary::-webkit-details-marker{display:none}
 details.acc summary:after{content:"＋"}
@@ -146,8 +145,6 @@ details.acc[open] summary:after{content:"−"}
 /* 주문 요약 토글: ＋/− 대신 셰브론 */
 details.acc.chev summary:after{content:"";width:11px;height:11px;border-right:2px solid #9A929E;border-bottom:2px solid #9A929E;transform:rotate(45deg);margin:2px 3px 0 0;transition:transform .2s}
 details.acc.chev[open] summary:after{transform:rotate(-135deg);margin-top:6px}
-details.acc.chev{border-top:0}
-details.acc.chev:last-child{border-bottom:0}
 details.acc.chev summary{padding:0;font-size:17px;align-items:center}
 details.acc.chev[open] summary{padding-bottom:16px}
 .accb.ordb{padding-bottom:0;color:var(--ink)}
@@ -321,7 +318,7 @@ footer .ctc{display:inline;margin:0 10px 0 0;font-weight:700;color:var(--sub)}
 .flow div{font-size:min(12px,3.1vw);line-height:1.6;white-space:nowrap;letter-spacing:-.2px;margin-bottom:6px;color:var(--mute)}
 .rsub{font-size:12.5px;color:var(--mute);margin:0 0 14px}
 .rshare{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border:1.5px solid #E8E3E6;background:#fff;border-radius:12px;font-size:14px;font-weight:900}
-.ract{padding:18px 18px 10px}
+.ract{padding:18px 18px 0}  /* 아래 여백은 페이지의 16px이 맡음 (2026-11-25) */
 .ract .cta{display:block}
 .tl{display:block;text-align:center;margin-top:14px;font-size:13px;font-weight:700;color:var(--sub);text-decoration:underline;text-underline-offset:3px}
 .tl.ext{color:var(--ink);font-size:13.5px}
@@ -453,14 +450,14 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 /* 1·2·3 안내 박스: 상세 페이지 안내 박스(.info)와 같은 규칙 — 면 #F5F3F4·반지름 12·안여백 10/12·본문색·행간 1.9. 한 줄 유지를 위해 글자는 최대 12.5px에서 화면 폭에 맞춰 줄어듦 */
 .cond2{margin-top:12px;background:#F5F3F4;border-radius:12px;padding:10px 12px}
 .cond2 p{margin:0;font-size:min(12.5px,calc((100vw - 60px) * .0335));line-height:1.9;white-space:nowrap;color:var(--ink)}
-.tlist{list-style:none;margin:32px 0 0;padding:0}
+.tlist{list-style:none;margin:23px 0 0;padding:0}  /* 약관 묶음 위 23px — 메인 푸터 이용약관 묶음과 같은 값 (2026-11-25) */
 .tlist li{display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:13px;color:var(--sub)}
 .tlist button{background:none;border:0;padding:12px 0 12px 16px;font-size:12.5px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-family:inherit}
-.agreet{margin:32px 0 12px;text-align:center;font-size:12.5px;color:var(--sub)}
+.agreet{margin:48px 0 12px;text-align:center;font-size:12.5px;color:var(--sub)}  /* 약관 묶음 아래 48px — 위로 가기 버튼(CTA 위 12px)이 사업자정보 「보기」에 붙지 않게 23px보다 넓힘 (2026-11-25) */
 .paybtn{display:block;width:100%;min-height:54px;border:0;border-radius:99px;background:linear-gradient(180deg,#C82158,#C82158);color:#fff;font-size:17px;font-weight:900;font-family:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 18px rgba(200,33,88,.3);cursor:pointer}
 .paybtn[aria-disabled="true"]{background:#E8E3E6;color:#9A929E;box-shadow:none}
-.ckpage .wrap{padding-bottom:calc(32px + env(safe-area-inset-bottom));overflow-x:clip}
-.ckpage .sec:last-child{border-bottom:none}
+.ckpage .wrap{padding-bottom:calc(16px + env(safe-area-inset-bottom));overflow-x:clip}  /* 알약 CTA 아래 16px — 메인 바와 같은 값 (2026-11-25) */
+.ckpage .sec:last-child{border-bottom:none;padding-bottom:0!important}  /* 決済する 아래는 wrap의 16px만 — .sec 22px!important를 눌러야 해서 !important */
 .err:empty{display:none}
 .ckpage .err{font-size:12.5px;color:#E2343B;font-weight:700;text-align:center;margin-bottom:10px}
 /* 탭 영역 48px */
@@ -522,7 +519,7 @@ div.fimg{overflow:hidden}
 .recl{display:table;margin:0 auto;text-align:left}
 /* 가격 비교 */
 .pcmp{text-align:center}
-.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0}
+h2.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* .sec h2(17px)보다 뒤·같은 구체도로 D20 21px 적용. 아래 16px은 S5 */
 .mk{position:relative;z-index:0;padding:0 3px}
 .mk:before{content:"";position:absolute;z-index:-1;left:-2px;right:-2px;bottom:2px;height:46%;background:#FFD84D;border-radius:4px 10px 6px 12px;transform:rotate(-1.5deg)}
 .psub{font-size:13px;color:#8A8290;margin:8px 0 22px}
@@ -545,7 +542,7 @@ div.fimg{overflow:hidden}
 .ck:after{content:"";position:absolute;left:6px;top:3.5px;width:3.5px;height:7px;border:solid #fff;border-width:0 1.8px 1.8px 0;transform:rotate(45deg)}
 .pc .inc{font-size:11px;color:#C82158}
 .pc-sum{display:flex;flex-direction:column;justify-content:center;padding:14px 0;border-top:1px solid #EEE9EC;font-size:13px}
-.pc-sum small{font-size:10px;color:#C9C3C7;font-weight:400;margin-top:6px;white-space:nowrap}
+.pc-sum small{font-size:10px;color:#C9C3C7;font-weight:400;margin-top:6px;line-height:1.4}
 .pc-a.sum,.pc-k.sum{flex-direction:column;padding:16px 0;border-top:1px solid #E8E3E6;border-radius:0 0 14px 14px}
 .pc-a.sum span{font-size:14px;font-weight:900;color:#8A8290;white-space:nowrap}
 .pc-k.sum{border-top-color:#F1E3E8}
@@ -554,7 +551,8 @@ div.fimg{overflow:hidden}
 .pc em{font-style:normal;font-size:.6em;margin-right:1px}
 /* 코스맵 · 장소 소개 */
 .iroute{margin:0 0 36px;text-align:left}
-.rh{font-size:21px;font-weight:900;line-height:1.5;margin:0}
+.iroute>.rh,.iroute>.rs{text-align:center}  /* 코스 섹션 제목·서브는 가격비교(.pcmp)와 같은 가운데 정렬 (2026-11-25) */
+h2.rh{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* 같은 이유 (D20·S5) */
 .rs{font-size:13px;color:#8A8290;margin:6px 0 16px}
 .spot{margin-bottom:40px;text-align:left}
 .spot h3{font-size:18px;margin:0}
@@ -578,10 +576,12 @@ div.fimg{overflow:hidden}
 .wn{flex:none;width:20px;height:20px;border-radius:50%;background:#C82158;color:#fff;font-style:normal;font-size:12px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .wc p{margin:0;font-size:min(10.8px,2.72vw);color:#666;line-height:1.65;white-space:nowrap;letter-spacing:-.2px;padding-left:28px;font-feature-settings:"palt"}
 /* 위로 가기 */
-.totop{position:fixed;right:16px;bottom:96px;width:44px;height:44px;border-radius:50%;border:1px solid #E8E3E6;background:rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;z-index:40;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
+.totop{--ttg:12px;position:fixed;right:16px;bottom:calc(72px + var(--ttg));width:44px;height:44px;border-radius:50%;border:1px solid #E8E3E6;background:rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;z-index:40;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
 .totop.on{opacity:1;pointer-events:auto;transform:none}
 /* 하단 고정 바가 없는 페이지(결제·완료·실패): 화면 바닥 기준 16px */
-.totop.nobar{bottom:16px}
+/* 위로 가기 버튼은 어느 페이지에서나 CTA 위 --ttg(12px). 메인: 알약 바 윗면 72px / 상세: 바 69px + safe-area / 결제·완료·실패: CTA가 화면에 보이면 그 위(--lift는 common.js가 넣음), 안 보이면 바닥 16px */
+.totop.nobar{bottom:calc(var(--lift,4px) + var(--ttg))}
+body:has(.bar.solid) .totop{bottom:calc(69px + var(--ttg) + env(safe-area-inset-bottom,0px))}
 /* 푸터 줄 간격 */
 .footer-links button,footer .cl{display:inline-flex;align-items:center;min-height:32px}
 footer{font-size:12px;color:var(--mute);border-top:1px solid var(--line);line-height:1.5;padding:20px 20px 28px}
@@ -1092,8 +1092,6 @@ div.sm{margin-left:22px!important;margin-right:22px!important}
 /* 주 버튼 글자 18px (메인·상세 공통) */
 .bar .cta{font-size:18px!important}
 .bar .cta small{font-size:12px!important;margin-top:5px!important}
-/* CTA 바가 70px로 커진 만큼 본문 아래 여백 확보 */
-.wrap{padding-bottom:100px}
 /* 탭 효과는 「≒ ？」 칩에만. 한국 지역명·읽는 법은 움직이지 않음 */
 .mtag .nm2,.mtag .nm2 *{transition:none!important;animation:none!important}
 /* 시즌 칩: 메인·상세 한 벌로 통일 (아이콘 크기·정렬 동일) */
@@ -1157,3 +1155,9 @@ footer p:has(>.ctc) .sep{margin:0 8px}
 html{touch-action:manipulation}
 /* D26: 달력 시트 안 안내문은 시트 좌우 여백이 이미 있으므로 22px를 더 주지 않는다 — 범례·달력과 같은 선 */
 .sbody .note{padding-left:0!important;padding-right:0!important}
+
+/* ---------- 결제완료·실패(.ract 있는 페이지): 한 화면에 들어오게 + 소제목 통일 (2026-11-25) ---------- */
+body:has(.ract) .sec{padding-top:12px!important;padding-bottom:12px!important}
+body:has(.ract) .ract{padding-top:12px}
+body:has(.ract) .sec:has(+ .ract){border-bottom:0}  /* CTA 바로 위 구분선 없음 */
+details.acc.chev summary{font-weight:700}  /* 다른 소제목(h2 17px/700)과 같은 굵기 */

@@ -52,7 +52,8 @@
 
   // 입력 검사: 칸을 벗어날 때 인라인 에러. 빠진 칸이 있으면 버튼은 비활성 모양, 누르면 첫 빠진 칸으로 이동
   var RULES = {
-    name: [function (v) { return v.trim().length > 0; }, "お名前を入力してください"],
+    // 임시 문구(W10): 이름은 姓・名 2단어 이상, 반각 영문(ローマ字)만. 예) HANAKO YAMADA
+    name: [function (v) { return /^[A-Za-z]+(?:[ .'\-]+[A-Za-z]+)+$/.test(v.trim().replace(/\s+/g, " ")); }, "姓と名をローマ字（半角）で入力してください"],
     email: [function (v) { return /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(v.trim()); }, "メールアドレスの形式を確認してください"],
     line: [function (v) { return /^[a-z0-9._-]{4,20}$/.test(v.trim()); }, "LINE IDを確認してください（半角英数字・. - _ 4〜20文字）"]
   };

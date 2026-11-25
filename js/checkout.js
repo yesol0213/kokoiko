@@ -11,7 +11,7 @@
   // 뒤로가기(헤더 ‹)·「日程・人数を変更する」 모두 상세 페이지로 돌아갈 때 선택했던 날짜·인원을 유지(상세 페이지가 ?date=&qty=를 읽어 그대로 복원함)
   $("backLink").href = p.page + "?date=" + date + "&qty=" + qty;
   $("sImg").style.backgroundImage = "url(" + K.img(p.hero[0]) + ")";
-  $("sName").innerHTML = p.name.replace("<br>", " ");
+  $("sName").textContent = p.name;
   $("sDate").textContent = "参加日：" + K.jpLong(date);
   $("sTime").textContent = "時間：" + p.time;
   $("sQty").textContent = "人数：" + qty + "名";

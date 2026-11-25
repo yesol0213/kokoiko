@@ -130,7 +130,7 @@
       document.body.appendChild(m);
       m.addEventListener("click", function (e) { if (e.target.closest("[data-x]")) K.closeSheet(m); });
     }
-    var title = k === "legal" ? "特定商取引法に基づく表記" : k === "terms" ? "利用規約" : k === "privacy" ? "プライバシーポリシー" : k === "biz" ? "사업자정보" : "キャンセル・返金規定";
+    var title = k === "legal" ? "特定商取引法に基づく表記" : k === "terms" ? "利用規約" : k === "privacy" ? "プライバシーポリシー" : k === "biz" ? "사업자정보" : "キャンセルポリシー";
     m.innerHTML = '<div class="dim" data-x></div><div class="body legal-body"' + (k === "biz" ? ' lang="ko"' : '') + '><div class="grab"></div><div class="sh-hd"><b>' + title + '</b><button type="button" data-x aria-label="' + (k === "biz" ? "닫기" : "閉じる") + '">✕</button></div><div class="legal-sc">' + LEGAL[k] + '</div></div>';
     m.classList.add("on");
   };
@@ -219,7 +219,7 @@
   };
   document.addEventListener("DOMContentLoaded", function () {
     var f = document.getElementById("footer");
-    if (f) f.innerHTML = '<div class="footer-links"><button data-legal="terms">利用規約</button><button data-legal="privacy">プライバシーポリシー</button><button data-legal="legal">特定商取引法に基づく表記</button><button data-legal="cancel">キャンセル規定</button></div>' +
+    if (f) f.innerHTML = '<div class="footer-links"><button data-legal="terms">利用規約</button><button data-legal="privacy">プライバシーポリシー</button><button data-legal="legal">特定商取引法に基づく表記</button><button data-legal="cancel">キャンセルポリシー</button></div>' +
       (document.body.hasAttribute("data-product") ? '' : '<p><span class="ctc">お問い合わせ</span>' + K.contactLinks() + '</p>') + '<p>© KOKOIKO ここいこ</p>'; // 상세 페이지는 FAQ에 문의가 있어 푸터 문의 생략
     document.addEventListener("click", function (e) { var b = e.target.closest("[data-legal]"); if (b) K.openLegal(b.getAttribute("data-legal")); });
     K.fillYen();

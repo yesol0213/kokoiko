@@ -36,7 +36,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 /* ---------- Main: products ---------- */
 .psec{padding:28px 18px 8px}
 .psec h2{font-size:21px;margin:0;line-height:1.4}
-.psec p{font-size:13px;color:var(--sub);margin:6px 0 0}
+.psec p{font-size:16px;color:var(--sub);margin:6px 0 0}
 .slides{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .slides::-webkit-scrollbar{display:none}
 .slides>div{flex:0 0 100%;height:100%;scroll-snap-align:start;background-size:cover;background-position:center 20%;position:relative}
@@ -66,7 +66,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .sm .t{font-size:15px;font-weight:900}
 .sm .s{font-size:12px;color:#6B6170;margin-top:2px}
 /* ---------- bottom bars ---------- */
-.bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:calc(min(100vw,480px) - 24px);border-radius:34px;padding:8px;display:flex;gap:8px;align-items:center;z-index:20}
+.bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateZ(0);width:calc(min(100vw,480px) - 24px);border-radius:34px;padding:8px;display:flex;gap:8px;align-items:center;z-index:20}
 .bar.solid{background:#fff;border:1px solid #EEE9EC;box-shadow:0 10px 30px rgba(60,30,60,.18)}
 .share{width:50px;height:50px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.9);background:var(--glass);box-shadow:var(--glass-sh)}
 .cta small{display:block;font-size:11px;font-weight:400;opacity:.92}
@@ -114,7 +114,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .info b{color:var(--rose)}
 .food{margin-top:26px;background:#FFF6F0;border-radius:18px;padding:16px}
 .food h3{margin:0;font-size:16px}
-.food .s{font-size:12px;color:#8A6F60;margin-top:2px}
+.food .s{font-size:13px;color:#8A8290;margin-top:2px}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .fg div{height:120px;border-radius:12px;background-size:cover;background-position:center;position:relative}
 .fg .fzoom{cursor:pointer}
@@ -274,7 +274,7 @@ button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97
 .sbody{overflow-y:auto;padding-bottom:16px;flex:1}
 #sSel:has(+ .wait:not([hidden])) .pickhint{margin-bottom:0}
 .pickhint{margin:22px 0;padding:20px 14px;border-radius:12px;background:#F5F3F4;color:#9A929E;font-size:14px;font-weight:700;text-align:center}
-.pickd{margin-top:22px;font-size:15px;font-weight:700;color:var(--ink)}
+.pickd{margin-top:22px;font-size:15px;font-weight:700;color:var(--rose)}
 .sbar{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 0 calc(14px + env(safe-area-inset-bottom));margin:0 -4px}
 .sbody:has(+ .sbar[hidden]){padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 .sbar .bprice{padding-left:4px}
@@ -499,11 +499,15 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .fimg video{width:100%;height:100%;object-fit:cover;display:block}
 div.fimg{overflow:hidden}
 .city{text-align:center}
+/* 지명 읽는법(가타카나 괄호)은 줄 중간에서 쪼개지지 않게 묶는다 (N23) */
+.pn{white-space:nowrap}
+/* 일본어 문장은 문절 단위로 끊는다 — 고아 글자 방지 (D25). 미지원 브라우저는 기존 동작 */
+.sec h1,.ch,.cd,.cf,.cf small,.ph,.psub,.rh,.rs,.spot h3,.spot p,.food h3,.food .s,.food .fl,.psec h2,.psec p,.stage .hero h1,.stage .hero p.hsub{word-break:auto-phrase}
 .ckk{font-size:13px;font-weight:700;color:var(--rose);margin:6px 0 0}
 .ch{font-size:21px;font-weight:900;line-height:1.5;margin:10px 0 0}
-.cd{font-size:15px;color:#6B6170;line-height:1.8;margin:10px 0 0}
+.cd{font-size:13px;color:#8A8290;line-height:1.8;margin:10px 0 0}
 .cf{font-size:16px;font-weight:700;line-height:1.7;margin:40px 0 0}
-.cf small{display:block;font-size:15px;font-weight:400;color:#6B6170;margin-top:6px;line-height:1.8}
+.cf small{display:block;font-size:13px;font-weight:400;color:#8A8290;margin-top:6px;line-height:1.8}
 .fbig,.ftwo>div{position:relative;overflow:hidden}
 .fbig{margin:18px -18px 0;aspect-ratio:3/2}
 .ftwo{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:2px -18px 0}
@@ -518,7 +522,7 @@ div.fimg{overflow:hidden}
 .recl{display:table;margin:0 auto;text-align:left}
 /* 가격 비교 */
 .pcmp{text-align:center}
-.ph{font-size:22px;font-weight:900;line-height:1.5;margin:0}
+.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0}
 .mk{position:relative;z-index:0;padding:0 3px}
 .mk:before{content:"";position:absolute;z-index:-1;left:-2px;right:-2px;bottom:2px;height:46%;background:#FFD84D;border-radius:4px 10px 6px 12px;transform:rotate(-1.5deg)}
 .psub{font-size:13px;color:#8A8290;margin:8px 0 22px}
@@ -550,11 +554,11 @@ div.fimg{overflow:hidden}
 .pc em{font-style:normal;font-size:.6em;margin-right:1px}
 /* 코스맵 · 장소 소개 */
 .iroute{margin:0 0 36px;text-align:left}
-.rh{font-size:20px;font-weight:900;line-height:1.5;margin:0}
+.rh{font-size:21px;font-weight:900;line-height:1.5;margin:0}
 .rs{font-size:13px;color:#8A8290;margin:6px 0 16px}
 .spot{margin-bottom:40px;text-align:left}
 .spot h3{font-size:18px;margin:0}
-.spot p{font-size:13px;color:#6B6170;line-height:1.8;margin:6px 0 0}
+.spot p{font-size:13px;color:#8A8290;line-height:1.8;margin:6px 0 0}
 .sph{position:relative;margin-top:14px;border-radius:16px;overflow:hidden;aspect-ratio:4/5}
 .spsl{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .spsl::-webkit-scrollbar{display:none}
@@ -632,7 +636,7 @@ div.need.fimg{aspect-ratio:4/3}
 .pc-mv em{font-style:normal}
 .pc-mv em{font-size:12px;color:#8A8290}
 .intro.clip{position:relative;overflow:hidden}.intro.clip.open{overflow:visible}
-.more{display:flex;width:100%;min-height:48px;margin-top:16px;border:0;border-top:1px solid #EEE9EC;border-radius:0;align-items:center;justify-content:center;gap:4px;padding:14px 12px 0;font-size:14px;font-weight:700;background:none;color:var(--ink)}
+.more{display:flex;width:100%;min-height:48px;margin-top:16px;border:0;border-radius:0;align-items:center;justify-content:center;gap:4px;padding:0 12px;font-size:14px;font-weight:700;background:none;color:var(--ink)}
 .more .mi{flex:none;transition:transform .2s ease}
 .more.on .mi{transform:rotate(180deg)}
 .mpm:after{content:"";position:absolute;inset:0;background:rgba(110,140,180,.07);pointer-events:none}
@@ -689,9 +693,9 @@ body:has(.cta.off) .barbg{opacity:0}
 /* ===== mock v24: logo / subtitle / quiz ===== */
 .stage .hd b{font-size:16px}
 .stage .hero{top:78px}
-.stage .hero p.hsub{font-size:15px;font-weight:700;margin:8px 0 0;opacity:.95;text-shadow:0 1px 6px rgba(120,30,70,.25)}
+.stage .hero p.hsub{font-size:16px;font-weight:700;margin:8px 0 0;opacity:.95;text-shadow:0 1px 6px rgba(120,30,70,.25)}
 .stage.compact .hero{top:62px}
-.stage.compact .hero p.hsub{font-size:14px;margin-top:5px}
+.stage.compact .hero p.hsub{font-size:15px;margin-top:5px}
 .mtag .q{display:inline;font-size:12px;font-weight:900;color:#C82158;margin-left:5px}
 .mtag .q{display:inline}
 .mtag.on .q{color:#fff}
@@ -890,12 +894,7 @@ body:has(.cta.off) .barbg{opacity:0}
 /* detail top: tighter gaps (hero→chips, note→divider, heading→date label) */
 .dhero+.sec{padding-top:16px}
 
-/* RULE: 1px divider = 20px above and below, on every page */
-.sec{padding-top:20px!important;padding-bottom:20px!important}
 .dhero+.sec{padding-top:16px!important}
-.hl{margin:20px 0}
-.ftsrc:last-of-type{margin-bottom:20px}
-footer{padding-top:20px}
 /* calendar link keeps its 44px tap area without making the heading row taller */
 .h2row .calk{margin:-10px 0}
 #pick .h2row{margin-bottom:14px}
@@ -982,11 +981,11 @@ footer{padding-top:20px}
 .vsec .h2row{justify-content:flex-start;gap:8px}
 .vsec .h2row .xlink{margin-left:auto}
 .sl .si:last-child{margin-bottom:0}
-/* RULE: 1px divider = 22px above and below, on every page */
+/* RULE: 1px divider = 22px above and below, on every page (S1) */
 .sec{padding-top:22px!important;padding-bottom:22px!important}
 .hl{margin:22px 0}
 .ftsrc:last-of-type{margin-bottom:22px}
-footer{padding-top:22px}
+footer{padding-top:22px;padding-bottom:22px}
 /* missing-photo placeholder inside review cards and viewer */
 .vc .vph.need{border:0;border-radius:0;font-size:10.5px;color:#9A929E}
 .vcar.n1 .vc .vph.need{border-radius:12px;font-size:9.5px;line-height:1.4;padding:0 6px;box-sizing:border-box}

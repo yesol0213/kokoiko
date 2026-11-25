@@ -64,9 +64,14 @@
   [].forEach.call($("th").children, function (b, k) { b.onclick = function () { go(k); }; });
   if ($("arr")) $("arr").onclick = function () { go(Math.min(cur + 1, n - 1)); };
   // 자동 슬라이드: 카드가 화면에 보일 때만 3.5초마다 다음 장(마지막 다음은 처음). 손으로 만지는 동안은 멈추고, 놓은 뒤 5초 지나면 다시 자동. '동작 줄이기' 기기는 자동 넘김 없음
-  var auto = null, rt = null, inView = false, AUTO_MS = 3500, RESUME_MS = 5000, REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  function stopAuto() { if (auto) { clearInterval(auto); auto = null; } }
-  function startAuto() { stopAuto(); if (REDUCE || !inView) return; auto = setInterval(function () { if (document.hidden) return; go((cur + 1) % n); }, AUTO_MS); }
+  var auto = null, rt = null, inView = false, AUTO_MS = 3500, FIRST_MS = 1800, RESUME_MS = 5000, REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function stopAuto() { if (auto) { clearTimeout(auto); clearInterval(auto); auto = null; } }
+  // fast=true: 카드가 처음 보일 때 1번 사진만 1.8초로 짧게 넘겨 "자동으로 넘어간다"를 먼저 알린다. 2번부터는 3.5초
+  function startAuto(fast) {
+    stopAuto(); if (REDUCE || !inView) return;
+    if (fast) { auto = setTimeout(function () { auto = null; if (!document.hidden) go((cur + 1) % n); startAuto(); }, FIRST_MS); return; }
+    auto = setInterval(function () { if (document.hidden) return; go((cur + 1) % n); }, AUTO_MS);
+  }
   function holdAuto() { stopAuto(); clearTimeout(rt); }
   function releaseAuto() { clearTimeout(rt); rt = setTimeout(startAuto, RESUME_MS); }
   ["pointerdown", "touchstart"].forEach(function (ev) { sl.addEventListener(ev, holdAuto, { passive: true }); });
@@ -160,7 +165,7 @@
   if ("IntersectionObserver" in window) new IntersectionObserver(function (es) {
     es.forEach(function (e) {
       if (!e.isIntersecting) { inView = false; holdAuto(); if (sl.scrollLeft > 0) sl.scrollTo({ left: 0 }); }
-      else if (e.intersectionRatio >= 0.5 && !inView) { inView = true; clearTimeout(rt); startAuto(); }
+      else if (e.intersectionRatio >= 0.5 && !inView) { inView = true; clearTimeout(rt); startAuto(true); }
     });
   }, { threshold: [0, 0.5] }).observe(sl);
 })();

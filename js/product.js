@@ -60,7 +60,7 @@
   }
   function routeHtml() {
     if (!p.route) return "";
-    var names = (it.spots || it.blocks).map(function (b) { return b.t.replace(/（.*?）/, ""); });
+    var names = (it.spots || it.blocks).map(function (b) { return b.t.replace(/[（(].*?[）)]/g, "").trim(); });
     return '<div class="iroute"><h2 class="rh">' + (it.routeTitle || "ソウルから、<br>乗り換えなしで") + '</h2><p class="rs">' + (it.routeSub || "蚕室駅を出発して、" + names.join("・") + "をめぐる一日") + '</p>' +
       '<button class="rmap" id="rmap" style="aspect-ratio:' + p.route.ratio + ';background-image:url(assets/img/' + p.route.img + ')" aria-label="コースマップを拡大"></button></div>';
   }
@@ -127,7 +127,7 @@
       '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("ok", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("no") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
       (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
-      '<details class="acc"><summary>キャンセル・返金規定</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
+      '<details class="acc"><summary>キャンセルポリシー</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
       '<details class="acc"><summary>お問い合わせ（LINE・Instagram）</summary><div class="accb"><p class="accl">出発確定・日程のご案内・キャンセルや返金のご相談は、LINEでお気軽にどうぞ。</p>' + K.contactLinks() + '</div></details></div>' +
     '<footer id="footer"></footer><button class="totop" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>' +
     '<div class="bar solid" id="resBar"><div class="bprice"><span id="bLabel"></span><div><b id="bYen"></b><small id="bKrw"></small></div></div><button class="cta w" id="reserve">予約に進む</button></div>' +
@@ -158,9 +158,17 @@
     if (!topSec) return;
     dhero.style.height = "";
     var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
-    var bar = $("resBar"), bh = bar ? bar.getBoundingClientRect().height + 12 : 80; // 바는 바닥에 붙음(D5) — 바 높이 + 여유 12
-    var need = dhero.offsetHeight + topSec.offsetHeight, avail = vh - bh;
-    if (need > avail) dhero.style.height = Math.max(220, dhero.offsetHeight - (need - avail)) + "px";
+    var bar = $("resBar"), bh = bar ? bar.getBoundingClientRect().height : 68;
+    var loc = topSec.querySelector(".locrow");
+    var GAP = 14; // 집합 장소 줄 ~ 하단 바 사이 여백
+    if (loc) {
+      // 집합 장소 줄 바로 아래에서 첫 화면이 끝나게 — 섹션 아래 여백·구분선은 접히는 선 밖으로 (D46)
+      var inner = loc.getBoundingClientRect().bottom - topSec.getBoundingClientRect().top;
+      dhero.style.height = Math.max(220, Math.min(dhero.offsetHeight, vh - bh - GAP - inner)) + "px";
+    } else {
+      var need = dhero.offsetHeight + topSec.offsetHeight, avail = vh - bh - 12;
+      if (need > avail) dhero.style.height = Math.max(220, dhero.offsetHeight - (need - avail)) + "px";
+    }
   }
   fitHero(); window.addEventListener("resize", fitHero); if (window.visualViewport) window.visualViewport.addEventListener("resize", fitHero); window.addEventListener("load", fitHero);
 
@@ -317,7 +325,7 @@
       h += '<button class="' + cls + '" data-s="' + s + '"' + (ok ? "" : " disabled") + '><b>' + d + '</b><small>' + (ok && stt === "full" ? "満席" : "") + '</small></button>';
     }
     $("cal").innerHTML = h;
-    $("cal").querySelectorAll("[data-s]:not([disabled])").forEach(function (b) { b.onclick = function () { sp = { date: b.getAttribute("data-s"), time: false, qty: 0 }; drawCal(); sheetSel(); K.track("select_date", { product: id, date: sp.date, place: "calendar" }); }; });
+    $("cal").querySelectorAll("[data-s]:not([disabled])").forEach(function (b) { b.onclick = function () { var s = b.getAttribute("data-s"); sp = sp.date === s ? { date: null, time: false, qty: 0 } : { date: s, time: false, qty: 0 }; drawCal(); sheetSel(); K.track(sp.date ? "select_date" : "unselect_date", { product: id, date: sp.date || s, place: "calendar" }); }; });
   }
   function sheetSel() {
     var full = sp.date && dates[sp.date] === "full";

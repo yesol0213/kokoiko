@@ -34,6 +34,10 @@
         '<div class="fslide"><div class="slides" id="fs">' + it.foodMain.map(function (x) { return '<div><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '>' + lab(x[1]) + '</div>'; }).join("") + '</div><div class="dots" id="fdots">' + it.foodMain.map(function () { return "<i></i>"; }).join("") + '</div></div>' +
         (it.foodNote ? '<p class="cnote">' + it.foodNote + '</p>' : '');
     }
+    if (it.foodWhy) {
+      h += it.foodWhySub.map(function (t) { return '<p class="cfs">' + t.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</p>'; }).join("") +
+        '<div class="fslide"><div class="slides" id="fs2">' + it.foodWhy.map(function (x) { return '<div><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '>' + lab(x[1]) + '</div>'; }).join("") + '</div><div class="dots" id="fdots2">' + it.foodWhy.map(function () { return "<i></i>"; }).join("") + '</div></div>';
+    }
     if (it.cityTitle) h += '<p class="cf">' + it.cityTitle + '<small>' + it.cityDesc + '</small></p>' + fullImg(it.cityImg);
     return h + '</div>';
   }
@@ -171,7 +175,12 @@
   [].forEach.call(hth, function (b, k) { b.onclick = function () { hs.scrollTo({ left: hs.clientWidth * k, behavior: "smooth" }); }; });
   K.dragScroll(hs);
   // 한정식 슬라이드 점 (메인 카드·스팟 사진과 같은 표시)
-  var fs = $("fs"); if (fs) { var fd = $("fdots").children, fOn = function () { var i = Math.round(fs.scrollLeft / fs.clientWidth); [].forEach.call(fd, function (d, k) { d.classList.toggle("on", k === i); }); }; fs.addEventListener("scroll", fOn, { passive: true }); fOn(); K.dragScroll(fs); }
+  ["fs", "fs2"].forEach(function (id) {   // 한정식 슬라이드 2개가 같은 방식으로 움직인다
+    var fs = $(id); if (!fs) return;
+    var fd = $(id === "fs" ? "fdots" : "fdots2").children;
+    var fOn = function () { var i = Math.round(fs.scrollLeft / fs.clientWidth); [].forEach.call(fd, function (d, k) { d.classList.toggle("on", k === i); }); };
+    fs.addEventListener("scroll", fOn, { passive: true }); fOn(); K.dragScroll(fs);
+  });
 
   // 상품 소개 펼치기·접기 (접힌 상태 = 도시 소개 첫 사진까지)
   function clipH() {
@@ -274,7 +283,23 @@
   function stepIn(box, pre, o) {
     var n = (o.date ? 1 : 0) + (o.date && o.time ? 1 : 0), els = box.querySelectorAll(".step");
     for (var i = steps[pre]; i < n && i < els.length; i++) { els[i].style.animationDelay = (i - steps[pre]) * 40 + "ms"; els[i].classList.add("stepin"); }
+    if (n > steps[pre] && els[n - 1]) reveal(els[n - 1]);  // 새로 생긴 단계가 화면 밖이면 보이는 곳까지 올린다
     steps[pre] = n;
+  }
+  // 새 단계(時間·人数)가 접힌 화면 아래에서 생기면 스크롤해서 보여 준다
+  function reveal(el) {
+    setTimeout(function () {
+      var sc = el.closest(".sbody");
+      if (sc) {
+        var over = el.getBoundingClientRect().bottom - sc.getBoundingClientRect().bottom + 16;
+        if (over > 0) sc.scrollTo({ top: sc.scrollTop + over, behavior: "smooth" });
+      } else {
+        var bar = document.querySelector(".bar.solid");
+        var lim = window.innerHeight - (bar ? bar.getBoundingClientRect().height : 0) - 16;
+        var d = el.getBoundingClientRect().bottom - lim;
+        if (d > 0) window.scrollBy({ top: d, behavior: "smooth" });
+      }
+    }, 80);
   }
   function selHtml(o, pre) {
     var h = "";

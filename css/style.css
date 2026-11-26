@@ -183,8 +183,8 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .cal .d small{font-size:9px;height:11px;color:#C9C3C7;font-weight:400}
 .cal .d small.ok{color:#8A8290;background:rgba(255,216,77,.45);border-radius:99px;padding:0 3px;height:13px;line-height:13px;white-space:nowrap}
 .cal .d small.nd{color:#8A8290}  /* あと○名: 출발 확정까지 남은 인원 */
-.cal .d small.ok{color:#2F5F8C}  /* 確定: 출발 확정(긍정 상태 = 시즌 파랑) */
 .cal .d.pick:not(.full) small{color:#fff}
+.cal .d.pick:not(.full) small.ok{background:none;padding:0}  /* 로즈 위에 노랑 금지 (N22) */
 .cal .d[disabled] b{color:#C9C3C7!important}
 .cal .d.full b{color:#C9C3C7!important}
 .cal .d.full.pick{border-color:#C9C3C7}
@@ -285,7 +285,7 @@ button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97
 .lbn{display:flex;align-items:center;gap:22px;margin-top:16px;color:#fff;font-size:15px;font-weight:700}
 .lbn button{position:static;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:0;color:#fff;font-size:24px;line-height:1}
 /* 캘린더 시트 */
-.sbody{overflow-y:auto;padding-bottom:16px;flex:1}
+.sbody{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;min-height:0;padding-bottom:16px;flex:1}
 #sSel:has(+ .wait:not([hidden])) .pickhint{margin-bottom:0}
 .pickhint{margin:22px 0;padding:20px 14px;border-radius:12px;background:#F5F3F4;color:#9A929E;font-size:14px;font-weight:700;text-align:center}
 .sbar{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 0 calc(14px + env(safe-area-inset-bottom));margin:0 -4px}
@@ -446,7 +446,8 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 #dateChips{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;margin-right:-18px;padding-right:18px;scrollbar-width:none}
 #dateChips::-webkit-scrollbar{display:none}
 #dateChips .c{flex:none;margin:0;scroll-snap-align:start}
-.c.dt{width:97px;padding:8px 6px;box-sizing:border-box;text-align:center}  /* 폭 고정(12/2 처럼 짧은 날짜도 같은 칸) + 가운데 정렬. 4번째가 화면 끝에 걸려 밀 수 있음을 알린다 */
+.c.dt{width:138px;padding:8px 6px;box-sizing:border-box;text-align:center}  /* 폭 고정 + 가운데 정렬. 「出発確定・残り19席」이 한 줄에 들어가는 폭(11px 기준 101px + 안여백). 3번째가 반쯤 걸려 밀 수 있음을 알린다 */
+.c.dt small{white-space:nowrap}  /* 상태 줄은 줄바꿈하지 않는다 */
 /* v16 결제 */
 .tbd{color:#C9C3C7}
 .phd2{position:sticky;top:0;z-index:20;background:#fff;height:52px;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;border-bottom:1px solid var(--line);transition:transform .25s ease}
@@ -510,7 +511,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .ir{display:flex;align-items:center;gap:6px}
 .ir.nw{white-space:nowrap}
 .info .ir small{font-size:inherit;color:inherit;font-weight:400}
-.info{margin-top:12px;background:#F5F3F4;border-radius:12px;padding:10px 12px;font-size:min(12.5px,calc((100vw - 60px) * .0335));line-height:1.9}  /* 결제 페이지 안내 박스(.cond2 p)와 같은 크기·행간 */
+.info{margin-top:12px;background:#F5F3F4;border-radius:12px;padding:10px 12px;font-size:min(12.5px,3.4vw);line-height:1.9;color:#6B6170}  /* 크기·행간 = 1126-1 직전 값, 글자색 = 주의사항 박스 본문(.wc p)과 같은 보조 회색 */
 .accb .ir{line-height:1.9}
 /* 상품 소개 (펼치기 없음) */
 .intro2{overflow:visible}
@@ -521,12 +522,14 @@ div.fimg{overflow:hidden}
 /* 지명 읽는법(가타카나 괄호)은 줄 중간에서 쪼개지지 않게 묶는다 (N23) */
 .pn{white-space:nowrap}
 /* 일본어 문장은 문절 단위로 끊는다 — 고아 글자 방지 (D25). 미지원 브라우저는 기존 동작 */
-.sec h1,.ch,.cd,.cf,.cf small,.ph,.psub,.rh,.rs,.spot h3,.spot p,.food h3,.food .s,.food .fl,.psec h2,.psec p,.stage .hero h1,.stage .hero p.hsub{word-break:auto-phrase}
+.sec h1,.ch,.cd,.cf,.cf small,.cfs,.ph,.psub,.rh,.rs,.spot h3,.spot p,.food h3,.food .s,.food .fl,.psec h2,.psec p,.stage .hero h1,.stage .hero p.hsub{word-break:auto-phrase}
 .ckk{font-size:13px;font-weight:700;color:var(--rose);margin:6px 0 0}
 .ch{font-size:21px;font-weight:900;line-height:1.5;margin:10px 0 0}
 .cd{font-size:13px;color:#8A8290;line-height:1.8;margin:10px 0 0}
 .cf{font-size:16px;font-weight:700;line-height:1.7;margin:40px 0 0}
 .cf small{display:block;font-size:13px;font-weight:400;color:#8A8290;margin-top:6px;line-height:1.8}
+.cfs{font-size:13px;color:#8A8290;line-height:1.8;margin:40px 0 0}  /* 헤드 없는 서브라인 — 크기·색은 .cf small과 같고, 위 간격만 .cf와 같은 40px */
+.cfs+.cfs{margin-top:14px}
 
 .fslide{position:relative;margin:18px -18px 0}  /* 한정식 슬라이드 — 칸은 원본(7·8번) 비율 4:3 */
 .fslide .slides{height:auto;aspect-ratio:4/3}

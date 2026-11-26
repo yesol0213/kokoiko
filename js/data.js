@@ -9,6 +9,7 @@ window.KOKOIKO = {
   SHEET_CSV_URL: "",
   FALLBACK_JPY_PER_KRW: 0.107,
   MIN_PEOPLE: 10,
+  CAPACITY: 19,          // 버스 정원 — 残り○席 계산 기준. 21인승 가정값(D47), 클라이언트 확인 필요
   MAX_PER_BOOKING: 19,   // 21인승 프리미엄 버스 기준 − 가이드·내부 직원 2명. 오픈 이슈: 실제 운행 버스 차종 확인 필요
   CLOSE_DAYS_BEFORE: 3,  // 예약 마감·출발 확정 판단: 출발 3일 전(72시간 전) — 대표님 답변 기준
   MEETING: { ja: "蚕室駅(チャムシル駅)", ko: "서울 송파구 올림픽로 지하 265", map: "https://www.google.com/maps/search/?api=1&query=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C+%EC%9E%A0%EC%8B%A4%EC%97%AD" },
@@ -28,8 +29,8 @@ window.KOKOIKO = {
         { stars: 5, text: "【サンプル】メタセコイア並木道の雪景色が印象的でした。", name: "サンプル Dさん", date: "2027年1月参加" }
       ], season: { label: "雪景色 12〜2月", icon: "snow", months: [12, 1, 2] },
       sellDays: [6], // 토요일 출발 (fallback용)
-      hero: ["jd_hero", "jd_bh", "jd_aerial", "jd_tg"], thumb0: "jd_th1",
-      heroCaps: ["冬の韓服でおさんぽ（全州）", "雪の竹緑苑 鳳凰楼（潭陽）", "雪の全州韓屋村", "潭陽 トッカルビ"],
+      hero: ["jd_hero", "jd_bh", "jd_aerial", "jd_f2a", "jd_f2b"], thumb0: "jd_th1",
+      heroCaps: ["冬の韓服でおさんぽ（全州）", "雪の竹緑苑 鳳凰楼（潭陽）", "雪の全州韓屋村", "全州 韓定食", "全州 韓定食"],
       // 혼자 갈 때 비용(고속버스·현지 택시 1인 기준, 2026-11 조사)
       solo: { trans: 183150, entry: 5000, total: 188150, bus: "約9時間<br>乗り換え7回" },
       // 혼자 갈 때 구간별 비용 (2026-11 조사, 시내버스 광주 ₩1,250 / 전주 ₩1,650)
@@ -42,7 +43,7 @@ window.KOKOIKO = {
         img: "jd_bh",
         foodTitle: "韓国でも“食の都”として知られる、全羅道（チョルラド）。",
         foodSub: "なかでも全州は、ユネスコ食文化創造都市に選ばれた美食の街です。",
-        foodImgs: [["jd_f2", "韓定食"], ["jd_tg", "トッカルビ"], ["jd_dt", "竹筒飯（テトンバプ）"]],
+        foodMain: [["jd_f2a"], ["jd_f2b"], ["jd_f2c", "", 50], ["jd_f2d", "", 50], ["jd_f2e", "", 38], ["jd_f2f", "", 45]],  // 한정식 슬라이드 6장 (4:3, 세로 사진은 세 번째 값 = 세로 기준점 %)
         cityTitle: "街のすぐそばに、韓屋が息づく。",
         cityDesc: "全州は、ビルが並ぶ街の中に700軒以上の韓屋が残る町。<br>暮らしと伝統が自然にとけあう風景を歩けます。",
         cityImg: "jd_city",

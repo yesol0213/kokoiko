@@ -129,5 +129,6 @@
         var msg = (err && err.message) || "決済を開始できませんでした"; $("err").textContent = msg; K.toast(msg);
       });
   }
+  K.hideOnScroll(document.querySelector(".phd2"));  // 상단 바 공통 규칙 — 내리면 숨김, 올리면 다시
   K.track("view_checkout", { product: id, date: date, quantity: qty });
 })();

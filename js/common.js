@@ -72,7 +72,14 @@
   K.jpLong = function (s) { var d = K.parse(s); return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日(" + WD[d.getDay()] + ")"; };
 
   // 판매일: 구글 시트 CSV(product,date,status) → 실패 시 fallback(시즌 토요일 + 예시 매진 1일)
+  // 날짜별 예약 인원(결제 완료 기준). 값이 없는 날짜는 달력에 인원 표시를 하지 않는다
+  K.booked = {};
+  // 출발 확정(MIN_PEOPLE)까지 남은 인원. 0 = 확정, null = 정보 없음
+  // 남은 좌석(정원 − 예약 인원). 정원은 가정값이므로 확인 후 노출 여부 재검토
+  K.left = function (pid, date) { var b = (K.booked[pid] || {})[date]; return b == null ? null : Math.max(0, K.CAPACITY - b); };
+  K.need = function (pid, date) { var b = (K.booked[pid] || {})[date]; return b == null ? null : Math.max(0, K.MIN_PEOPLE - b); };
   K.getDates = function (p) {
+    var bk = K.booked[p.id] = {};
     function fallback() {
       var out = {}, today = new Date(); today.setHours(0, 0, 0, 0);
       if (p.gwDates) { p.gwDates.forEach(function (d) { out[d] = "open"; }); }
@@ -82,19 +89,36 @@
           if (p.sellDays.indexOf(d.getDay()) > -1 && p.season.months.indexOf(d.getMonth() + 1) > -1) out[K.ymd(d)] = "open";
         }
       }
-      var keys = Object.keys(out).sort(); if (keys[2]) out[keys[2]] = "full"; // 예시: 3번째 날짜 매진
+      // 예시(구글 시트 연결 전): 앞에서부터 7개 날짜에 예약 인원을 넣는다 — あと4名 / 確定 / 満席 / あと6名 / 確定 / あと5名 / 満席
+      var keys = Object.keys(out).sort(), demo = [6, 12, "full", 0, 15, 5, "full"];  // 4번째(12/26) = 0명 예약 → 確定まで10名(두 자리 확인용)
+      demo.forEach(function (v, i) { if (!keys[i]) return; if (v === "full") out[keys[i]] = "full"; else bk[keys[i]] = v; });
       return out;
     }
     if (!K.SHEET_CSV_URL) return Promise.resolve(fallback());
     return fetch(K.SHEET_CSV_URL).then(function (r) { return r.text(); }).then(function (t) {
       var out = {};
       t.trim().split(/\r?\n/).slice(1).forEach(function (line) {
-        var c = line.split(","); if (c[0] === p.id && c[1]) out[c[1].trim()] = (c[2] || "open").trim();
+        var c = line.split(","); if (c[0] === p.id && c[1]) { out[c[1].trim()] = (c[2] || "open").trim(); if (c[3] && !isNaN(+c[3])) bk[c[1].trim()] = +c[3]; }
       });
       return Object.keys(out).length ? out : fallback();
     }).catch(fallback);
   };
   K.bookable = function (s) { var lim = new Date(); lim.setHours(0, 0, 0, 0); lim.setDate(lim.getDate() + K.CLOSE_DAYS_BEFORE); return K.parse(s) >= lim; };
+
+  // ---------- 상단 바: 내리면 숨기고, 올리면 다시 나타남 (V26 공통 규칙) ----------
+  // 메인은 하단 바에 같은 규칙이 따로 있고, 결제완료·실패는 스크롤이 없어 제외한다
+  K.hideOnScroll = function (el, past, each) {
+    if (!el) return;
+    var lastY = window.scrollY;
+    function on() {
+      var y = window.scrollY, p = past ? past(y) : y > 80, d = y - lastY;
+      if (each) each(p, y);
+      if (!p) { el.classList.remove("hide"); lastY = y; }
+      else if (d > 8) { el.classList.add("hide"); lastY = y; }
+      else if (d < -8) { el.classList.remove("hide"); lastY = y; }
+    }
+    window.addEventListener("scroll", on, { passive: true }); on();
+  };
 
   // ---------- 공유 ----------
   K.toast = function (msg) {

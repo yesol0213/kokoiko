@@ -4,12 +4,13 @@
   // 390px 기준 첫 화면을 화면 폭에 맞게 확대/축소
   // 지도 전체(아래 고정 바 위까지)가 첫 화면에 들어오도록 폭·높이 중 작은 쪽에 맞춤 (카톡·LINE 인앱 브라우저 대응)
   var lastW = 0, _lvh = 0;
-  // 100lvh = 툴바가 숨은 상태의 화면 높이. 주소창이 나타나고 숨어도 값이 바뀌지 않아 첫 화면 높이가 흔들리지 않는다.
-  // lvh를 모르는 브라우저는 예전 방식(보이는 높이 중 가장 작은 값)으로 되돌아간다.
+  // 100svh = 툴바가 보이는 상태의 화면 높이(가장 작은 값). 한 번만 재서 고정하므로 주소창이 나타나고 숨어도 높이가 흔들리지 않고,
+  // 툴바가 보이는 상태에서도 지도 박스 바닥(테두리)이 화면 안에 들어온다. 100lvh(툴바 숨은 높이)를 쓰면 툴바가 보일 때 박스 바닥이 화면 밖으로 나간다.
+  // svh를 모르는 브라우저는 예전 방식(보이는 높이 중 가장 작은 값)으로 되돌아간다.
   function LVH() {
     if (_lvh) return _lvh;
     var d = document.createElement("div");
-    d.style.cssText = "position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none";
+    d.style.cssText = "position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none";
     document.body.appendChild(d);
     var h = d.getBoundingClientRect().height;
     d.parentNode.removeChild(d);
@@ -26,15 +27,25 @@
     var s = w / 390, avail = (vh - bh) / s;
     // 하늘색 박스는 항상 화면 폭. 짧은 화면: ① 박스 아래를 제주도 절반까지만 보이게 자르고(430) ② 그래도 모자라면 지도를 비율 그대로 축소
     // 제목과 박스 사이 간격은 8의 배수(28px)로 넉넉하게
-    var compact = avail < 700, top = compact ? 172 : 196;
-    var full = 344 / 366, vis = compact ? 462 : 481; // vis: 박스에 보일 지도 높이(제주도 절반 = 462)
-    var mh = Math.max(300, avail - top), k = mh / vis;
+    var compact = avail < 700, top0 = compact ? 172 : 196;
+    var full = 344 / 366, vis = compact ? 462 : 481;
+    // 박스 바닥을 지도 그림 바닥에 맞춘다 (잘림·빈 하늘색 둘 다 없앰)
+    // MAP_TOP = 박스 안에서 .mapin 위치(top 10px + 테두리 1px), MAP_INK = .mapin 안에서 지도 그림 바닥(img top 6 + 높이 471.5 × 불투명 569/575)
+    var MAP_TOP = 11, MAP_INK = 472.6, MAP_PAD = 16, room = Math.max(300, avail - top0);
+    var roomyA = vh >= 740, dyA = roomyA ? 26 : 14;
+    var kbA = Math.min(1.0, (room - MAP_TOP - dyA - MAP_PAD) / MAP_INK);
+    var mh = MAP_TOP + dyA + MAP_INK * kbA + MAP_PAD;
+    var top = top0;
+    var k = room / vis;
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
-    var kk = Math.min(k, full); var roomy = vh >= 740, dy = roomy ? 26 : 14, kb = Math.min(1.0, (mh - 10 - dy - 16) / 447); window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
+    var kk = Math.min(k, full); var roomy = roomyA, dy = dyA, kb = kbA; window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
     var H = top + mh; // 지도 묶음 안쪽 여백 0 — 지도 아래 간격은 .psec의 위 40px 하나로 통일 (D44, 1127-1)
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
-    wrap.style.height = (H * s) + "px";
+    // .stage-wrap이 overflow:hidden이라 묶음 높이를 박스 바닥에 딱 맞추면 지도 박스 그림자(0 12px 30px)가 통째로 잘린다.
+    // 그림자가 번지는 만큼(SHADOW) 묶음을 더 길게 잡아 그림자가 보이게 한다.
+    var SHADOW = 32;
+    wrap.style.height = (H * s + SHADOW) + "px";
     // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)
     window.__kkFixLabel = function () {
       var lab = document.querySelector('.mtag[data-region="jeonju-damyang"]'), mi = $("mapin"), card = $("mcard");

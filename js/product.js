@@ -31,12 +31,12 @@
     var h = '<div class="city">' + (it.kicker ? '<p class="ckk">' + it.kicker + '</p>' : "") + '<h2 class="ch">' + it.lead + '</h2><p class="cd">' + it.desc + '</p>' + fullImg(it.img);
     if (it.foodMain) {
       h += '<p class="cf">' + it.foodTitle + '<small>' + it.foodSub + '</small></p>' +
-        '<div class="fslide"><div class="slides" id="fs">' + it.foodMain.map(function (x) { return '<div><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '>' + lab(x[1]) + '</div>'; }).join("") + '</div><div class="dots" id="fdots">' + it.foodMain.map(function () { return "<i></i>"; }).join("") + '</div></div>' +
         (it.foodNote ? '<p class="cnote">' + it.foodNote + '</p>' : '');
     }
     if (it.foodWhy) {
-      h += it.foodWhySub.map(function (t) { return '<p class="cfs">' + t.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</p>'; }).join("") +
-        '<div class="fslide"><div class="slides" id="fs2">' + it.foodWhy.map(function (x) { return '<div><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '>' + lab(x[1]) + '</div>'; }).join("") + '</div><div class="dots" id="fdots2">' + it.foodWhy.map(function () { return "<i></i>"; }).join("") + '</div></div>';
+      // 슬라이드 없이 사진을 그대로 세로로 쌓는다 (점·스와이프 없음)
+      h += it.foodWhy.map(function (x) { return '<div class="fpic"><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '></div>'; }).join("") +
+        it.foodWhySub.map(function (t) { return '<p class="cfs">' + t.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</p>'; }).join("");
     }
     if (it.cityTitle) h += '<p class="cf">' + it.cityTitle + '<small>' + it.cityDesc + '</small></p>' + fullImg(it.cityImg);
     return h + '</div>';
@@ -108,14 +108,14 @@
       '<a class="rvrow" href="#voices">' + K.icon("star", "#F5A623", 17) + '<b>' + (vAvg || "0.0") + '</b><i>・</i><u>レビュー ' + V.length + '件</u></a>' +
       '<div class="locrow">' + K.icon("pin", "#9A929E", 17) + '<span>' + K.MEETING.ja + '</span><a href="#meetmap" id="gmap0">詳しい場所</a></div>' +
       '</div>' +
-    voicesHtml() +
     '<div class="sec" id="pick"><div class="h2row"><h2>いつ参加しますか？</h2><button class="calk" id="calOpen">' + CAL + 'カレンダーで見る ›</button></div>' +
       '<div class="lbl">参加日</div><div id="dateChips"></div><div id="timeBox"></div>' +
       INFO() + '</div>' +
+    voicesHtml() +
     '<div class="sec intro2"><div class="intro clip" id="intro">' + cityHtml() + '<hr class="hl">' + recHtml() + '<hr class="hl">' + priceHtml() + '<hr class="hl">' + routeHtml() + spotsHtml() + sweetsHtml() + '</div><button class="more" id="more"><span class="mt">詳細情報をもっと見る</span><svg class="mi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>' +
-    galHtml() +
     '<div class="sec"><h2 style="margin-bottom:4px">スケジュール</h2><div class="note" style="margin:0 0 12px">当日の交通状況により変わる場合があります。</div><div class="sl">' +
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
+    galHtml() +
     (p.reviews && p.reviews.length ? '<div class="sec"><h2>体験レビュー</h2><div class="rv">' + p.reviews.map(function (r) { return '<div style="background-image:url(' + img(r) + ')"></div>'; }).join("") + '</div></div>' : '') + // 후기 사진이 생기면 data.js 에 reviews: ["파일명", ...] 추가
     '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2 style="margin-bottom:12px">集合場所</h2>' +
@@ -126,7 +126,7 @@
         '<div class="mad"><span>' + K.MEETING.ko + '</span><button class="cpy" id="copyAddr">コピー</button></div></div>' +
       '<div class="note" style="margin-top:8px">※タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
     '<div class="sec" style="border-bottom:none">' +
-      '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("ok", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("no") + K.excludes + '</div></div></details>' +
+      '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
       (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
       '<details class="acc"><summary>キャンセルポリシー</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
@@ -174,13 +174,6 @@
   hs.addEventListener("scroll", function () { var i = Math.round(hs.scrollLeft / hs.clientWidth); $("hcnt").textContent = (i + 1) + " / " + p.hero.length; [].forEach.call(hth, function (b, k) { b.classList.toggle("on", k === i); }); });
   [].forEach.call(hth, function (b, k) { b.onclick = function () { hs.scrollTo({ left: hs.clientWidth * k, behavior: "smooth" }); }; });
   K.dragScroll(hs);
-  // 한정식 슬라이드 점 (메인 카드·스팟 사진과 같은 표시)
-  ["fs", "fs2"].forEach(function (id) {   // 한정식 슬라이드 2개가 같은 방식으로 움직인다
-    var fs = $(id); if (!fs) return;
-    var fd = $(id === "fs" ? "fdots" : "fdots2").children;
-    var fOn = function () { var i = Math.round(fs.scrollLeft / fs.clientWidth); [].forEach.call(fd, function (d, k) { d.classList.toggle("on", k === i); }); };
-    fs.addEventListener("scroll", fOn, { passive: true }); fOn(); K.dragScroll(fs);
-  });
 
   // 상품 소개 펼치기·접기 (접힌 상태 = 도시 소개 첫 사진까지)
   function clipH() {
@@ -269,21 +262,37 @@
   // 예약 조건 안내 박스 — 상세 본문과 달력 시트에서 같은 문구·같은 양식으로 쓴다(N17·D37)
   function INFO() { return '<div class="info"><div class="ir nw">' + K.icon("ppl") + '<span><b>' + K.MIN_PEOPLE + '名様以上で出発確定</b><small>（未満は全額返金）</small></span></div><div class="ir">' + K.icon("clk") + '予約締切：出発' + K.CLOSE_DAYS_BEFORE + '日前</div><div class="ir nw">' + K.icon("kid") + '大人・子ども同料金／2歳未満は無料</div></div>'; }
   function openDates() { return Object.keys(dates).filter(function (d) { return dates[d] !== "full" && K.bookable(d); }).sort(); }
+  // 참가일 칩 목록은 만석일도 함께 보여 준다(달력과 같은 날짜 집합) — 찼다는 걸 알려 빨리 고르게 한다
+  function chipDates() { return Object.keys(dates).filter(function (d) { return K.bookable(d); }).sort(); }
   // 시간·인원 영역 html (o = 선택 상태, pre = id 접두어)
   // 참가일 칩 한 장. 상태 줄은 날짜에 속한 정보라 칩 안에 넣는다(임시 문구 — 확인 전)
   // 안 고른 확정일만 노랑 알약으로 눈에 띄게 하고, 고른 칩은 로즈가 강조를 맡으므로 회색 글자
   function chipHtml(d, sel, attr) {
     var n = K.need(id, d), s = "";
-    if (n === 0) s = sel ? "<small>出発確定・残り" + K.left(id, d) + "席</small>" : '<small><span class="ok">出発確定</span></small>';
-    else if (n > 0) s = "<small>確定まで" + n + "名</small>";
+    if (dates[d] === "full") return '<button class="c dt full"' + (attr || "") + '><b>' + K.jpShort(d) + "</b><small>満席</small></button>";
+    if (n === 0) {
+      var lf = K.left(id, d);
+      s = (sel && lf != null && lf <= K.SHOW_LEFT_MAX) ? "<small>出発確定・残り" + lf + "席</small>"
+        : sel ? "<small>出発確定</small>" : '<small><span class="ok">出発確定</span></small>';
+    } else if (n > 0 && n <= K.SHOW_NEED_MAX) s = "<small>確定まで" + n + "名</small>";
     return '<button class="c dt' + (sel ? " sel" : "") + '"' + (attr || "") + '><b>' + K.jpShort(d) + "</b>" + s + "</button>";
+  }
+  // 가로로 걸쳐 있는 참가일 칩을 고르면, 보이는 만큼만 가로로 밀어 준다(세로는 건드리지 않는다)
+  function chipIntoView() {
+    var box = document.getElementById("dateChips"); if (!box) return;
+    var el = box.querySelector(".c.dt.sel"); if (!el) return;
+    var b = box.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var dx = r.right > b.right ? r.right - b.right : (r.left < b.left ? r.left - b.left : 0);
+    if (!dx) return;  // 이미 다 보이면 아무것도 하지 않는다
+    var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    box.scrollBy({ left: dx, behavior: rm ? "auto" : "smooth" });
   }
   // 단계가 하나 늘었을 때만, 새로 생긴 블록에 등장 애니메이션(40ms 시차)
   var steps = { s_: 0, p_: 0 };
   function stepIn(box, pre, o) {
     var n = (o.date ? 1 : 0) + (o.date && o.time ? 1 : 0), els = box.querySelectorAll(".step");
     for (var i = steps[pre]; i < n && i < els.length; i++) { els[i].style.animationDelay = (i - steps[pre]) * 40 + "ms"; els[i].classList.add("stepin"); }
-    if (n > steps[pre] && els[n - 1]) reveal(els[n - 1]);  // 새로 생긴 단계가 화면 밖이면 보이는 곳까지 올린다
+    if (n > steps[pre] && els[n - 1]) reveal(box.querySelector(".info") || els[n - 1]);  // 새 단계 + 그 아래 안내 박스까지 보이는 곳까지 올린다
     steps[pre] = n;
   }
   // 새 단계(時間·人数)가 접힌 화면 아래에서 생기면 스크롤해서 보여 준다
@@ -323,10 +332,11 @@
     if (btn !== "reserve") $(btn).disabled = !ready; else $(btn).classList.toggle("need", !ready);
   }
   function render() {
-    var sug = openDates();
+    var sug = chipDates();
+    var pin = document.querySelector("#pick .info"); if (pin) pin.hidden = false;
     $("dateChips").innerHTML = sug.length ? sug.map(function (d) { return chipHtml(d, st.date === d, ' data-d="' + d + '"'); }).join("")
       : '<span class="note">現在予約できる日程がありません。LINEでお問い合わせください。</span>';
-    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { st.date = b.getAttribute("data-d"); st.time = false; st.qty = 0; save(); render(); K.track("select_date", { product: id, date: st.date }); }; });
+    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { var d = b.getAttribute("data-d"); if (dates[d] === "full") { st = { date: null, time: false, qty: 0 }; save(); render(); var pf = document.querySelector("#pick .info"); if (pf) pf.hidden = true; $("timeBox").innerHTML = '<div class="pickhint">' + K.jpLong(d) + 'は満席です</div><a class="wait" href="' + (K.LINE_ADD_URL || "#") + '">LINEでキャンセル待ちする ›</a>'; return; } if (st.date === d) { st = { date: null, time: false, qty: 0 }; save(); render(); return; } st.date = d; st.time = false; st.qty = 0; save(); render(); chipIntoView(); K.track("select_date", { product: id, date: st.date }); }; });
     $("timeBox").innerHTML = selHtml(st, "p_");
     stepIn($("timeBox"), "p_", st);
     selBind(st, "p_", function () { save(); render(); });

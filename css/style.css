@@ -511,7 +511,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .ir{display:flex;align-items:center;gap:6px}
 .ir.nw{white-space:nowrap}
 .info .ir small{font-size:inherit;color:inherit;font-weight:400}
-.info{margin-top:12px;background:#F5F3F4;border-radius:12px;padding:10px 12px;font-size:min(12.5px,3.4vw);line-height:1.9;color:#6B6170}  /* 크기·행간 = 1126-1 직전 값, 글자색 = 주의사항 박스 본문(.wc p)과 같은 보조 회색 */
+.info{margin-top:16px;background:#F5F3F4;border-radius:12px;padding:10px 12px;font-size:min(12.5px,3.4vw);line-height:1.9;color:#6B6170}  /* 크기·행간 = 1126-1 직전 값, 글자색 = 주의사항 박스 본문(.wc p)과 같은 보조 회색 */
 .accb .ir{line-height:1.9}
 /* 상품 소개 (펼치기 없음) */
 .intro2{overflow:visible}
@@ -582,7 +582,7 @@ h2.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* .sec h
 h2.rh{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* 같은 이유 (D20·S5) */
 .rs{font-size:13px;color:#8A8290;margin:6px 0 16px}
 .spot{margin-bottom:40px;text-align:left}
-.spot h3{font-size:18px;margin:0}
+.spot h3{font-size:16px;margin:0}
 .spot p{font-size:13px;color:#8A8290;line-height:1.8;margin:6px 0 0}
 .sph{position:relative;margin-top:14px;border-radius:16px;overflow:hidden;aspect-ratio:4/5}
 .spsl{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
@@ -1007,7 +1007,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .vsec .h2row .xlink{margin-left:auto}
 .sl .si:last-child{margin-bottom:0}
 /* RULE: 1px divider = 22px above and below, on every page (S1) */
-.sec{padding-top:22px!important;padding-bottom:22px!important}
+.sec{padding-top:32px!important;padding-bottom:28px!important}
 .hl{margin:22px 0}
 .ftsrc:last-of-type{margin-bottom:22px}
 footer{padding-top:22px;padding-bottom:22px}
@@ -1186,3 +1186,21 @@ body:has(.ract) .sec{padding-top:12px!important;padding-bottom:12px!important}
 body:has(.ract) .ract{padding-top:12px}
 body:has(.ract) .sec:has(+ .ract){border-bottom:0}  /* CTA 바로 위 구분선 없음 */
 details.acc.chev summary{font-weight:700}  /* 다른 소제목(h2 17px/700)과 같은 굵기 */
+
+/* 한정식 사진 2장 — 슬라이드 없이 그대로 쌓는다 (2026-11-27, D49 변경) */
+.fpic{position:relative;margin:18px -18px 0;aspect-ratio:4/3;overflow:hidden}
+.fpic img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Q&A 구간을 회색 면으로 묶는다 (2026-11-27 시안) */
+.sec:has(details.acc){background:#F5F3F4;border-bottom:0}
+.sec:has(details.acc) details.acc + details.acc{border-top-color:#fff}
+
+/* 시안 G1c: 펼친 내용은 흰색, 좌우 끝까지 (박스 아님) */
+.sec:has(details.acc){padding-left:0;padding-right:0}
+.sec:has(details.acc) details.acc summary{padding-left:18px;padding-right:18px}
+.sec:has(details.acc) details.acc[open] .accb{background:#fff;padding:12px 18px 14px}
+
+/* 하단 구간 구분선 제거 (2026-11-27) — 주의사항 상·하, Q&A 위. 푸터 바로 위 선은 남긴다 */
+.sec:has(.gal){border-bottom:0}                     /* 周辺の人気スポット 아래 = 주의사항 위 */
+.sec.warnsec{border-bottom:0}                       /* 주의사항 아래 */
+.sec:has(.mrow){border-bottom:0}  /* 集合場所 아래 = Q&A 위 */

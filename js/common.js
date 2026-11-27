@@ -20,13 +20,15 @@
   window.addEventListener("pagehide", sendDwell);
 
   // ---------- 선 아이콘 (이모지 대신, 메인·상세 공통) ----------
-  var SV = function (d, c, w) { return '<svg class="li" viewBox="0 0 24 24" width="' + (w || 16) + '" height="' + (w || 16) + '" fill="none" stroke="' + (c || "#9A929E") + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
+  var SV = function (d, c, w) { return '<svg class="li" viewBox="0 0 24 24" width="' + (w || 16) + '" height="' + (w || 16) + '" fill="none" stroke="' + (c || "#9A929E") + '" color="' + (c || "#9A929E") + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
   var IC = {
     ppl: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.5 0 4 1.5 4.5 4.3"/>',
     clk: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
     kid: '<circle cx="8" cy="6.5" r="2.6"/><path d="M3.8 19.5c.4-3.6 2-5.6 4.2-5.6s3.8 2 4.2 5.6"/><circle cx="16.5" cy="10.5" r="1.9"/><path d="M13.6 19.5c.3-2.5 1.4-3.9 2.9-3.9s2.6 1.4 2.9 3.9"/>',
     warn: '<path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.3"/>',
     ok: '<circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.3 2.5 2.5 4.9-5"/>',
+    okf: '<circle cx="12" cy="12" r="9" fill="currentColor" stroke="none"/><path d="m8.2 12.3 2.6 2.6 5-5.1" stroke="#fff" stroke-width="2.2"/>',
+    nof: '<circle cx="12" cy="12" r="9" fill="currentColor" stroke="none"/><path d="m9.3 9.3 5.4 5.4M14.7 9.3l-5.4 5.4" stroke="#fff" stroke-width="2.2"/>',
     no: '<circle cx="12" cy="12" r="8.5"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>',
     pin: '<path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
     star: '<path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8-5.3-2.9-5.3 2.9 1.1-5.8L3.5 9.6l5.9-.8z" fill="currentColor" stroke="none"/>',

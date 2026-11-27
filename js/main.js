@@ -65,7 +65,8 @@
   var imgs = JD.hero.map(function (k, i) { return i === 0 ? "jd_main1" : k; }).concat(["jd_pnb", "jd_bg"]);
   var caps = (JD.heroCaps || JD.hero.map(function (k, i) { return i === 0 ? "冬の韓服でおさんぽ（全州）" : (cmap[k] || ""); })).concat(["PNB 手作りチョコパイ（全州）", "バゲットバーガー（全州）"]);
   var sl = $("slides"), n = imgs.length, cur = -1;
-  sl.innerHTML = imgs.map(function (k) { return '<div style="background-image:url(' + K.img(k) + ')"></div>'; }).join("");
+  var POS = { jd_bh2: "54.4% center" };  // 사진 속 「천년담양」 글자 묶음이 카드 가운데 오게 (글자 중심이 사진 중심보다 24px 오른쪽)
+  sl.innerHTML = imgs.map(function (k) { return '<div style="background-image:url(' + K.img(k) + ')' + (POS[k] ? ';background-position:' + POS[k] : '') + '"></div>'; }).join("");
   $("dots").innerHTML = imgs.map(function () { return "<i></i>"; }).join("");
   $("th").innerHTML = JD.hero.map(function (k, i) { return '<button style="background-image:url(' + K.img(i === 0 ? JD.thumb0 : k) + ')" aria-label="写真' + (i + 1) + '"></button>'; }).join("");
   K.dragScroll(sl);

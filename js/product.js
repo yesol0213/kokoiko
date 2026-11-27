@@ -62,6 +62,20 @@
       '<div class="pc-sum"><b>合計</b><small>※円は本日のレートによる目安</small>' + (legs.some(function (l) { return /<sup>※/.test(l[1] || ""); }) ? '<small>※公共交通がない区間</small>' : '') + (legs.some(function (l) { return /<sup>＊/.test(l[1] || ""); }) ? '<small>＊バスがほとんどなく、<br>タクシーもつかまりにくい区間</small>' : '') + '</div><div class="pc-a sum"><span data-krw="' + tot + '">' + K.yen(tot, rate()) + '</span><small>' + K.krw(tot) + '</small></div>' +
       '<div class="pc-k sum"><span class="mk" data-krw="' + p.priceKrw + '">' + K.yen(p.priceKrw, rate()) + '</span><small>' + K.krw(p.priceKrw) + '</small></div></div></div>';
   }
+  // スケジュール 소요시간 (1127-6). 장소 = 클라이언트 정보요청서의 「도착 → 집결」 시각 차이 그대로(일정 세 번째 값). 첫 줄·마지막 줄 = 버스 이동(출발·도착 시각 차이, 교통 상황이 있어 「約」)
+  function schedDur(rows, i) {
+    var hm = function (t) { var m = /(\d{1,2}):(\d{2})/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : null; };
+    var exact = function (min) { var h = Math.floor(min / 60), m = min % 60; return (h ? h + "時間" : "") + (m ? m + "分" : ""); };
+    var bus = function (min) { var h = Math.round(min / 30) / 2, w = Math.floor(h); return "約" + (w ? w + "時間" : "") + (h - w ? (w ? "半" : "30分") : ""); };
+    var t = rows[i][0], a = hm(t); if (a == null) return "";
+    if (rows[i][2]) return exact(hm(rows[i][2]) - a);  // 머무는 시간
+    if (t.indexOf("→") >= 0) {  // 귀환 줄: "18:30 → 22:00〜22:30"
+      var ts = t.match(/\d{1,2}:\d{2}/g).map(hm); if (ts.length < 2) return "";
+      return bus(ts[1] - ts[0]) + (ts[2] != null ? "〜" : "");  // 가장 이른 도착 기준 「約3時間半〜」
+    }
+    if (i === 0) for (var j = 1; j < rows.length; j++) { var b = hm(rows[j][0]); if (b != null) return bus(b - a); }
+    return "";
+  }
   function routeHtml() {
     if (!p.route) return "";
     var names = (it.spots || it.blocks).map(function (b) { return b.t.replace(/[（(].*?[）)]/g, "").trim(); });
@@ -115,8 +129,9 @@
       INFO() + '</div>' +
     voicesHtml() +
     '<div class="sec intro2"><div class="intro clip" id="intro">' + cityHtml() + '<hr class="hl">' + recHtml() + '<hr class="hl">' + priceHtml() + '<hr class="hl">' + routeHtml() + spotsHtml() + sweetsHtml() + '</div><button class="more" id="more"><span class="mt">詳細情報をもっと見る</span><svg class="mi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>' +
-    '<div class="sec"><h2 style="margin-bottom:4px">スケジュール</h2><div class="note" style="margin:0 0 12px">当日の交通状況により変わる場合があります。</div><div class="sl">' +
-      p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
+    '<div class="sec"><h2>スケジュール</h2><div class="sl">' +
+      p.schedule.map(function (s, i) { var d = schedDur(p.schedule, i); return '<div class="si"><small>' + s[0] + (d ? '<span class="dur">（' + d + '）</span>' : '') + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
+    '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     galHtml() +
     (p.reviews && p.reviews.length ? '<div class="sec"><h2>体験レビュー</h2><div class="rv">' + p.reviews.map(function (r) { return '<div style="background-image:url(' + img(r) + ')"></div>'; }).join("") + '</div></div>' : '') + // 후기 사진이 생기면 data.js 에 reviews: ["파일명", ...] 추가
     '<div class="sec"><h2 style="margin-bottom:12px">集合場所</h2>' +
@@ -126,9 +141,8 @@
         '<a class="mrow" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap2"><b>' + K.MEETING.ja + '</b><i>›</i></a>' +
         '<div class="mad"><span>' + K.MEETING.ko + '</span><button class="cpy" id="copyAddr">コピー</button></div></div>' +
       '<div class="note" style="margin-top:8px">※タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
-    '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
-    '<div class="sec" style="border-bottom:none">' +
-      '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
+    '<div class="sec" style="border-bottom:none"><h2 class="qah">ご利用案内</h2>' +
+      '<details class="acc"><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
       (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
       '<details class="acc"><summary>キャンセルポリシー</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
@@ -271,7 +285,7 @@
   // 안 고른 확정일만 노랑 알약으로 눈에 띄게 하고, 고른 칩은 로즈가 강조를 맡으므로 회색 글자
   function chipHtml(d, sel, attr) {
     var n = K.need(id, d), s = "";
-    if (dates[d] === "full") return '<button class="c dt full"' + (attr || "") + '><b>' + K.jpShort(d) + "</b><small>満席</small></button>";
+    if (dates[d] === "full") return '<button class="c dt full' + (fullPick === d ? " fsel" : "") + '"' + (attr || "") + '><b>' + K.jpShort(d) + "</b><small>満席</small></button>";
     if (n === 0) {
       var lf = K.left(id, d);
       s = (sel && lf != null && lf <= K.SHOW_LEFT_MAX) ? "<small>出発確定・残り" + lf + "席</small>"
@@ -280,6 +294,8 @@
     return '<button class="c dt' + (sel ? " sel" : "") + '"' + (attr || "") + '><b>' + K.jpShort(d) + "</b>" + s + "</button>";
   }
   // 가로로 걸쳐 있는 참가일 칩을 고르면, 보이는 만큼만 가로로 밀어 준다(세로는 건드리지 않는다)
+  var fullPick = null;  // 본문에서 눌러 둔 매진 칩(날짜). 누르기 전 흰 바탕 → 누른 뒤 회색 (1127-6)
+  function waitGo(e, d) { e.preventDefault(); K.track("waitlist_click", { product: id, date: d }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); }
   function chipIntoView() {
     var box = document.getElementById("dateChips"); if (!box) return;
     var el = box.querySelector(".c.dt.sel"); if (!el) return;
@@ -294,7 +310,7 @@
   function stepIn(box, pre, o) {
     var n = (o.date ? 1 : 0) + (o.date && o.time ? 1 : 0), els = box.querySelectorAll(".step");
     for (var i = steps[pre]; i < n && i < els.length; i++) { els[i].style.animationDelay = (i - steps[pre]) * 40 + "ms"; els[i].classList.add("stepin"); }
-    if (n > steps[pre] && els[n - 1]) reveal(box.querySelector(".info") || els[n - 1]);  // 새 단계 + 그 아래 안내 박스까지 보이는 곳까지 올린다
+    if (n > steps[pre] && els[n - 1]) reveal(box.querySelector(".info") || (pre === "p_" ? document.querySelector("#pick .info") : null) || els[n - 1]);  // 새 단계 + 그 아래 안내 박스까지 보이는 곳까지 올린다
     steps[pre] = n;
   }
   // 새 단계(時間·人数)가 접힌 화면 아래에서 생기면 스크롤해서 보여 준다
@@ -338,7 +354,7 @@
     var pin = document.querySelector("#pick .info"); if (pin) pin.hidden = false;
     $("dateChips").innerHTML = sug.length ? sug.map(function (d) { return chipHtml(d, st.date === d, ' data-d="' + d + '"'); }).join("")
       : '<span class="note">現在予約できる日程がありません。LINEでお問い合わせください。</span>';
-    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { var d = b.getAttribute("data-d"); if (dates[d] === "full") { st = { date: null, time: false, qty: 0 }; save(); render(); var pf = document.querySelector("#pick .info"); if (pf) pf.hidden = true; $("timeBox").innerHTML = '<div class="pickhint">' + K.jpLong(d) + 'は満席です</div><a class="wait" href="' + (K.LINE_ADD_URL || "#") + '">LINEでキャンセル待ちする ›</a>'; return; } if (st.date === d) { st = { date: null, time: false, qty: 0 }; save(); render(); return; } st.date = d; st.time = false; st.qty = 0; save(); render(); chipIntoView(); K.track("select_date", { product: id, date: st.date }); }; });
+    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { var d = b.getAttribute("data-d"); if (dates[d] === "full") { var again = fullPick === d; st = { date: null, time: false, qty: 0 }; save(); fullPick = again ? null : d; render(); if (again) return; var pf = document.querySelector("#pick .info"); if (pf) pf.hidden = true; $("timeBox").innerHTML = '<div class="pickhint">' + K.jpLong(d) + 'は満席です</div><a class="wait" href="#">LINEでキャンセル待ちする ›</a>'; $("timeBox").querySelector(".wait").onclick = function (e) { waitGo(e, d); }; return; } fullPick = null; if (st.date === d) { st = { date: null, time: false, qty: 0 }; save(); render(); return; } st.date = d; st.time = false; st.qty = 0; save(); render(); chipIntoView(); K.track("select_date", { product: id, date: st.date }); }; });
     $("timeBox").innerHTML = selHtml(st, "p_");
     stepIn($("timeBox"), "p_", st);
     selBind(st, "p_", function () { save(); render(); });
@@ -399,10 +415,7 @@
   $("mPrev").onclick = function () { goMonth(-1); };
   $("mNext").onclick = function () { goMonth(1); };
   $("sGo").onclick = function () { goCheckout(sp); };
-  $("wait").onclick = function (e) {
-    e.preventDefault(); K.track("waitlist_click", { product: id, date: sp.date });
-    if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です");
-  };
+  $("wait").onclick = function (e) { waitGo(e, sp.date); };
 
   K.getDates(p).then(function (d) {
     dates = d;

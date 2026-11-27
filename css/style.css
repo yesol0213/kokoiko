@@ -111,7 +111,8 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .c small{display:block;margin-top:3px;font-size:11px;font-weight:400;color:var(--mute)}  /* 참가일 칩 상태 줄 */
 .c small .ok{background:rgba(255,216,77,.45);border-radius:99px;padding:0 5px}  /* 안 고른 출발 확정일 */
 .c.sel small{color:var(--mute)}
-.c.full{color:#C9C3C7;background:#F5F3F4;border-color:#F5F3F4}  /* 면 #F5F3F4 + 테두리 같은 색(평면). 글자 = 캘린더 안 満席·날짜와 같은 표시 #C9C3C7 (1127-3) */
+.c.full{color:#C9C3C7}  /* 매진 칩: 누르기 전 = 다른 칩과 같은 흰 바탕·테두리, 글자만 표시색 #C9C3C7 (1127-6) */
+.c.full.fsel{background:#F5F3F4;border-color:#F5F3F4}  /* 누른 뒤 = 면 #F5F3F4 평면 */
 .c.full small{color:#C9C3C7}  /* .c small 의 --mute 를 덮어 날짜와 같은 색으로 */
 .meet{font-size:13px;font-weight:700;margin-top:2px}
 .qrow{display:flex;justify-content:space-between;align-items:center}
@@ -149,14 +150,15 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .rv div{flex:1;height:150px;border-radius:14px;background:#E8E3E6;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;text-align:center}
 .mpc iframe{width:100%;height:170px;border:0;display:block}
 details.acc + details.acc{border-top:1px solid var(--line)}  /* 구분선은 항목 사이에만 — 묶음의 위·아래는 섹션 선이 맡아 선이 겹쳐 보이지 않게 (2026-11-25) */
-details.acc summary{list-style:none;padding:14px 0;display:flex;justify-content:space-between;font-size:14.5px;font-weight:900;cursor:pointer}
+.sec h2.qah{margin-bottom:2px}  /* Q&A 소제목 → 첫 항목 글자 16px = 소제목 2 + 항목 패딩 14 (S5, 1127-6) */
+details.acc summary{list-style:none;padding:14px 0;display:flex;justify-content:space-between;font-size:14px;font-weight:400;cursor:pointer}  /* 소제목(17px·700)보다 가볍게 (1127-6) */
 details.acc summary::-webkit-details-marker{display:none}
 details.acc summary:after{content:"＋"}
 details.acc[open] summary:after{content:"−"}
 /* 주문 요약 토글: ＋/− 대신 셰브론 */
 details.acc.chev summary:after{content:"";width:11px;height:11px;border-right:2px solid #9A929E;border-bottom:2px solid #9A929E;transform:rotate(45deg);margin:2px 3px 0 0;transition:transform .2s}
 details.acc.chev[open] summary:after{transform:rotate(-135deg);margin-top:6px}
-details.acc.chev summary{padding:0;font-size:17px;align-items:center}
+details.acc.chev summary{padding:0;font-size:17px;font-weight:900;align-items:center}
 details.acc.chev[open] summary{padding-bottom:16px}
 .accb.ordb{padding-bottom:0;color:var(--ink)}
 .ordb .rr:first-of-type{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
@@ -189,7 +191,7 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .cal .d.pick:not(.full) small.ok{background:none;padding:0}  /* 로즈 위에 노랑 금지 (N22) */
 .cal .d[disabled] b{color:#C9C3C7!important}
 .cal .d.full b{color:#C9C3C7!important}
-.cal .d.full.pick{border-color:#C9C3C7}
+.cal .d.full.pick{border:1px solid #C9C3C7}  /* 매진일 선택 테두리 2→1px (1127-6) */
 .cal .d.pick:not(.full){background:none}  /* 채움은 :before가 그린다 */
 .cal .d.pick:not(.full) b{color:#fff!important}
 .sheet .cta{margin-top:12px;width:100%}
@@ -296,7 +298,7 @@ button:not([disabled]):active,a.cta:active,.ichi-card:active{transform:scale(.97
 .sbar .cta.w{width:150px;flex:none;margin:0}
 /* 비교표 */
 /* 주의사항 박스 */
-.warnsec{border-bottom:none;padding-bottom:6px}
+.warnsec{padding-bottom:6px}  /* 아래 구분선 있음 — 다음이 周辺の人気スポット(다른 내용) (1127-6) */
 /* 푸터 문의 */
 .sep{margin:0 10px;color:#E8E3E6}
 a.cl{text-decoration:underline;text-underline-offset:3px;color:var(--sub)}
@@ -525,11 +527,13 @@ div.fimg{overflow:hidden}
 .pn{white-space:nowrap}
 /* 일본어 문장은 문절 단위로 끊는다 — 고아 글자 방지 (D25). 미지원 브라우저는 기존 동작 */
 .sec h1,.ch,.cd,.cf,.cf small,.cfs,.ph,.psub,.rh,.rs,.spot h3,.spot p,.food h3,.food .s,.food .fl,.psec h2,.psec p,.stage .hero h1,.stage .hero p.hsub{word-break:auto-phrase}
-.ckk{font-size:13px;font-weight:700;color:var(--rose);margin:6px 0 0}
-h2.ch{font-size:21px;font-weight:900;line-height:1.5;margin:10px 0 0}  /* .sec h2(17px, 100줄)와 같은 구체도로 올려 D20의 21px을 실제 적용 (1127-3). .ph·.rh와 같은 처리 */
+.ckk{font-size:13px;font-weight:700;color:var(--rose);margin:8px 0 0}  /* 도입 묶음 위 40px = 섹션 패딩 32 + 8 (1127-6) */
+h2.ch{font-size:18px;font-weight:900;line-height:1.5;margin:10px 0 0}  /* .sec h2(17px, 100줄)와 같은 구체도로 올려 D20의 21px을 실제 적용 (1127-3). .ph·.rh와 같은 처리 */
 .cd{font-size:13px;color:#8A8290;line-height:1.8;margin:6px 0 0}  /* 헤드→서브 6px = S2 「같은 묶음 안 줄 사이」 (1127-3, 이전 10px) */
-.cf{font-size:16px;font-weight:700;line-height:1.7;margin:40px 0 0}
-.cf small{display:block;font-size:13px;font-weight:400;color:#8A8290;margin-top:6px;line-height:1.8}
+.cf{font-size:18px;font-weight:700;line-height:1.7;margin:22px 0 0}  /* 도시 소개 헤드 18px 통일. 두 번째·세 번째 묶음은 위아래 22px 대칭 (S14, 1127-6) */
+.city .cd + .fimg,.city .cf + .fimg,.city .cfs + .fpic{margin-top:22px}  /* 묶음 아래(글 → 사진) 22px. 도입 묶음은 위 40 / 아래 22 */
+.cf + .cfs{margin-top:4px}  /* 헤드 바로 아래 서브라인은 다른 묶음의 헤드→서브와 같은 간격 */
+.cf small{display:block;font-size:13px;font-weight:400;color:#8A8290;margin-top:4px;line-height:1.8}  /* 헤드가 16→18px이 되며 늘어난 2px을 빼서, 글자 사이 간격을 원래(9px)대로 (1127-6) */
 .cfs{font-size:13px;color:#8A8290;line-height:1.8;margin:18px 0 0}  /* 헤드 없는 서브라인 — 크기·색은 .cf small과 같다. 위 간격은 헤드가 없으므로 아래(.fpic 18px)와 같은 18px (1127-3, 이전 40px) */
 .cfs+.cfs{margin-top:14px}
 
@@ -548,10 +552,10 @@ h2.ch{font-size:21px;font-weight:900;line-height:1.5;margin:10px 0 0}  /* .sec h
 .recl{display:table;margin:0 auto;text-align:left}
 /* 가격 비교 */
 .pcmp{text-align:center}
-h2.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* .sec h2(17px)보다 뒤·같은 구체도로 D20 21px 적용. 아래 16px은 S5 */
+h2.ph{font-size:18px;font-weight:900;line-height:1.5;margin:0}  /* .sec h2(17px)보다 뒤·같은 구체도로 D20 21px 적용. 아래 16px은 S5 */
 .mk{position:relative;z-index:0;padding:0 3px}
 .mk:before{content:"";position:absolute;z-index:-1;left:-2px;right:-2px;bottom:2px;height:46%;background:#FFD84D;border-radius:4px 10px 6px 12px;transform:rotate(-1.5deg)}
-.psub{font-size:13px;color:#8A8290;margin:8px 0 22px}
+.psub{font-size:13px;color:#8A8290;margin:8px 0 22px}  /* 헤드→서브·묶음 아래를 도시 소개 묶음과 같게 (1127-6) */
 .pc{display:grid;grid-template-columns:1fr 86px 86px;column-gap:2px;text-align:left}
 .pc-h{font-size:12px;font-weight:700;text-align:center;padding:12px 0 8px}
 .pc-h.a{color:#9A929E;background:#F5F3F4;border-radius:14px 14px 0 0}
@@ -581,8 +585,8 @@ h2.ph{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* .sec h
 /* 코스맵 · 장소 소개 */
 .iroute{margin:0 0 36px;text-align:left}
 .iroute>.rh,.iroute>.rs{text-align:center}  /* 코스 섹션 제목·서브는 가격비교(.pcmp)와 같은 가운데 정렬 (2026-11-25) */
-h2.rh{font-size:21px;font-weight:900;line-height:1.5;margin:0 0 16px}  /* 같은 이유 (D20·S5) */
-.rs{font-size:13px;color:#8A8290;margin:6px 0 16px}
+h2.rh{font-size:18px;font-weight:900;line-height:1.5;margin:0}  /* 같은 이유 (D20·S5) */
+.rs{font-size:13px;color:#8A8290;margin:8px 0 22px}  /* 헤드→서브·묶음 아래를 도시 소개 묶음과 같게 (1127-6, 이전 6/16) */
 .spot{margin-bottom:40px;text-align:left}
 .spot h3{font-size:16px;margin:0}
 .spot p{font-size:13px;color:#8A8290;line-height:1.8;margin:6px 0 0}
@@ -647,7 +651,7 @@ div.sm{margin:14px 16px 12px}
 .plab.r{left:16px;right:auto;bottom:12px;background:rgba(0,0,0,.45);font-weight:400;font-size:11px}
 .sph .dots{left:auto;right:16px;bottom:20px;justify-content:flex-end}
 .sph .dots{left:0;right:0;top:22px;bottom:auto;justify-content:center}
-.city .ckk+.ch{margin-top:10px}  /* 킥커→헤드 10px (1127-3, 이전 18px) */
+.city .ckk+.ch{margin-top:6px}  /* 킥커→헤드 6px = S2 「같은 묶음 안 줄 사이 6px」, 헤드→서브와 같은 값 (1127-6, 이전 10px) */
 .city .ch{margin-bottom:6px}  /* 헤드→서브 6px = S2. `.sec h2{margin:0 0 16px}`(100줄)가 `.ch`를 이기고 있어 같은 구체도로 덮는다. font-size는 건드리지 않는다 (1127-3) */
 .intro2 .hl{background:none;margin:22px 0}
 .intro2 .rec+.hl{width:1.5px;height:56px;margin:26px auto;background:#C9C3C7}
@@ -666,7 +670,7 @@ div.need.fimg{aspect-ratio:4/3}
 .pc-mv em{font-style:normal}
 .pc-mv em{font-size:12px;color:#8A8290}
 .intro.clip{position:relative;overflow:hidden}.intro.clip.open{overflow:visible}
-.more{display:flex;width:100%;min-height:48px;margin-top:16px;border:0;border-radius:0;align-items:center;justify-content:center;gap:4px;padding:0 12px;font-size:14px;font-weight:700;background:none;color:var(--ink)}
+.more{display:flex;width:100%;min-height:48px;margin-top:10px;border:0;border-radius:0;align-items:center;justify-content:center;gap:4px;padding:0 12px;font-size:14px;font-weight:700;background:none;color:var(--ink)}
 .more .mi{flex:none;transition:transform .2s ease}
 .more.on .mi{transform:rotate(180deg)}
 .mpm:after{content:"";position:absolute;inset:0;background:rgba(110,140,180,.07);pointer-events:none}
@@ -859,7 +863,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .big .g .irow .chip.ichi{font-size:11px!important;padding:2px 8px!important}
 /* big product card: photo on top (same ratio as detail hero 375:440), info box below like the two-column cards */
 .big{height:auto!important;background:#fff!important;box-shadow:0 6px 18px rgba(60,30,60,.10)}
-.big .slides{height:auto!important;aspect-ratio:375/440}
+.big .slides{height:auto!important;aspect-ratio:375/405}  /* 메인 큰 카드 사진 1:1.08 (2026-11-27, 이전 375/440 — 헤드라인+카드 영역이 길어 보여 32px 줄임. 상세 대표 사진은 별개) */
 .big .slides>div{height:auto!important}
 .big:before{height:70px}
 .big .g{position:static!important;display:block;background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:12px 14px 14px!important;transform:none!important}
@@ -1011,6 +1015,8 @@ body:has(.cta.off) .barbg{opacity:0}
 .sl .si:last-child{margin-bottom:0}
 /* RULE: 1px divider = 22px above and below, on every page (S1) */
 .sec{padding-top:32px!important;padding-bottom:28px!important}
+.sec.intro2{padding-bottom:9px!important}  /* 접기·펼치기 버튼 글자 위아래를 24px로 같게: 위 = 버튼 마진 10 + 버튼 안 14, 아래 = 버튼 안 14 + 패딩 9 + 선 1 (1127-6). 바로 윗줄이 !important라 같은 방식으로 덮는다 */
+.sec:has(.sl){padding-bottom:15px!important;border-bottom:0!important}.sec.warnsec{padding-top:15px!important}  /* スケジュール ↔ 안내 박스 30px(15 + 15), 구분선 없음 — 일정과 안내를 한 흐름으로 (1127-6, 이전 61px + 선) */
 .hl{margin:22px 0}
 .ftsrc:last-of-type{margin-bottom:22px}
 footer{padding-top:22px;padding-bottom:22px}
@@ -1197,5 +1203,3 @@ details.acc.chev summary{font-weight:700}  /* 다른 소제목(h2 17px/700)과 �
 
 
 /* 하단 구간 구분선 제거 (2026-11-27) — 주의사항 상·하, Q&A 위. 푸터 바로 위 선은 남긴다 */
-.sec.warnsec{border-bottom:0}                       /* 주의사항 아래 */
-.sec:has(.mrow){border-bottom:0}  /* 集合場所 아래 = Q&A 위 */

@@ -142,7 +142,7 @@
         '<div class="mad"><span>' + K.MEETING.ko + '</span><button class="cpy" id="copyAddr">コピー</button></div></div>' +
       '<div class="note" style="margin-top:8px">※タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
     '<div class="sec" style="border-bottom:none"><h2 class="qah">ご利用案内</h2>' +
-      '<details class="acc"><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
+      '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +
       (p.faq || []).map(function (q) { return '<details class="acc"><summary>' + q[0] + '</summary><div class="accb">' + q[1].replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</div></details>'; }).join("") +
       '<details class="acc"><summary>キャンセルポリシー</summary><div class="accb"><p class="accl">キャンセルは、LINEで注文番号をお知らせください。</p>・' + K.cancel.join("<br>・") + '</div></details>' +
@@ -297,13 +297,16 @@
   var fullPick = null;  // 본문에서 눌러 둔 매진 칩(날짜). 누르기 전 흰 바탕 → 누른 뒤 회색 (1127-6)
   function waitGo(e, d) { e.preventDefault(); K.track("waitlist_click", { product: id, date: d }); if (K.LINE_ADD_URL) location.href = K.LINE_ADD_URL; else K.toast("ただいま準備中です"); }
   function chipIntoView() {
+    // 고른 칩을 가로 왼쪽 끝으로 민다(1127-7 ⓐ). 매진 칩(.fsel)도 같이 움직인다.
+    // 다 보이는 칩은 건드리지 않는다(N22). 세로는 건드리지 않는다.
+    // 왼쪽 끝 정렬은 scroll-snap-align:start 의 스냅 지점과 같은 자리라 스냅이 되돌리지 않는다
+    // (예전 scrollBy 방식은 스냅이 이동량을 가장 가까운 칩으로 끌어당겨 칩이 계속 잘렸다).
     var box = document.getElementById("dateChips"); if (!box) return;
-    var el = box.querySelector(".c.dt.sel"); if (!el) return;
+    var el = box.querySelector(".c.dt.sel, .c.dt.fsel"); if (!el) return;
     var b = box.getBoundingClientRect(), r = el.getBoundingClientRect();
-    var dx = r.right > b.right ? r.right - b.right : (r.left < b.left ? r.left - b.left : 0);
-    if (!dx) return;  // 이미 다 보이면 아무것도 하지 않는다
+    if (r.left >= b.left - 0.5 && r.right <= b.right + 0.5) return;  // 이미 다 보이면 아무것도 하지 않는다
     var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    box.scrollBy({ left: dx, behavior: rm ? "auto" : "smooth" });
+    box.scrollTo({ left: Math.round(box.scrollLeft + (r.left - b.left)), behavior: rm ? "auto" : "smooth" });
   }
   // 단계가 하나 늘었을 때만, 새로 생긴 블록에 등장 애니메이션(40ms 시차)
   var steps = { s_: 0, p_: 0 };
@@ -354,7 +357,7 @@
     var pin = document.querySelector("#pick .info"); if (pin) pin.hidden = false;
     $("dateChips").innerHTML = sug.length ? sug.map(function (d) { return chipHtml(d, st.date === d, ' data-d="' + d + '"'); }).join("")
       : '<span class="note">現在予約できる日程がありません。LINEでお問い合わせください。</span>';
-    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { var d = b.getAttribute("data-d"); if (dates[d] === "full") { var again = fullPick === d; st = { date: null, time: false, qty: 0 }; save(); fullPick = again ? null : d; render(); if (again) return; var pf = document.querySelector("#pick .info"); if (pf) pf.hidden = true; $("timeBox").innerHTML = '<div class="pickhint">' + K.jpLong(d) + 'は満席です</div><a class="wait" href="#">LINEでキャンセル待ちする ›</a>'; $("timeBox").querySelector(".wait").onclick = function (e) { waitGo(e, d); }; return; } fullPick = null; if (st.date === d) { st = { date: null, time: false, qty: 0 }; save(); render(); return; } st.date = d; st.time = false; st.qty = 0; save(); render(); chipIntoView(); K.track("select_date", { product: id, date: st.date }); }; });
+    $("dateChips").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { var d = b.getAttribute("data-d"); if (dates[d] === "full") { var again = fullPick === d; st = { date: null, time: false, qty: 0 }; save(); fullPick = again ? null : d; render(); if (again) return; var pf = document.querySelector("#pick .info"); if (pf) pf.hidden = true; $("timeBox").innerHTML = '<div class="pickhint">' + K.jpLong(d) + 'は満席です</div><a class="wait" href="#">LINEでキャンセル待ちする ›</a>'; $("timeBox").querySelector(".wait").onclick = function (e) { waitGo(e, d); }; chipIntoView(); return; } fullPick = null; if (st.date === d) { st = { date: null, time: false, qty: 0 }; save(); render(); return; } st.date = d; st.time = false; st.qty = 0; save(); render(); chipIntoView(); K.track("select_date", { product: id, date: st.date }); }; });
     $("timeBox").innerHTML = selHtml(st, "p_");
     stepIn($("timeBox"), "p_", st);
     selBind(st, "p_", function () { save(); render(); });
@@ -368,7 +371,8 @@
   // V26: 버튼 안쪽만이 아니라 하단 바 전체(가격 영역·여백 포함)를 눌러도 같은 동작
   $("resBar").onclick = function () {
     if (!(st.date && st.qty)) {
-      K.toast("参加日を選択してください"); // N22
+      // 날짜를 이미 골랐으면 다음 단계(時間·人数)를 가리킨다 (1127-7)
+      K.toast(st.date ? "時間と人数を選択してください" : "参加日を選択してください"); // N22
       window.scrollTo({ top: $("pick").getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" });
       K.track("reserve_need_select", { product: id }); return;
     }

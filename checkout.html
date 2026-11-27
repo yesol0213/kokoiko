@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=1127-6">
+<link rel="stylesheet" href="css/style.css?v=1127-7">
 <script src="https://js.tosspayments.com/v2/standard"></script>
 </head>
 <body class="ckpage">
@@ -15,7 +15,12 @@
   <div class="phd2"><a href="index.html" id="backLink" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></a><b>お支払い</b><span></span></div>
 
   <div class="sec"><h2>ご予約内容</h2>
-    <div class="osum"><div class="im" id="sImg"></div><div><b id="sName"></b><span id="sDate"></span><span id="sTime"></span><span id="sQty"></span><span class="smeet"><span id="sMeet"></span><button type="button" class="cpy" id="addrCopy">コピー</button></span></div></div>
+    <div class="ordb">
+      <div class="psum"><div class="im" id="sImg"></div><b id="sName"></b></div>
+      <div class="rr"><span>参加日</span><b id="sDate"></b></div>
+      <div class="rr"><span>人数</span><b id="sQty"></b></div>
+      <div class="rr"><span>集合場所</span><b><span id="sMeet"></span><button type="button" class="cpy" id="addrCopy">コピー</button></b></div>
+    </div>
   </div>
 
   <form id="form" novalidate>
@@ -44,14 +49,13 @@
       </ul>
 
       <p class="agreet miss" id="agreet">必須項目を入力してください。</p>
-      <div class="err" id="err"></div>
       <button type="submit" class="paybtn" id="payBtn" aria-disabled="true">決済する</button>
     </div>
   </form>
 </div>
-<script src="js/data.js?v=1127-6"></script>
-<script src="js/common.js?v=1127-6"></script>
-<script src="js/checkout.js?v=1127-6"></script>
+<script src="js/data.js?v=1127-7"></script>
+<script src="js/common.js?v=1127-7"></script>
+<script src="js/checkout.js?v=1127-7"></script>
 <button class="totop nobar" id="totop" aria-label="ページの先頭へ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2A2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
 <script>(function(){var t=document.getElementById("totop");if(!t)return;addEventListener("scroll",function(){t.classList.toggle("on",scrollY>600)},{passive:true});t.onclick=function(){scrollTo({top:0,behavior:"smooth"})};})();</script>
 </body>

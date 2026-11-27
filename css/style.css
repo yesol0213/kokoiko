@@ -67,12 +67,12 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .sm .t{font-size:15px;font-weight:900}
 .sm .s{font-size:12px;color:#6B6170;margin-top:2px}
 /* ---------- bottom bars ---------- */
-.bar{position:fixed;bottom:calc(16px - var(--vvfix,0px));left:50%;transform:translateX(-50%) translateZ(0);width:calc(min(100vw,480px) - 24px);border-radius:34px;padding:8px;display:flex;gap:8px;align-items:center;z-index:20}
+.bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateZ(0);width:calc(min(100vw,480px) - 24px);border-radius:34px;padding:8px;display:flex;gap:8px;align-items:center;z-index:20}
 .bar.solid{background:#fff;border:1px solid #EEE9EC;box-shadow:0 10px 30px rgba(60,30,60,.18)}
 .share{width:50px;height:50px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.9);background:var(--glass);box-shadow:var(--glass-sh)}
 .cta small{display:block;font-size:11px;font-weight:400;opacity:.92}
 .cta[disabled],.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none;cursor:default}
-.barbg{position:fixed;left:0;right:0;bottom:calc(0px - var(--vvfix,0px));height:calc(80px + var(--vvfix,0px));background:linear-gradient(180deg,rgba(255,249,246,0),#FFF9F6 60%);z-index:19;pointer-events:none}
+.barbg{position:fixed;left:0;right:0;bottom:0;height:80px;background:linear-gradient(180deg,rgba(255,249,246,0),#FFF9F6 60%);z-index:19;pointer-events:none}
 .bprice{flex:1;padding-left:12px;line-height:1.25;min-width:0}
 .bprice span{display:block;font-size:11.5px;color:var(--sub);white-space:nowrap}
 .bprice span em{font-style:normal;color:#E2343B;font-weight:900;margin-right:5px}
@@ -151,9 +151,10 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .mpc iframe{width:100%;height:170px;border:0;display:block}
 details.acc + details.acc{border-top:1px solid var(--line)}  /* 구분선은 항목 사이에만 — 묶음의 위·아래는 섹션 선이 맡아 선이 겹쳐 보이지 않게 (2026-11-25) */
 .sec h2.qah{margin-bottom:2px}  /* Q&A 소제목 → 첫 항목 글자 16px = 소제목 2 + 항목 패딩 14 (S5, 1127-6) */
-details.acc summary{list-style:none;padding:14px 0;display:flex;justify-content:space-between;font-size:14px;font-weight:400;cursor:pointer}  /* 소제목(17px·700)보다 가볍게 (1127-6) */
+details.acc summary{list-style:none;padding:14px 0;display:flex;justify-content:space-between;font-size:14px;font-weight:600;cursor:pointer}  /* 누르는 것이므로 본문색 굵게(D39). 소제목(17px·700)보다는 가볍게 — 크기 3px·굵기 100 차이로 구분 (1127-7) */
 details.acc summary::-webkit-details-marker{display:none}
-details.acc summary:after{content:"＋"}
+details.acc summary:after{content:"＋";font-size:17px;line-height:20px;margin-right:2px}  /* ＋ 크기 14→17px, 오른쪽 끝에서 2px 안쪽. line-height 고정으로 행 높이 48px 유지 (1127-7) */
+details.acc:not(.chev) summary:after{font-size:17px;line-height:20px;margin-right:2px}  /* ＋/− 크기·왼쪽으로 2px (1127-7). line-height 고정으로 항목 행 높이 48px 유지 */
 details.acc[open] summary:after{content:"−"}
 /* 주문 요약 토글: ＋/− 대신 셰브론 */
 details.acc.chev summary:after{content:"";width:11px;height:11px;border-right:2px solid #9A929E;border-bottom:2px solid #9A929E;transform:rotate(45deg);margin:2px 3px 0 0;transition:transform .2s}
@@ -162,7 +163,7 @@ details.acc.chev summary{padding:0;font-size:17px;font-weight:900;align-items:ce
 details.acc.chev[open] summary{padding-bottom:16px}
 .accb.ordb{padding-bottom:0;color:var(--ink)}
 .ordb .rr:first-of-type{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.accb{font-size:12.5px;line-height:1.8;padding:0 0 12px;color:#6B6170}
+.accb{font-size:12.5px;line-height:1.8;padding:0 0 12px;color:#8A8290}  /* 항목(14px·600·본문색)과 구분되게 약한 글자 (1127-7) */
 .accb a{text-decoration:underline}
 /* ---------- Bottom sheet calendar ---------- */
 .sheet{position:fixed;inset:0;z-index:50;display:none}
@@ -171,7 +172,8 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .grab{width:40px;height:5px;border-radius:9px;background:#ddd;margin:0 auto 12px;touch-action:none;-webkit-user-select:none;user-select:none}
 .sh-hd{-webkit-user-select:none;user-select:none}
 @media(hover:hover){.grab{cursor:grab}}
-.sh-hd{display:flex;justify-content:flex-end;align-items:center}  /* 제목 없이 ✕만 — 오른쪽 */
+.sh-hd{display:flex;justify-content:flex-end;align-items:center}  /* 달력 시트: 제목 없이 ✕만 — 오른쪽 (N22) */
+.legal-body .sh-hd{justify-content:space-between}  /* 약관·사업자정보 시트: 소제목은 왼쪽, ✕는 오른쪽 (1127-7) */
 .sh-hd b{font-size:17px}
 .sh-hd button{background:none;border:0;font-size:20px;color:#999}
 .mo{position:sticky;top:0;z-index:2;background:#fff;display:flex;justify-content:center;align-items:center;gap:22px;margin:0 0 8px;padding:14px 0 6px;font-weight:900;font-size:16px}
@@ -190,7 +192,7 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .cal .d.pick:not(.full) small{color:#fff}
 .cal .d.pick:not(.full) small.ok{background:none;padding:0}  /* 로즈 위에 노랑 금지 (N22) */
 .cal .d[disabled] b{color:#C9C3C7!important}
-.cal .d.full b{color:#C9C3C7!important}
+.cal .d.full b{color:#2A2230!important}  /* 매진일 날짜 숫자는 본문색 — 「満席」 글자만 표시색 (1127-7) */
 .cal .d.full.pick{border:1px solid #C9C3C7}  /* 매진일 선택 테두리 2→1px (1127-6) */
 .cal .d.pick:not(.full){background:none}  /* 채움은 :before가 그린다 */
 .cal .d.pick:not(.full) b{color:#fff!important}
@@ -204,13 +206,6 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .phd{position:sticky;top:0;background:#fff;height:56px;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid var(--line);z-index:10}
 .phd a{display:flex;align-items:center}
 .phd b{font-size:15px}
-.osum{display:flex;gap:12px;align-items:center}
-.osum .im{width:112px;height:112px;border-radius:12px;background-size:cover;background-position:center;flex:none}
-.osum b{font-size:13px;line-height:1.25;display:block}
-.osum span{font-size:12px;color:var(--sub);display:block;margin-top:2px}
-.osum .smeet{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.osum .smeet span{display:inline;margin-top:0}
-.osum .smeet .cpy{font-size:12px;padding:10px 2px;margin:-10px 0}
 .field{margin-bottom:14px}
 .req{display:inline-block;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:4px;margin-left:8px;vertical-align:2px}
 .field input{width:100%;border:1.5px solid #E8E3E6;border-radius:12px;padding:12px;font-size:16px;font-family:inherit}
@@ -307,7 +302,7 @@ footer .ctc{display:inline;margin:0 10px 0 0;font-weight:700;color:var(--sub)}
 .rprd{display:flex;gap:14px;align-items:center}
 /* 결제완료·실패 상품 요약: 제목 왼쪽 + 썸네일 오른쪽, 아래 조건줄(일정·인원 / 단가) */
 .psum{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
-.psum b{flex:1;font-size:15px;line-height:1.45;font-weight:900}
+.psum b{flex:1;font-size:15px;line-height:1.45;font-weight:600}  /* 소제목 17px·700보다 가볍게 — 상품명이 더 굵어 위계가 뒤집혀 있었다 (1127-7) */
 .psum .im{width:72px;height:72px;border-radius:10px;flex:none;background-size:cover;background-position:center}
 .psum-opt{display:flex;gap:12px;justify-content:space-between;margin-top:12px;font-size:12.5px;line-height:1.5;color:var(--sub)}
 .psum-opt span:last-child{flex:none;text-align:right}
@@ -400,7 +395,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 @keyframes mcpop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 .mcard.pop{animation:mcpop .32s cubic-bezier(.2,.8,.3,1) both}
 /* 결제 버튼 위 다음 단계 안내 */
-#payment-method.need{outline:2px solid var(--rose);outline-offset:4px;border-radius:12px}
+#payment-method.need{outline:2px solid #E2343B;outline-offset:4px;border-radius:12px}  /* 오류 테두리는 경고 빨강 (역할표). 로즈는 "누르는 곳"이라 오류에 쓰지 않는다 (1127-7) */
 /* 사진 출처·안내: 애플 각주 방식 (푸터와 같은 좌우 여백, 줄 간격 넉넉하게, 출처와 안내 분리) */
 .src{margin-bottom:6px;margin:12px 20px 0;font-size:12px;line-height:1.7;color:#9A929E;text-wrap:pretty;word-break:auto-phrase}
 .src .nw{white-space:nowrap}
@@ -458,7 +453,6 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .phd2.hide{transform:translateY(-100%)}  /* 상단 바 공통 규칙 — 상세(.dtop)와 같은 움직임 */
 .phd2 a{width:48px;height:48px;display:flex;align-items:center;justify-content:center}
 .phd2 b{text-align:center;font-size:16px;font-weight:900}
-.ckpage .osum span{margin-top:3px}
 .chg{display:inline-flex;align-items:center;min-height:48px;font-size:12.5px;color:var(--sub);text-decoration:underline;text-underline-offset:3px}
 .pm{display:flex;align-items:center;gap:12px;min-height:56px;cursor:pointer;position:relative}
 .pm input{position:absolute;opacity:0;width:1px;height:1px}
@@ -486,7 +480,6 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .ckpage .wrap{padding-bottom:calc(16px + env(safe-area-inset-bottom));overflow-x:clip}  /* 알약 CTA 아래 16px — 메인 바와 같은 값 (2026-11-25) */
 .ckpage .sec:last-child{border-bottom:none;padding-bottom:0!important}  /* 決済する 아래는 wrap의 16px만 — .sec 22px!important를 눌러야 해서 !important */
 .err:empty{display:none}
-.ckpage .err{font-size:12.5px;color:#E2343B;font-weight:700;text-align:center;margin-bottom:10px}
 /* 탭 영역 48px */
 .calk{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;background:none;border:0;padding:4px 0;min-height:44px}
 .mtag::after,.hd a::after,.gbtn::after{content:"";position:absolute;inset:-8px}
@@ -909,7 +902,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .bar .cta{height:48px!important;transition:transform .25s cubic-bezier(.2,.8,.3,1),box-shadow .2s ease,background-color .15s ease!important}
 @media(hover:hover){.bar .cta:not(.off):not([disabled]):hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(200,33,88,.28)!important;filter:none}}
 /* premium pass — detail reservation bar: price loud */
-.bar.solid{width:min(100vw,480px);bottom:calc(0px - var(--vvfix,0px));border-radius:0;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid #EEE9EC;box-shadow:none} /* 상세 하단 바: 화면 하단에 붙은 풀폭(D5) */
+.bar.solid{width:min(100vw,480px);bottom:0;border-radius:0;padding:9px 18px 10px;border:0;border-top:1px solid #EEE9EC;box-shadow:none}  /* 위 9 + 테두리 1 = 보이는 간격 10, 아래 10 → 10/10. 높이 68px (D5) */ /* 상세 하단 바: 화면 하단에 붙은 풀폭(D5) */
 .bar.solid .bprice{padding-left:0}
 /* fit fixes: map card must stay below the Jeonju pill; detail bar price on one line */
 .mcard{padding:14px 24px!important}

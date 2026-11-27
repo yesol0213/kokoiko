@@ -30,13 +30,15 @@
   function cityHtml() {
     var h = '<div class="city">' + (it.kicker ? '<p class="ckk">' + it.kicker + '</p>' : "") + '<h2 class="ch">' + it.lead + '</h2><p class="cd">' + it.desc + '</p>' + fullImg(it.img);
     if (it.foodMain) {
-      h += '<p class="cf">' + it.foodTitle + '<small>' + it.foodSub + '</small></p>' +
+      h += '<p class="cf">' + it.foodTitle + (it.foodSub ? '<small>' + it.foodSub + '</small>' : '') + '</p>' +
         (it.foodNote ? '<p class="cnote">' + it.foodNote + '</p>' : '');
     }
     if (it.foodWhy) {
       // 슬라이드 없이 사진을 그대로 세로로 쌓는다 (점·스와이프 없음)
-      h += it.foodWhy.map(function (x) { return '<div class="fpic"><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '></div>'; }).join("") +
-        it.foodWhySub.map(function (t) { return '<p class="cfs">' + t.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</p>'; }).join("");
+      var fpic = function (x) { return '<div class="fpic"><img src="' + img(x[0]) + '" alt="" loading="lazy"' + (x[2] ? ' style="object-position:center ' + x[2] + '%"' : "") + '></div>'; };
+      var fsub = it.foodWhySub.map(function (t) { return '<p class="cfs">' + t.replace(/\{(\d+)\}/g, '<span data-krw10="$1"></span>') + '</p>'; }).join("");
+      // 서브라인 먼저, 그다음 사진 2장을 연달아 (2026-11-27)
+      h += fsub + it.foodWhy.map(fpic).join("");
     }
     if (it.cityTitle) h += '<p class="cf">' + it.cityTitle + '<small>' + it.cityDesc + '</small></p>' + fullImg(it.cityImg);
     return h + '</div>';
@@ -117,7 +119,6 @@
       p.schedule.map(function (s) { return '<div class="si"><small>' + s[0] + '</small><b>' + s[1] + '</b></div>'; }).join("") + '</div></div>' +
     galHtml() +
     (p.reviews && p.reviews.length ? '<div class="sec"><h2>体験レビュー</h2><div class="rv">' + p.reviews.map(function (r) { return '<div style="background-image:url(' + img(r) + ')"></div>'; }).join("") + '</div></div>' : '') + // 후기 사진이 생기면 data.js 에 reviews: ["파일명", ...] 추가
-    '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     '<div class="sec"><h2 style="margin-bottom:12px">集合場所</h2>' +
       '<div class="mpc" id="meetmap"><div class="mpm"><iframe loading="lazy" tabindex="-1" aria-hidden="true" title="集合場所の地図" src="https://maps.google.com/maps?q=%EC%9E%A0%EC%8B%A4%EC%97%AD&z=15&hl=ja&output=embed"></iframe>' +
         '<a class="mlink" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap" aria-label="Googleマップで開く"></a><i class="mpin">' + PIN + '</i>' +
@@ -125,6 +126,7 @@
         '<a class="mrow" href="' + K.MEETING.map + '" target="_blank" rel="noopener" id="gmap2"><b>' + K.MEETING.ja + '</b><i>›</i></a>' +
         '<div class="mad"><span>' + K.MEETING.ko + '</span><button class="cpy" id="copyAddr">コピー</button></div></div>' +
       '<div class="note" style="margin-top:8px">※タクシーでは韓国語住所を運転手に見せてください。</div></div>' +
+    '<div class="sec warnsec"><div class="warn"><div class="wt">' + K.icon("warn", "#C82158", 19) + 'ご予約前に必ずご確認ください</div>' + K.warn.map(function (w, i) { return '<div class="wc"><b><i class="wn">' + (i + 1) + '</i>' + w[0] + '</b><p>' + w[1] + '</p></div>'; }).join("") + '</div></div>' +
     '<div class="sec" style="border-bottom:none">' +
       '<details class="acc" open><summary>含まれるもの／含まれないもの</summary><div class="accb"><div class="ir">' + K.icon("okf", "#C82158") + K.includes + '</div><div class="ir">' + K.icon("nof", "#9A929E") + K.excludes + '</div></div></details>' +
       '<details class="acc"><summary>注意事項</summary><div class="accb">・' + K.notes.join("<br>・") + '</div></details>' +

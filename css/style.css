@@ -31,7 +31,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .mtag small{font-weight:700;color:var(--rose);margin-left:4px}
 .mtag.on{background:linear-gradient(135deg,#C82158,#C82158);color:#fff}
 .mtag.on small{color:#fff}
-.season{position:absolute;right:12px;bottom:14px;font-weight:900;font-size:13px;border-radius:99px;padding:6px 12px;color:#2F5F8C}
+.season{position:absolute;right:12px;bottom:14px;font-weight:900;font-size:13px;border-radius:99px;padding:6px 12px;color:#2A2230}
 .ichi{font-size:11px;font-weight:900;background:#fff;color:var(--rose);border:1.5px solid var(--rose);border-radius:99px;padding:1px 8px}
 /* ---------- Main: products ---------- */
 .psec{padding:28px 18px 8px;margin:12px 0 14px}  /* 앞뒤 요소의 여백과 상쇄되어, 어느 블록 뒤에 와도 위 40·아래 22로 같아진다 (2026-11-26) */
@@ -50,7 +50,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .th button.on{border-color:#fff;opacity:1}
 .arr{position:absolute;right:10px;top:42%;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.25));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.85);box-shadow:0 4px 12px rgba(0,0,0,.2)}
 .chip{display:inline-block;font-size:11px;font-weight:900;border-radius:99px;padding:1px 8px}
-.chip.snow{background:rgba(255,255,255,.85);color:#2F5F8C;margin-left:4px}
+.chip.snow{background:rgba(255,255,255,.85);color:#2A2230;margin-left:4px}
 .big .t{font-size:18px;font-weight:900;margin:6px 0 2px}
 .big .s{font-size:12px;color:#6B6170}
 .prow{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
@@ -108,7 +108,7 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .c{text-align:left}
 .c b{display:block;font-size:13px;font-weight:700}
 .c small{display:block;margin-top:3px;font-size:11px;font-weight:400;color:var(--mute)}  /* 참가일 칩 상태 줄 */
-.c small .ok{background:rgba(255,216,77,.45);border-radius:99px;padding:0 5px}  /* 안 고른 출발 확정일 */
+.c small .ok{color:#2A2230;background:rgba(255,216,77,.45);border-radius:99px;padding:0 5px}  /* 안 고른 출발 확정일 — 글자는 본문색 (금지목록 X1) */
 .c.sel small{color:var(--mute)}
 .c.full{color:#bbb;background:#F5F3F4}
 .meet{font-size:13px;font-weight:700;margin-top:2px}
@@ -181,7 +181,7 @@ details.acc.chev[open] summary{padding-bottom:16px}
 .cal .d>b,.cal .d>small{position:relative}
 .cal .d b{font-size:15px}
 .cal .d small{font-size:9px;height:11px;color:#C9C3C7;font-weight:400}
-.cal .d small.ok{color:#8A8290;background:rgba(255,216,77,.45);border-radius:99px;padding:0 3px;height:13px;line-height:13px;white-space:nowrap}
+.cal .d small.ok{color:#2A2230;background:rgba(255,216,77,.45);border-radius:99px;padding:0 3px;height:13px;line-height:13px;white-space:nowrap}
 .cal .d small.nd{color:#8A8290}  /* あと○名: 출발 확정까지 남은 인원 */
 .cal .d.pick:not(.full) small{color:#fff}
 .cal .d.pick:not(.full) small.ok{background:none;padding:0}  /* 로즈 위에 노랑 금지 (N22) */
@@ -314,12 +314,12 @@ footer .ctc{display:inline;margin:0 10px 0 0;font-weight:700;color:var(--sub)}
 .rst{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 /* 결제 결과 상태 영역: 아이콘 → 상태(크게) → 사유 1문장 → 안심 문구 → 코드. 완료·실패 같은 슬롯 */
 .rhero h1{margin:0;font-size:22px;line-height:1.3;font-weight:900}
-.rhero h1.ok{color:#2F5F8C}
+.rhero h1.ok{color:#2A2230}
 .rhero h1.ng{color:#E2343B}
 .rhero .r1{margin:10px 0 0;font-size:14px;font-weight:400;color:var(--sub)}
 
 .rst b{font-size:17px}
-.rst b.ok{color:#2F5F8C}
+.rst b.ok{color:#2A2230}
 .rst b.ng{color:#E2343B}
 .rst span{font-size:12.5px;color:var(--mute)}
 .rr{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;margin-top:12px}
@@ -379,7 +379,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .gbtn{transition:.15s;display:flex;justify-content:space-between;align-items:center;background:none;border-radius:0;border-top:1px solid #EEE9EC;margin-top:10px;padding:9px 0 0;color:var(--ink);font-weight:700;font-size:13px;text-align:left}
 .gbtn span{font-size:17px;color:var(--mute);line-height:1}
 /* 누를 수 없는 표시는 버튼처럼 보이지 않게: 시즌 안내·≒京都는 테두리·둥근 배경 없이 텍스트로 */
-.mapbox .season{z-index:3;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0;border-radius:0;font-size:12.5px;color:#2F5F8C;text-shadow:0 0 6px #fff,0 0 2px #fff}
+.mapbox .season{z-index:3;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0;border-radius:0;font-size:12.5px;color:#2A2230;text-shadow:0 0 6px #fff,0 0 2px #fff}
 /* 지역 태그(누를 수 있는 것)는 상하 여백을 넉넉하게 */
 .kyoto{position:absolute;font-weight:900;font-size:13px;border-radius:99px;padding:4px 11px;background:#FFD84D;border:1.5px solid var(--ink);z-index:2;animation:pop .3s ease}
 .lbWhy{font-size:12.5px;line-height:1.55;color:var(--ink);text-align:center;white-space:normal}
@@ -391,7 +391,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .mcard .mt{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
 .mcard .mt b{font-size:16px;font-weight:900}
 .mcard .eq{color:var(--rose);font-weight:900;font-size:16px}
-.mcard .ms{margin-left:auto;font-size:11px;font-weight:700;color:#2F5F8C}
+.mcard .ms{margin-left:auto;font-size:11px;font-weight:700;color:#2A2230}
 .mcard p{margin:4px 0 0;font-size:12.5px;line-height:1.6;color:var(--sub)}
 @keyframes mcpop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 .mcard.pop{animation:mcpop .32s cubic-bezier(.2,.8,.3,1) both}
@@ -507,7 +507,7 @@ a.cta.off{background:#E8E3E6;color:#9A929E;box-shadow:none}
 .hl{border:0;height:1px;background:#E8E3E6;margin:30px 0}
 /* 아이콘 */
 .li{flex:none;vertical-align:-3px}
-.c-season{background:#E6F2FB;color:#2F5F8C;display:inline-flex;align-items:center;gap:3px}
+.c-season{background:#F5F3F4;color:#2A2230;display:inline-flex;align-items:center;gap:3px}
 .ir{display:flex;align-items:center;gap:6px}
 .ir.nw{white-space:nowrap}
 .info .ir small{font-size:inherit;color:inherit;font-weight:400}
@@ -790,7 +790,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .mcard #mName,.mcard .eq{display:revert}
 .mcard #mLike,.mcard .eq{display:none}
 .mcard.pop #mName{display:inline-block;animation:qpop .5s cubic-bezier(.2,1.4,.4,1)}
-.mcard .ms,.mcard .ms.gw{background:#E6F2FB;color:#2F5F8C;padding:3px 10px;border-radius:99px}
+.mcard .ms,.mcard .ms.gw{background:#F5F3F4;color:#2A2230;padding:3px 10px;border-radius:99px}
 .mcard .ms.gw{background:#FCE8EF;color:#C82158}
 .mcard .ms.gw svg{margin:-4px -2px -4px -5px}
 .c-season.gw{background:#FCE8EF;color:#C82158}
@@ -824,7 +824,7 @@ body:has(.cta.off) .barbg{opacity:0}
 .bar:has(.cta.off) .bprice{display:none}
 .bar .cta.mw{width:182px}
 /* season chip: one rule everywhere (main map card, main product card, detail pages) */
-.mcard .ms,.chip.snow,.c-season{background:#E6F2FB!important;color:#2F5F8C!important;font-size:11px!important;font-weight:900!important;padding:2px 9px!important;border-radius:99px!important;display:inline-flex!important;align-items:center;gap:3px;line-height:1.6}
+.mcard .ms,.chip.snow,.c-season{background:#F5F3F4!important;color:#2A2230!important;font-size:11px!important;font-weight:900!important;padding:2px 9px!important;border-radius:99px!important;display:inline-flex!important;align-items:center;gap:3px;line-height:1.6}
 .mcard .ms.gw,.c-season.gw{background:#FCE8EF!important;color:#C82158!important}
 .chip.snow svg,.mcard .ms svg,.c-season svg{width:14px;height:14px;margin:0!important;flex:none}
 .mcard .ms.gw svg,.c-season.gw svg{width:17px;height:17px;margin:-2px -1px -2px -3px!important}
@@ -1102,7 +1102,7 @@ body.bhide .bar{transform:translate(-50%,140%)!important}
 body.bhide .barbg{opacity:0!important}
 @media (prefers-reduced-motion:reduce){.bar,.barbg{transition:none}}
 
-.gwb.wb{background:#E6F2FB;color:#2F5F8C}
+.gwb.wb{background:#F5F3F4;color:#2A2230}
 /* 좌우 기준선 22px 통일 (지도 상자와 아래 섹션들) */
 .psec{padding-left:22px!important;padding-right:22px!important}
 .big{margin-left:22px!important;margin-right:22px!important}

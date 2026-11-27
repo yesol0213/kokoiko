@@ -34,7 +34,8 @@ button{font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appeara
 .season{position:absolute;right:12px;bottom:14px;font-weight:900;font-size:13px;border-radius:99px;padding:6px 12px;color:#2F5F8C}
 .ichi{font-size:11px;font-weight:900;background:#fff;color:var(--rose);border:1.5px solid var(--rose);border-radius:99px;padding:1px 8px}
 /* ---------- Main: products ---------- */
-.psec{padding:8px 18px 8px;margin:14px 0 14px}  /* 위아래 대칭 22px — 앞뒤 요소의 마진과 상쇄되어 어느 블록 뒤에 와도 같아진다 (S10, 2026-11-27에 위 40→22로 대칭화) */
+.psec{padding:8px 18px 8px;margin:10px 0 14px}  /* S10: 헤드라인 묶음 마진 위 10·아래 14, 패딩 위아래 8 (2026-11-27 사용자 지정값) */
+.big + .psec{margin-top:42px}  /* 카드 뒤 헤드라인 위를 지도 뒤와 같은 50px로 맞춘다. 지도 뒤는 래퍼의 그림자 자리 32px이 더 있어 32+10+8=50, 카드 뒤는 42+8=50 (1127-5) */
 .psec h2{font-size:21px;margin:0;line-height:1.4}
 .psec p{font-size:16px;color:var(--sub);margin:6px 0 0}
 .slides{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}

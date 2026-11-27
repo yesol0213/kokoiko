@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>하단 바 진단</title>
+<style>
+  :root{--sab:env(safe-area-inset-bottom,0px)}
+  *{box-sizing:border-box}
+  body{margin:0;font:13px/1.7 -apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;color:#2A2230;background:#FFF9F6}
+  .pad{padding:16px 18px 240px}
+  h1{font-size:16px;margin:0 0 4px}
+  .hint{color:#6B6170;font-size:12px;margin:0 0 14px}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  td{padding:5px 0;border-bottom:1px solid #EEE9EC;font-size:12.5px}
+  td:first-child{color:#6B6170}
+  td:last-child{text-align:right;font-weight:700}
+  .big{font-size:15px;color:#C82158}
+  /* 측정용: 실제 사이트와 같은 방식의 고정 바 */
+  .bar{position:fixed;left:0;right:0;bottom:0;height:68px;padding-bottom:var(--sab);
+       background:#C82158;color:#fff;display:flex;align-items:center;justify-content:center;
+       font-weight:700;z-index:50}
+  /* 화면 진짜 바닥에 붙는 기준선(100dvh 기준) — 바와 이 선 사이가 "흰 여백" */
+  .ruler{position:fixed;left:0;right:0;top:calc(100dvh - 3px);height:3px;background:#2F5F8C;z-index:60}
+  .lab{position:fixed;right:8px;top:calc(100dvh - 24px);font-size:10px;color:#2F5F8C;font-weight:700;z-index:60}
+  button{width:100%;margin-top:14px;padding:12px;border:0;border-radius:10px;background:#2A2230;color:#fff;font-size:13px;font-weight:700}
+</style></head><body>
+<div class="pad">
+  <h1>하단 바 여백 진단</h1>
+  <p class="hint">① 이 화면을 <b>스크롤해서 주소창이 숨은 상태</b>로 만든 뒤 ② 아래 숫자를 캡처해 주세요.<br>
+  빨간 바(실제 사이트와 같은 <code>position:fixed; bottom:0</code>)와 파란 선(100dvh 바닥) 사이에 흰 띠가 보이면 그게 그 버그입니다.</p>
+  <table id="t"></table>
+  <button onclick="copy()">숫자 복사</button>
+</div>
+<div class="ruler"></div><div class="lab">100dvh</div>
+<div class="bar" id="bar">予約に進む</div>
+<script>
+var rows=[
+ ['브라우저', function(){return navigator.userAgent.slice(0,60)}],
+ ['화면 폭 × 높이', function(){return innerWidth+' × '+innerHeight}],
+ ['documentElement.clientHeight', function(){return document.documentElement.clientHeight}],
+ ['visualViewport.height', function(){return vv?Math.round(vv.height*100)/100:'-'}],
+ ['visualViewport.offsetTop', function(){return vv?Math.round(vv.offsetTop*100)/100:'-'}],
+ ['visualViewport.pageTop', function(){return vv?Math.round(vv.pageTop*100)/100:'-'}],
+ ['visualViewport.scale', function(){return vv?vv.scale:'-'}],
+ ['100svh (툴바 보임)', function(){return m('svh')}],
+ ['100lvh (툴바 숨음)', function(){return m('lvh')}],
+ ['100dvh (지금)', function(){return m('dvh')}],
+ ['safe-area-inset-bottom', function(){return m2()}],
+ ['현재 --vvfix 식 결과', function(){return vv?Math.round(vv.height+vv.offsetTop-document.documentElement.clientHeight):'-'}],
+ ['★ 바 아래 흰 여백(실측)', function(){return gap()+' px'}]
+];
+var vv=window.visualViewport, probe=document.createElement('div');
+probe.style.cssText='position:absolute;top:-9999px;width:1px';document.body.appendChild(probe);
+function m(u){probe.style.height='100'+u;return Math.round(probe.getBoundingClientRect().height*100)/100}
+function m2(){probe.style.height='env(safe-area-inset-bottom,0px)';var h=probe.getBoundingClientRect().height;return Math.round(h*100)/100}
+function gap(){var b=document.getElementById('bar').getBoundingClientRect();
+  var bottom=vv?(vv.height+vv.offsetTop):innerHeight;return Math.round((bottom-b.bottom)*10)/10}
+function draw(){var h='';for(var i=0;i<rows.length;i++){var v;try{v=rows[i][1]()}catch(e){v='err'}
+  h+='<tr><td>'+rows[i][0]+'</td><td class="'+(i===rows.length-1?'big':'')+'">'+v+'</td></tr>'}
+  document.getElementById('t').innerHTML=h}
+function copy(){var s='';for(var i=0;i<rows.length;i++){var v;try{v=rows[i][1]()}catch(e){v='err'}s+=rows[i][0]+': '+v+'\n'}
+  navigator.clipboard&&navigator.clipboard.writeText(s);alert('복사했습니다')}
+draw();setInterval(draw,200);
+if(vv){vv.addEventListener('resize',draw);vv.addEventListener('scroll',draw)}
+addEventListener('scroll',draw);addEventListener('resize',draw);
+</script></body></html>

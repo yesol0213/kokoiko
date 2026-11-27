@@ -3,11 +3,23 @@
   var K = window.KOKOIKO, $ = function (id) { return document.getElementById(id); };
   // 390px 기준 첫 화면을 화면 폭에 맞게 확대/축소
   // 지도 전체(아래 고정 바 위까지)가 첫 화면에 들어오도록 폭·높이 중 작은 쪽에 맞춤 (카톡·LINE 인앱 브라우저 대응)
-  var lastW = 0;
+  var lastW = 0, _lvh = 0;
+  // 100lvh = 툴바가 숨은 상태의 화면 높이. 주소창이 나타나고 숨어도 값이 바뀌지 않아 첫 화면 높이가 흔들리지 않는다.
+  // lvh를 모르는 브라우저는 예전 방식(보이는 높이 중 가장 작은 값)으로 되돌아간다.
+  function LVH() {
+    if (_lvh) return _lvh;
+    var d = document.createElement("div");
+    d.style.cssText = "position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none";
+    document.body.appendChild(d);
+    var h = d.getBoundingClientRect().height;
+    d.parentNode.removeChild(d);
+    if (!h) h = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
+    _lvh = h; return h;
+  }
   function fit() {
     var wrap = $("stageWrap"), w = wrap.clientWidth;
     // 인앱 브라우저(카톡·LINE)는 innerHeight가 실제 보이는 높이보다 크게 잡힐 때가 있어 가장 작은 값을 사용
-    var vh = Math.min(window.innerHeight, document.documentElement.clientHeight || 9999, window.visualViewport ? window.visualViewport.height : 9999);
+    var vh = LVH();
     // 스크롤로 주소창이 숨고 나타날 때 높이가 바뀌어도 다시 계산하지 않음 (지도가 늘었다 줄었다 하는 효과 방지). 폭이 바뀔 때(회전 등)만 다시 계산
     var key = "" + w; if (key === lastW) return; lastW = key;
     var bar = document.querySelector(".bar"), bh = bar ? bar.getBoundingClientRect().height + 32 : 104;
@@ -20,7 +32,7 @@
     $("stage").classList.toggle("compact", compact);
     var mb = document.querySelector(".mapbox"); mb.style.top = top + "px"; mb.style.height = mh + "px"; mb.style.transform = "";
     var kk = Math.min(k, full); var roomy = vh >= 740, dy = roomy ? 26 : 14, kb = Math.min(1.0, (mh - 10 - dy - 16) / 447); window.__kkBK = kb; var sp = document.querySelector(".mtag.plain"); if (sp) sp.style.left = (183 + (30 + 29 * kb - 173) / kb) + "px"; if (sp) sp.style.top = (roomy ? 68 : 75) + "px"; window.__kkBefore = "translateY(" + dy + "px) scale(" + kb + ")"; $("mapin").style.transform = $("mapin").hasAttribute("data-sel") ? "scale(" + kk + ")" : window.__kkBefore;
-    var H = top + mh + 12 + 24; // LINE·카톡 등 인앱 브라우저 툴바 높이 차이 대응 버퍼(D44) — 첫 화면 아래 다음 섹션 문구가 비치지 않도록
+    var H = top + mh; // 지도 묶음 안쪽 여백 0 — 지도 아래 간격은 .psec의 위 40px 하나로 통일 (D44, 1127-1)
     $("stage").style.transform = "scale(" + s + ")"; $("stage").style.height = H + "px";
     wrap.style.height = (H * s) + "px";
     // 화면이 짧으면 지도를 조금 더 줄여서, 전주 라벨이 설명 카드와 겹치지 않게 함 (라벨 위치는 그대로)
@@ -64,7 +76,7 @@
   [].forEach.call($("th").children, function (b, k) { b.onclick = function () { go(k); }; });
   if ($("arr")) $("arr").onclick = function () { go(Math.min(cur + 1, n - 1)); };
   // 자동 슬라이드: 카드가 화면에 보일 때만 3.5초마다 다음 장(마지막 다음은 처음). 손으로 만지는 동안은 멈추고, 놓은 뒤 5초 지나면 다시 자동. '동작 줄이기' 기기는 자동 넘김 없음
-  var auto = null, rt = null, inView = false, AUTO_MS = 3500, FIRST_MS = 1800, RESUME_MS = 5000, REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var auto = null, rt = null, inView = false, AUTO_MS = 3500, FIRST_MS = 1000, RESUME_MS = 5000, REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function stopAuto() { if (auto) { clearTimeout(auto); clearInterval(auto); auto = null; } }
   // fast=true: 카드가 처음 보일 때 1번 사진만 1.8초로 짧게 넘겨 "자동으로 넘어간다"를 먼저 알린다. 2번부터는 3.5초
   function startAuto(fast) {

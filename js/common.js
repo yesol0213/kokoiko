@@ -262,6 +262,22 @@
   });
 })();
 
+// 하단 고정 바 위치 보정 (D5): iOS·인앱 브라우저는 주소창이 스크롤로 숨을 때
+// 보이는 화면(visualViewport)이 레이아웃 화면보다 아래로 커져서, position:fixed 바가 위로 뜨고
+// 바 아래에 흰 띠가 보인다. 그 차이만큼 --vvfix에 담아 CSS가 바를 내려 준다.
+(function () {
+  var vv = window.visualViewport; if (!vv) return;
+  var root = document.documentElement;
+  function apply() {
+    var d = vv.height + vv.offsetTop - root.clientHeight;
+    root.style.setProperty("--vvfix", (d > 0 ? Math.round(d) : 0) + "px");
+  }
+  apply();
+  vv.addEventListener("resize", apply);
+  vv.addEventListener("scroll", apply);
+  window.addEventListener("orientationchange", function () { setTimeout(apply, 200); });
+})();
+
 // D26: 전 페이지 핀치·더블탭 줌 금지. iOS(Safari·인스타·LINE 인앱)는 viewport의 user-scalable=no를 무시하므로 직접 막는다
 (function () {
   var stop = function (e) { e.preventDefault(); };
